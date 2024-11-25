@@ -1,0 +1,33 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/**/*Controller.ts"],
+  "spec": {
+    "outputDirectory": "src",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "scheme": "bearer",
+        "in": "header"
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "src/routes",
+    "middleware": "express",
+    "authenticationModule": "./src/middlewares/authentication.ts"
+  },
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@users/*": ["./entities/users/*"],
+      "@entities/*": ["./entities/*"],
+      "@products/*": ["./entities/products/*"],
+      "@type/*": ["./types/*"],
+      "@db/*": ["./db/*"],
+      "@config/*": ["./config/*"]
+    }
+  }
+}

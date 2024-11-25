@@ -1,0 +1,17 @@
+{
+	"email": "correo",
+	"customValidator": "customValidator",
+	"isEmail": "isEmail",
+	"Debe_guardar_primero_el_template": "Debe guardar primero el template",
+	"incorrect_password": "Las contraseñas son diferentes",
+	"password": "password",
+	"a_special_symbol_is_required": "Se requiere un símbolo especial: @$!%*?&./#^().",
+	"email already in use": "email already in use",
+	"lowercase_letter_is_required": "Es necesaria una letra minuscula",
+	"capital_letter_required": "Es necesaria una letra mayuscula",
+	"already_in_use": "ya esta en uso",
+	"the": "El",
+	"thecorreoya esta en uso": "thecorreoya esta en uso",
+	"the correo ya esta en uso": "the correo ya esta en uso",
+	"": ""
+}

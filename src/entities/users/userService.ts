@@ -1,0 +1,161 @@
+import { modelRol, modelUser } from '@db/index'
+import { type FindOptions, ValidationErrorItem, ValidationError, Op } from 'sequelize'
+import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance } from '@users/userModel'
+import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import { fxI18n } from '@utils/i18n'
+
+class UsersService {
+  async validate(data: any, userId: string | null = null) {
+    console.log('data :>> ', data);
+    const fieldsToCheck = ['email']
+    for (const field of fieldsToCheck) {
+      if (data[field]) {
+        const whereStatement = {
+          where: { [field]: data[field] },
+        }
+        if (userId) {
+          whereStatement.where = {
+            ...whereStatement.where,
+            id: { [Op.not]: userId }
+          }
+        }
+        console.log('whereStatement.where :>> ', whereStatement.where);
+        const existingUser = await modelUser.findOne(whereStatement)
+        if (existingUser) {
+          const fielTanslate = fxI18n.__(field)
+          const errorItems = [
+            new ValidationErrorItem(
+              fxI18n.__('the') + ' ' + fielTanslate + ' ' + fxI18n.__('already_in_use'),
+              'unique violation', // type
+              field, // path
+              data[field], // value
+              existingUser,
+              'notUnique', // validatorKey
+              'validate',
+              []
+            ),
+          ]
+          console.log('errorItems :>> ', errorItems);
+          throw new ValidationError('Validation error', errorItems)
+        }
+      }
+    }
+    const dataValidate = modelUser.build(data)
+    await dataValidate.validate()
+  }
+  public async get(id: string): Promise<IUserAttributes | null> {
+    try {
+      const vResponse: IUserAttributes | null = await modelUser.findOne({
+        where: {
+          id,
+        },
+      })
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async getRol(id: string): Promise<IUserAttributes | null> {
+    try {
+      const vResponse: IUserAttributes | null = await modelUser.findOne({
+        where: {
+          id,
+        },
+        include: [
+          {
+            model: modelRol,
+            as: 'rol',
+            required: false,
+          },
+        ]
+      })
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async all(pParam: any): Promise<IResponseAllUser> {
+    try {
+      let whereStatement: FindOptions = {}
+      whereStatement = fxPaginate(pParam, whereStatement)
+      whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement.where = fxSearchILike(
+        pParam,
+        whereStatement,
+        pParam?.typeSearch || 'name',
+        modelUser.name
+      )
+      const vResponse: IUserAttributes[] = await modelUser.findAll(whereStatement)
+      if (Number(pParam?.pag)) {
+        const vResponsePaginate: IResponseAllUser = await fxReponseServices(
+          pParam,
+          whereStatement,
+          modelUser.name,
+          vResponse
+        )
+        return vResponsePaginate
+      }
+      return { data: vResponse }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async create(userCreationParams: IUserCreationAttributes): Promise<IUserAttributes> {
+    try {
+      const vResponse: IUserAttributes = await modelUser.create(userCreationParams)
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async update(userCreationParams: IUserCreationAttributes, id: string): Promise<IUserAttributes | null> {
+    try {
+      if (id) {
+        const vResponse: IUserInstance | null = await modelUser.findOne({
+          where: {
+            id: id
+          }
+        })
+        if (vResponse === null) {
+          return null
+        }
+        await vResponse.update(userCreationParams)
+        return vResponse
+      }
+      return null
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async login(pEmail: string): Promise<IUserAttributes | null> {
+    try {
+      const vUser: IUserAttributes | null = await modelUser.scope('withPassword').findOne({ where: { email: pEmail } })
+      return vUser
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async softDeleteRecord(pId: string): Promise<boolean> {
+    try {
+      const record = await modelUser.update(
+        { deletedAt: new Date() },
+        {
+          where: { id: pId },
+        }
+      )
+      if (!record) {
+        return false
+      }
+      return true
+    } catch (error) {
+      throw error
+    }
+  }
+}
+export default new UsersService()

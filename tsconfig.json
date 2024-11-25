@@ -1,0 +1,57 @@
+{
+"compilerOptions": {
+    /* Basic Options */
+    "incremental": true,
+    "target": "es2021",
+    "module": "commonjs",
+    "outDir": "./build",
+    "baseUrl": "./src",
+    "paths": {
+      "@users/*": ["./entities/users/*"],
+      "@products/*": ["./entities/products/*"],
+      "@entities/*": ["./entities/*"],
+      "@type/*": ["./types/*"],
+      "@db/*": ["./db/*"],
+      "@config/*": ["./config/*"],
+      "@utils/*": ["./utils/*"]
+    },
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    /* Additional Checks */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Module Resolution Options */
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+
+    /* Experimental Options */
+    "experimentalDecorators": true,
+
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true,
+    
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "typeRoots": [
+      "@types",
+      "./node_modules/@types",
+    ],
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build", "functions"],
+}
