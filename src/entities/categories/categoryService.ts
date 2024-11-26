@@ -32,6 +32,12 @@ class CategoriesService {
         pParam?.typeSearch || 'name',
         modelCategory.name
       )
+      if ('isSalient' in pParam && pParam.isSalient !== undefined && pParam.isSalient !== null) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          isSalient: pParam.isSalient
+        }
+      }
       const vResponse: ICategoryAttributes[] = await modelCategory.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllCategory = await fxReponseServices(
@@ -57,7 +63,7 @@ class CategoriesService {
     }
   }
 
-  public async update(causeCreationParams: ICategoryCreationAttributes, id: string): Promise<ICategoryAttributes | null> {
+  public async update(itemCreationParams: ICategoryCreationAttributes, id: string): Promise<ICategoryAttributes | null> {
     try {
       if (id) {
         const vResponse: ICategoryInstance | null = await modelCategory.findOne({
@@ -68,7 +74,7 @@ class CategoriesService {
         if (vResponse === null) {
           return null
         }
-        await vResponse.update(causeCreationParams)
+        await vResponse.update(itemCreationParams)
         return vResponse
       }
       return null

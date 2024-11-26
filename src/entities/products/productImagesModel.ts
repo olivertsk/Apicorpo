@@ -24,7 +24,7 @@ export interface IResponseAllProductImage {
 export interface IProductImageFilter {
   pag?: number
   limit?: number
-  name?: string
+  name?: string | null
 }
 export type IProductImageCreationAttributes = Pick<IProductImageAttributes, 'id' | 'alt' | 'isVideo'> & 
   Partial<Pick<IProductImageAttributes, 'file' | 'productId' >>

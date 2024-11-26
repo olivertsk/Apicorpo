@@ -34,7 +34,7 @@ export interface IResponseAllProduct {
 export interface IProductFilter {
   pag?: number
   limit?: number
-  name?: string
+  name?: string | null
 }
 export type IProductCreationAttributes = Pick<IProductAttributes, 'id' | 'departmentId' | 'categoryId' | 'description'> & 
   Partial<Pick<IProductAttributes, 'name' | 'code' | 'price' >>

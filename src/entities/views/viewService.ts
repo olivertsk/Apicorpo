@@ -57,7 +57,7 @@ class ViewService {
     }
   }
 
-  public async update(causeCreationParams: IViewCreationAttributes, id: string): Promise<IViewAttributes | null> {
+  public async update(itemCreationParams: IViewCreationAttributes, id: string): Promise<IViewAttributes | null> {
     try {
       if (id) {
         const vResponse: IViewInstance | null = await modelView.findOne({
@@ -68,7 +68,7 @@ class ViewService {
         if (vResponse === null) {
           return null
         }
-        await vResponse.update(causeCreationParams)
+        await vResponse.update(itemCreationParams)
         return vResponse
       }
       return null

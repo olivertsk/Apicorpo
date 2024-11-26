@@ -82,7 +82,8 @@
 						"format": "double"
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -240,7 +241,8 @@
 						"format": "double"
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -411,7 +413,8 @@
 						"format": "double"
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -592,6 +595,19 @@
 							}
 						]
 					},
+					"isSalient": {
+						"anyOf": [
+							{
+								"type": "boolean"
+							},
+							{
+								"type": "boolean",
+								"enum": [
+									true
+								]
+							}
+						]
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -602,12 +618,14 @@
 					},
 					"deletedAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"nullable": true
 					}
 				},
 				"required": [
 					"name",
-					"status"
+					"status",
+					"isSalient"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -650,7 +668,15 @@
 						"format": "double"
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
+					},
+					"isSalient": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"product": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -690,6 +716,19 @@
 					},
 					{
 						"properties": {
+							"isSalient": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											false
+										]
+									}
+								]
+							},
 							"status": {
 								"anyOf": [
 									{
@@ -705,6 +744,7 @@
 							}
 						},
 						"required": [
+							"isSalient",
 							"status"
 						],
 						"type": "object"
@@ -742,6 +782,10 @@
 					},
 					"departmentId": {
 						"type": "string",
+						"nullable": true
+					},
+					"isSalient": {
+						"type": "boolean",
 						"nullable": true
 					},
 					"createdAt": {
@@ -802,7 +846,12 @@
 						"format": "double"
 					},
 					"name": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
+					},
+					"isSalient": {
+						"type": "boolean",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -842,7 +891,180 @@
 					},
 					{
 						"properties": {
+							"isSalient": {
+								"type": "boolean",
+								"nullable": true
+							},
 							"departmentId": {
+								"type": "string",
+								"nullable": true
+							},
+							"status": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											true
+										]
+									}
+								]
+							}
+						},
+						"required": [
+							"status"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"EPositionBanner": {
+				"enum": [
+					"homePrincipal",
+					"homeSecondary"
+				],
+				"type": "string"
+			},
+			"IBannerAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"images": {
+						"type": "string",
+						"nullable": true
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"status": {
+						"type": "boolean"
+					},
+					"position": {
+						"$ref": "#/components/schemas/EPositionBanner"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"position"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllBanner": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IBannerAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IBannerFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"position": {
+						"$ref": "#/components/schemas/EPositionBanner"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IBannerAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IBannerAttributes.name-or-images__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"images": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"EPositionBanner.HomePrincipal": {
+				"enum": [
+					"homePrincipal"
+				],
+				"type": "string"
+			},
+			"IBannerCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IBannerAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IBannerAttributes.name-or-images__"
+					},
+					{
+						"properties": {
+							"position": {
+								"anyOf": [
+									{
+										"$ref": "#/components/schemas/EPositionBanner"
+									},
+									{
+										"$ref": "#/components/schemas/EPositionBanner.HomePrincipal"
+									}
+								]
+							},
+							"description": {
 								"type": "string",
 								"nullable": true
 							},
@@ -2115,13 +2337,7 @@
 				"tags": [
 					"Department"
 				],
-				"security": [
-					{
-						"bearerAuth": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -2177,7 +2393,7 @@
 				"security": [
 					{
 						"bearerAuth": [
-							"admin"
+							"optional"
 						]
 					}
 				],
@@ -2206,6 +2422,22 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isSalient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "product",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -2307,13 +2539,7 @@
 				"tags": [
 					"Department"
 				],
-				"security": [
-					{
-						"bearerAuth": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -2420,13 +2646,7 @@
 				"tags": [
 					"Category"
 				],
-				"security": [
-					{
-						"bearerAuth": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -2479,13 +2699,7 @@
 				"tags": [
 					"Category"
 				],
-				"security": [
-					{
-						"bearerAuth": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -2511,6 +2725,14 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isSalient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -2670,6 +2892,307 @@
 				"summary": "Eliminar una item por ID.",
 				"tags": [
 					"Category"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/banners/show/{bannerId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IBannerAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Banner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "bannerId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/banners/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IBannerAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllBanner"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Banner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "position",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/EPositionBanner"
+						}
+					}
+				]
+			}
+		},
+		"/banners/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IBannerAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Banner"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IBannerCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/banners/update/{bannerId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IBannerAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Banner"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "bannerId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IBannerCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/banners/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"Banner"
 				],
 				"security": [
 					{

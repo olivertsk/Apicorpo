@@ -33,7 +33,7 @@ export interface IResponseAllUser {
 export interface IUserFilter {
   pag?: number
   limit?: number
-  name?: string
+  name?: string | null
 }
 export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'avatar'> & 
   Partial<Pick<IUserAttributes, 'email' | 'name' | 'password' >>

@@ -20,7 +20,7 @@ export interface IResponseAllRol {
 export interface IRolFilter {
   pag?: number
   limit?: number
-  name?: string
+  name?: string | null
 }
 
 export type IRolCreationAttributes = Pick<IRolAttributes, 'id' | 'name'>

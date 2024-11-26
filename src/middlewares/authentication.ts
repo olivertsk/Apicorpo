@@ -16,6 +16,7 @@ export async function expressAuthentication(
   if (securityName === 'bearerAuth') {
     const authHeader = request?.headers?.authorization
     console.log('authHeader :>> ', authHeader);
+    console.log('scopes :>> ', scopes);
     if (authHeader) {
       console.log('viene por auth')
       const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader
@@ -25,6 +26,11 @@ export async function expressAuthentication(
         if (auth?.id) {
           rolUser = await userService.getRol(auth?.id)
           rolUser = JSON.parse(JSON.stringify(rolUser))
+        }
+        if (scopes && scopes?.includes('optional')) {
+          console.log('paso por aca');
+          request.auth = auth
+          return { token, auth }
         }
         if (scopes && scopes.length > 0 && !scopes.includes(null)) {
           const userRoles = rolUser.rol.name || ''
@@ -62,10 +68,17 @@ export async function expressAuthentication(
         }
         // throw new Error('Token inválido o expirado');
       }
+    } else {
+      if (scopes && scopes?.includes('optional')) {
+        console.log('paso por aca');
+        request.auth = null
+        return { token: '', auth: null }
+      }
     }
     if (!scopes) {
       return { token: '', auth: null }
     }
+    console.log('no deberia llegar aca');
     throw {
       status: 401,
       message: 'Invalid token',
@@ -84,4 +97,5 @@ export async function expressAuthentication(
       stack: '',
     }
   }
+  console.log('no deberia llegar aca');
 }

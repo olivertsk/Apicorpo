@@ -11,9 +11,9 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ) {
+  console.log('error in :>> ', req.url);
   if (err instanceof ValidateError) {
     console.log('err?.fields :>> ', err?.fields);
-    // console.log('req :>> ', req);
     let validationErrors: any
     if (err?.fields?.requestBody?.message.includes('Could not match the intersection against every type. Issues: ')) {
       validationErrors = err?.fields?.requestBody?.message.replace(

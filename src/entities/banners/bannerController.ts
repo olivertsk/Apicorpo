@@ -12,27 +12,27 @@ import {
   Delete,
   Put
 } from 'tsoa';
-import { ICategoryAttributes, ICategoryCreationAttributes, IResponseAllCategory, ICategoryFilter } from '@entities/categories/categoryModel';
-import CategoryService from '@entities/categories/categoryService';
+import { IBannerAttributes, IBannerCreationAttributes, IResponseAllBanner, IBannerFilter } from '@entities/banners/bannerModel';
+import BannerService from '@entities/banners/bannerService';
 import { fxI18n } from '@utils/i18n';
 import { fxMoveImages } from '@utils/helpers';
  
-@Route('categories')
-@Tags('Category')
-export class CategoriesController extends Controller {
-  private categoryService: typeof CategoryService
+@Route('banners')
+@Tags('Banner')
+export class BannersController extends Controller {
+  private bannerService: typeof BannerService
 
   constructor() {
     super()
-    this.categoryService = CategoryService
+    this.bannerService = BannerService
   }
 
-  @Get('/show/{categoryId}')
+  @Get('/show/{bannerId}')
   public async get(
-    @Path() categoryId: string,
-  ): Promise<{ data: ICategoryAttributes | null, message?: string }> {
+    @Path() bannerId: string,
+  ): Promise<{ data: IBannerAttributes | null, message?: string }> {
     try {
-      const vResponse: ICategoryAttributes | null = await this.categoryService.get(categoryId)
+      const vResponse: IBannerAttributes | null = await this.bannerService.get(bannerId)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -46,15 +46,15 @@ export class CategoriesController extends Controller {
    * @summary Obtener todos los datos con paginación.
    * @param {number} page - Número de página.
    * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { categories: ICategory[], message?: string }, status: boolean }>}
+   * @returns {Promise<{ data: { banners: IBanner[], message?: string }, status: boolean }>}
    */
   @Get('/all')
-  public async all(@Queries() pQueryParams: ICategoryFilter): Promise<{
-    data: ICategoryAttributes[] | IResponseAllCategory
+  public async all(@Queries() pQueryParams: IBannerFilter): Promise<{
+    data: IBannerAttributes[] | IResponseAllBanner
     message?: string
   }> {
     try {
-      const vResponse: ICategoryAttributes[] | IResponseAllCategory = await this.categoryService.all(pQueryParams)
+      const vResponse: IBannerAttributes[] | IResponseAllBanner = await this.bannerService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -67,14 +67,14 @@ export class CategoriesController extends Controller {
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
   public async create(
-    @Body() requestBody: ICategoryCreationAttributes
-  ): Promise<{ success: boolean, item: ICategoryAttributes | null, message?: string }> {
+    @Body() requestBody: IBannerCreationAttributes
+  ): Promise<{ success: boolean, item: IBannerAttributes | null, message?: string }> {
     try {
-      await this.categoryService.validate(requestBody)
-      if (requestBody.icon) {
-        requestBody.icon = await fxMoveImages(requestBody.icon)
+      await this.bannerService.validate(requestBody)
+      if (requestBody.images) {
+        requestBody.images = await fxMoveImages(requestBody.images)
       }
-      const vItem: ICategoryAttributes | null = await this.categoryService.create(requestBody);
+      const vItem: IBannerAttributes | null = await this.bannerService.create(requestBody)
       this.setStatus(201); // set return status 201
       return { success: true, item: vItem }
     } catch (error) {
@@ -84,17 +84,17 @@ export class CategoriesController extends Controller {
 
   @Security('bearerAuth', ["admin"])
   @SuccessResponse('200', 'Update') // Custom success response
-  @Put('/update/{categoryId}')
+  @Put('/update/{bannerId}')
   public async update(
-    @Path() categoryId: string,
-    @Body() requestBody: ICategoryCreationAttributes
-  ): Promise<{ success: boolean, item: ICategoryAttributes | null, message?: string }> {
+    @Path() bannerId: string,
+    @Body() requestBody: IBannerCreationAttributes
+  ): Promise<{ success: boolean, item: IBannerAttributes | null, message?: string }> {
     try {
-      await this.categoryService.validate(requestBody)
-      if (requestBody.icon) {
-        requestBody.icon = await fxMoveImages(requestBody.icon)
+      await this.bannerService.validate(requestBody)
+      if (requestBody.images) {
+        requestBody.images = await fxMoveImages(requestBody.images)
       }
-      const vItem: ICategoryAttributes | null = await this.categoryService.update(requestBody, categoryId)
+      const vItem: IBannerAttributes | null = await this.bannerService.update(requestBody, bannerId)
       if (vItem) {
         this.setStatus(200); // set return status 200
         return { success: true, item: vItem }
@@ -119,7 +119,7 @@ export class CategoriesController extends Controller {
   ): Promise<{ success: boolean, message?: string }> {
     try {
       this.setStatus(200); // set return success 201
-      const vResponse = await this.categoryService.softDeleteRecord(key);
+      const vResponse = await this.bannerService.softDeleteRecord(key);
       if (vResponse) {
         this.setStatus(200)
         return { success: true }

@@ -10,11 +10,14 @@ import {
   Queries,
   Security,
   Delete,
-  Put
+  Put,
+  Request
 } from 'tsoa';
 import { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentFilter } from '@entities/departments/departmentModel';
 import DepartmentService from '@entities/departments/departmentService';
 import { fxI18n } from '@utils/i18n';
+import { IUserAttributes } from '@users/userModel';
+import { fxMoveImages } from '@utils/helpers';
  
 @Route('departments')
 @Tags('Department')
@@ -26,7 +29,6 @@ export class DepartmentsController extends Controller {
     this.departmentService = DepartmentService
   }
 
-  @Security('bearerAuth', ["admin"])
   @Get('/show/{departmentId}')
   public async get(
     @Path() departmentId: string,
@@ -47,13 +49,17 @@ export class DepartmentsController extends Controller {
    * @param {number} count - Cantidad de datos por página.
    * @returns {Promise<{ data: { departments: IDepartment[], message?: string }, status: boolean }>}
    */
-  @Security('bearerAuth', ["admin"])
+  @Security('bearerAuth', ['optional'])
   @Get('/all')
-  public async all(@Queries() pQueryParams: IDepartmentFilter): Promise<{
+  public async all(@Queries() pQueryParams: IDepartmentFilter, @Request() requestBody: { auth: IUserAttributes }): Promise<{
     data: IDepartmentAttributes[] | IResponseAllDepartment
     message?: string
   }> {
     try {
+      const auth = requestBody?.auth?.rolId
+      console.log('holaaaaaa');
+      console.log('auth :>> ', auth);
+      // TODO Verificar si es admin para filtrar los status false
       const vResponse: IDepartmentAttributes[] | IResponseAllDepartment = await this.departmentService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
@@ -71,6 +77,9 @@ export class DepartmentsController extends Controller {
   ): Promise<{ success: boolean, item: IDepartmentAttributes | null, message?: string }> {
     try {
       await this.departmentService.validate(requestBody)
+      if (requestBody.icon) {
+        requestBody.icon = await fxMoveImages(requestBody.icon)
+      }
       const vItem: IDepartmentAttributes | null = await this.departmentService.create(requestBody);
       this.setStatus(201); // set return status 201
       return { success: true, item: vItem }
@@ -79,7 +88,6 @@ export class DepartmentsController extends Controller {
     }
   }
 
-  @Security('bearerAuth', ["admin"])
   @SuccessResponse('200', 'Update') // Custom success response
   @Put('/update/{departmentId}')
   public async update(
@@ -88,6 +96,9 @@ export class DepartmentsController extends Controller {
   ): Promise<{ success: boolean, item: IDepartmentAttributes | null, message?: string }> {
     try {
       await this.departmentService.validate(requestBody)
+      if (requestBody.icon) {
+        requestBody.icon = await fxMoveImages(requestBody.icon)
+      }
       const vItem: IDepartmentAttributes | null = await this.departmentService.update(requestBody, departmentId)
       if (vItem) {
         this.setStatus(200); // set return status 200

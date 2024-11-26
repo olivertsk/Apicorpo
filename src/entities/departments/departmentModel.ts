@@ -1,6 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
+import { ModelRegistry } from '@db/index'
 
 export interface IDepartmentAttributes {
   id?: string
@@ -8,9 +9,10 @@ export interface IDepartmentAttributes {
   name: string
   description?: string | null
   status: boolean | true
+  isSalient: boolean | true
   createdAt?: Date
   updatedAt?: Date
-  deletedAt?: Date
+  deletedAt?: Date | null
 }
 
 export interface IResponseAllDepartment {
@@ -23,12 +25,15 @@ export interface IResponseAllDepartment {
 export interface IDepartmentFilter {
   pag?: number
   limit?: number
-  name?: string
+  name?: string | null
+  isSalient?: boolean | null
+  product?: boolean
 }
 export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description' | 'icon'> & 
   Partial<Pick<IDepartmentAttributes, 'name' >>
   & {
     status: boolean | true
+    isSalient: boolean | false
   };
 export interface IDepartmentInstance
   extends Model<IDepartmentAttributes, IDepartmentCreationAttributes>,
@@ -43,12 +48,12 @@ export const vDepartmentModelAttributes: SequelizeAttributes<IDepartmentAttribut
   createdAt: {
     type: DataTypes.DATE,
     field: 'createdAt',
-    allowNull: false,
+    allowNull: true,
   },
   updatedAt: {
     type: DataTypes.DATE,
     field: 'updatedAt',
-    allowNull: false,
+    allowNull: true,
   },
   deletedAt: {
     type: DataTypes.DATE,
@@ -76,6 +81,12 @@ export const vDepartmentModelAttributes: SequelizeAttributes<IDepartmentAttribut
     defaultValue: true,
     allowNull: true,
   },
+  isSalient: {
+    type: DataTypes.BOOLEAN,
+    field: 'isSalient',
+    defaultValue: true,
+    allowNull: true,
+  },
 }
 
 export function fxDepartmentFactory(sequelize: Sequelize) {
@@ -94,10 +105,16 @@ export function fxDepartmentFactory(sequelize: Sequelize) {
       paranoid: true,
     }
   )
-
+  vData.associate = function (models: ModelRegistry) {
+    const { modelProduct, modelDepartment } = models
+    modelDepartment.hasMany(modelProduct, {
+      foreignKey: 'departmentId',
+      sourceKey: 'id',
+      as: 'products',
+    })
+  }
   vData.prototype.toJSON = function () {
     const values = { ...this.get() }
-    delete values.password
     return values
   }
   return vData

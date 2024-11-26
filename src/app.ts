@@ -5,6 +5,7 @@ import * as swaggerDocument from './swagger.json'
 import { errorHandler } from './middlewares/errorHandler'
 import { expressAuthentication } from './middlewares/expressAuthentication'
 import cors from 'cors'
+import { formatRequest } from 'middlewares/formatRequest'
 // import multer from 'multer';
 
 export const app = express()
@@ -26,6 +27,7 @@ app.use(
   })
 )
 app.use(json())
+app.use(formatRequest)
 app.use(expressAuthentication)
 RegisterRoutes(app)
 

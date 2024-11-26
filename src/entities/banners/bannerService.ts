@@ -1,16 +1,16 @@
-import { modelDepartment, modelProduct } from '@db/index'
+import { modelBanner } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
+import { type IBannerAttributes, type IBannerCreationAttributes, type IResponseAllBanner, type IBannerInstance, EPositionBanner } from '@entities/banners/bannerModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
-class DepartmentsService {
+class BannersService {
   async validate(data: any) {
-    const dataValidate = modelDepartment.build(data)
+    const dataValidate = modelBanner.build(data)
     await dataValidate.validate()
   }
-  public async get(id: string): Promise<IDepartmentAttributes | null> {
+  public async get(id: string): Promise<IBannerAttributes | null> {
     try {
-      const vResponse: IDepartmentAttributes | null = await modelDepartment.findOne({
+      const vResponse: IBannerAttributes | null = await modelBanner.findOne({
         where: {
           id,
         },
@@ -21,7 +21,7 @@ class DepartmentsService {
     }
   }
 
-  public async all(pParam: any): Promise<IResponseAllDepartment> {
+  public async all(pParam: any): Promise<IResponseAllBanner> {
     try {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
@@ -30,28 +30,20 @@ class DepartmentsService {
         pParam,
         whereStatement,
         pParam?.typeSearch || 'name',
-        modelDepartment.name
+        modelBanner.name
       )
-      if ('isSalient' in pParam && pParam.isSalient !== undefined && pParam.isSalient !== null) {
+      if (pParam.position && Object.values(EPositionBanner).includes(pParam.position)) {
         whereStatement.where = {
           ...whereStatement.where,
-          isSalient: pParam.isSalient
+          position: pParam.position
         }
       }
-      if (pParam?.product) {
-        whereStatement.include = [
-          {
-            model: modelProduct,
-            as: 'products'
-          }
-        ]
-      }
-      const vResponse: IDepartmentAttributes[] = await modelDepartment.findAll(whereStatement)
+      const vResponse: IBannerAttributes[] = await modelBanner.findAll(whereStatement)
       if (Number(pParam?.pag)) {
-        const vResponsePaginate: IResponseAllDepartment = await fxReponseServices(
+        const vResponsePaginate: IResponseAllBanner = await fxReponseServices(
           pParam,
           whereStatement,
-          modelDepartment.name,
+          modelBanner.name,
           vResponse
         )
         return vResponsePaginate
@@ -62,19 +54,19 @@ class DepartmentsService {
     }
   }
 
-  public async create(viewCreationParams: IDepartmentCreationAttributes): Promise<IDepartmentAttributes> {
+  public async create(viewCreationParams: IBannerCreationAttributes): Promise<IBannerAttributes> {
     try {
-      const vResponse: IDepartmentAttributes = await modelDepartment.create(viewCreationParams)
+      const vResponse: IBannerAttributes = await modelBanner.create(viewCreationParams)
       return vResponse
     } catch (error) {
       throw error
     }
   }
 
-  public async update(itemCreationParams: IDepartmentCreationAttributes, id: string): Promise<IDepartmentAttributes | null> {
+  public async update(itemCreationParams: IBannerCreationAttributes, id: string): Promise<IBannerAttributes | null> {
     try {
       if (id) {
-        const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
+        const vResponse: IBannerInstance | null = await modelBanner.findOne({
           where: {
             id: id
           }
@@ -92,7 +84,7 @@ class DepartmentsService {
   }
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
-      const record = await modelDepartment.update(
+      const record = await modelBanner.update(
         { deletedAt: new Date() },
         {
           where: { id: pId },
@@ -107,4 +99,4 @@ class DepartmentsService {
     }
   }
 }
-export default new DepartmentsService()
+export default new BannersService()

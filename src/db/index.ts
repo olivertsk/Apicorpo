@@ -11,6 +11,7 @@ import { fxDepartmentFactory } from '@entities/departments/departmentModel'
 import { fxCategoryFactory } from '@entities/categories/categoryModel'
 import { fxProductFactory } from '@products/productModel'
 import { fxProductImageFactory } from '@products/productImagesModel'
+import { fxBannerFactory } from '@entities/banners/bannerModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -27,6 +28,7 @@ export const modelDepartment = fxDepartmentFactory(sequelize)
 export const modelCategory = fxCategoryFactory(sequelize)
 export const modelProduct = fxProductFactory(sequelize)
 export const modelProductImages = fxProductImageFactory(sequelize)
+export const modelBanner = fxBannerFactory(sequelize)
 // export const modelPermission = fxPermissionFactory(sequelize)
 
 const models = {
@@ -36,7 +38,8 @@ const models = {
   // modelPermission,
   modelDepartment,
   modelProduct,
-  modelProductImages
+  modelProductImages,
+  modelBanner
 }
 
 export type ModelRegistry = typeof models

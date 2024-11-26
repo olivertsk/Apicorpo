@@ -24,7 +24,7 @@ export interface IResponseAllPermission {
 export interface IPermissionFilter {
   pag?: number
   limit?: number
-  name?: string
+  name?: string | null
 }
 
 export type IPermissionCreationAttributes = Pick<IPermissionAttributes, 'id'> & 

@@ -2,44 +2,47 @@ import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
 
-export interface ICategoryAttributes {
+export interface IBannerAttributes {
   id?: string
-  icon?: string | null
+  images?: string | null
   name: string
   description?: string | null
-  status: boolean | true
-  departmentId?: string | null
-  isSalient?: boolean | null
+  status?: boolean
+  position: EPositionBanner
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
 }
 
-export interface IResponseAllCategory {
+export enum EPositionBanner {
+  HomePrincipal = 'homePrincipal',
+  HomeSecondary = 'homeSecondary'
+}
+export interface IResponseAllBanner {
   total?: number
   totalPage?: number
-  data: ICategoryAttributes[]
+  data: IBannerAttributes[]
   actualPage?: number
 }
 
-export interface ICategoryFilter {
+export interface IBannerFilter {
   pag?: number
   limit?: number
   name?: string | null
-  isSalient?: boolean | null
+  position?: EPositionBanner
 }
-export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> & 
-  Partial<Pick<ICategoryAttributes, 'name' >>
+export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> & 
+  Partial<Pick<IBannerAttributes, 'name' | 'images'>>
   & {
     status: boolean | true
-    departmentId?: string | null
-    isSalient?: boolean | null
+    description?: string | null
+    position?: EPositionBanner | EPositionBanner.HomePrincipal
   };
-export interface ICategoryInstance
-  extends Model<ICategoryAttributes, ICategoryCreationAttributes>,
-    ICategoryAttributes {}
+export interface IBannerInstance
+  extends Model<IBannerAttributes, IBannerCreationAttributes>,
+    IBannerAttributes {}
 
-export const vCategoryModelAttributes: SequelizeAttributes<ICategoryAttributes> = {
+export const vBannerModelAttributes: SequelizeAttributes<IBannerAttributes> = {
   id: {
     type: DataTypes.UUID,
     primaryKey: true,
@@ -59,9 +62,9 @@ export const vCategoryModelAttributes: SequelizeAttributes<ICategoryAttributes> 
     type: DataTypes.DATE,
     field: 'deletedAt',
   },
-  icon: {
+  images: {
     type: DataTypes.STRING,
-    field: "icon",
+    field: "images",
     allowNull: false
   },
   name: {
@@ -81,32 +84,22 @@ export const vCategoryModelAttributes: SequelizeAttributes<ICategoryAttributes> 
     defaultValue: true,
     allowNull: true,
   },
-  isSalient: {
-    type: DataTypes.BOOLEAN,
-    field: 'isSalient',
-    defaultValue: false,
+  position: {
+    type: DataTypes.STRING,
+    field: 'position',
+    defaultValue: true,
     allowNull: true,
-  },
-  departmentId: {
-    type: DataTypes.UUID,
-    field: 'department_id',
-    defaultValue: null,
-    allowNull: true,
-    references: {
-      model: 'departments',
-      key: 'id',
-    },
   },
 }
 
-export function fxCategoryFactory(sequelize: Sequelize) {
-  const vData = <ModelStatic<ICategoryInstance>>sequelize.define(
-    'Category',
+export function fxBannerFactory(sequelize: Sequelize) {
+  const vData = <ModelStatic<IBannerInstance>>sequelize.define(
+    'Banner',
     {
-      ...vCategoryModelAttributes,
+      ...vBannerModelAttributes,
     },
     {
-      tableName: 'categories',
+      tableName: 'banners',
       defaultScope: {
         order: [['createdAt', 'DESC']],
       },
@@ -118,7 +111,6 @@ export function fxCategoryFactory(sequelize: Sequelize) {
 
   vData.prototype.toJSON = function () {
     const values = { ...this.get() }
-    delete values.password
     return values
   }
   return vData
