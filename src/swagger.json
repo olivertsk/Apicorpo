@@ -566,6 +566,190 @@
 					}
 				]
 			},
+			"IMapAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"address": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"map": {
+						"type": "string"
+					},
+					"status": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"map",
+					"status",
+					"order"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllMap": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IMapAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IMapFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IMapAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IMapAttributes.name-or-image-or-map__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"map": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"IMapCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IMapAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IMapAttributes.name-or-image-or-map__"
+					},
+					{
+						"properties": {
+							"order": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "number",
+										"enum": [
+											0
+										]
+									}
+								]
+							},
+							"email": {
+								"type": "string"
+							},
+							"phoneNumber": {
+								"type": "string"
+							},
+							"address": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string",
+								"nullable": true
+							},
+							"status": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											true
+										]
+									}
+								]
+							}
+						},
+						"required": [
+							"order",
+							"status"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"IDepartmentAttributes": {
 				"properties": {
 					"id": {
@@ -2282,6 +2466,299 @@
 				"summary": "Eliminar una images de productos por ID.",
 				"tags": [
 					"Product"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/maps/show/{mapId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IMapAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Map"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mapId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/maps/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IMapAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllMap"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Map"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/maps/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IMapAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Map"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IMapCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/maps/update/{mapId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IMapAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Map"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "mapId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IMapCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/maps/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"Map"
 				],
 				"security": [
 					{
