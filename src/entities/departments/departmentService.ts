@@ -90,6 +90,22 @@ class DepartmentsService {
       throw error
     }
   }
+
+  async deleteImagesName(name: string): Promise<void> {
+    try {
+      const vImagesName: IDepartmentInstance | null = await modelDepartment.findOne({
+        where: {
+          icon: name
+        }
+      })
+      await vImagesName?.update({
+        icon: ''
+      })
+    } catch (error) {
+      throw error
+    }
+  }
+
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
       const record = await modelDepartment.update(

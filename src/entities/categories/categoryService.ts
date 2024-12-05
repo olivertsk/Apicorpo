@@ -38,6 +38,12 @@ class CategoriesService {
           isSalient: pParam.isSalient
         }
       }
+      if (pParam?.departmentId) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          departmentId: pParam.departmentId
+        }
+      }
       const vResponse: ICategoryAttributes[] = await modelCategory.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllCategory = await fxReponseServices(
@@ -94,6 +100,20 @@ class CategoriesService {
         return false
       }
       return true
+    } catch (error) {
+      throw error
+    }
+  }
+  async deleteImagesName(name: string): Promise<void> {
+    try {
+      const vImagesName: ICategoryInstance | null = await modelCategory.findOne({
+        where: {
+          icon: name
+        }
+      })
+      await vImagesName?.update({
+        icon: ''
+      })
     } catch (error) {
       throw error
     }

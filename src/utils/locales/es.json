@@ -13,5 +13,7 @@
 	"the": "El",
 	"thecorreoya esta en uso": "thecorreoya esta en uso",
 	"the correo ya esta en uso": "the correo ya esta en uso",
-	"": ""
+	"": "",
+	"file_not_found": "el archivo es requerido",
+	"invalid_string_value": "es requerido"
 }

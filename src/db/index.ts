@@ -38,6 +38,7 @@ const models = {
   modelRol,
   modelView,
   // modelPermission,
+  modelCategory,
   modelDepartment,
   modelProduct,
   modelProductImages,

@@ -98,5 +98,19 @@ class BannersService {
       throw error
     }
   }
+  async deleteImagesName(name: string): Promise<void> {
+    try {
+      const vImagesName: IBannerInstance | null = await modelBanner.findOne({
+        where: {
+          images: name
+        }
+      })
+      await vImagesName?.update({
+        images: ''
+      })
+    } catch (error) {
+      throw error
+    }
+  }
 }
 export default new BannersService()

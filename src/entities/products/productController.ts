@@ -10,13 +10,15 @@ import {
   Queries,
   Security,
   Delete,
-  Put
+  Put,
+  Request
 } from 'tsoa';
 import { IProductAttributes, IProductCreationAttributes, IResponseAllProduct, IProductFilter } from '@entities/products/productModel';
 import ProductService from '@entities/products/productService';
 import { fxI18n } from '@utils/i18n';
 import { IProductImageCreationAttributes } from './productImagesModel';
 import { fxDeleteImages, fxMoveImages } from '@utils/helpers';
+import { IUserAttributes } from '@users/userModel';
 
 @Route('products')
 @Tags('Product')
@@ -30,10 +32,15 @@ export class ProductsController extends Controller {
 
   @Get('/show/{productId}')
   public async get(
-    @Path() productId: string,
+    @Path() productId: string, @Request() requestBody: { auth: IUserAttributes }
   ): Promise<{ data: IProductAttributes | null, message?: string }> {
     try {
-      const vResponse: IProductAttributes | null = await this.productService.get(productId)
+      const auth = requestBody?.auth || false
+      const params = {
+        auth: auth ? true : false,
+        id: productId
+      }
+      const vResponse: IProductAttributes | null = await this.productService.get(params)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -76,6 +83,9 @@ export class ProductsController extends Controller {
         imagesData = requestBody?.images
         delete requestBody.images
       }
+      if (requestBody?.coverImage) {
+        requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
+      }
       const vItem: IProductAttributes | null = await this.productService.create(requestBody);
       if (imagesData?.length) {
         for (const key in imagesData) {
@@ -110,6 +120,9 @@ export class ProductsController extends Controller {
       if (requestBody?.images) {
         imagesData = requestBody?.images
         delete requestBody.images
+      }
+      if (requestBody?.coverImage) {
+        requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
       }
       const vItem: IProductAttributes | null = await this.productService.update(requestBody, productId)
       if (vItem) {

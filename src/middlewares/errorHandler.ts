@@ -40,17 +40,26 @@ export function errorHandler(
     console.log('keys :>> ', keys);
     const errors = []
     for (const key of keys) {
+      console.log('validationErrors :>> ', validationErrors);
+      console.log('key :>> ', key);
       const element = validationErrors[0][key]
       const messages = element.message
+      console.log('messages :>> ', messages);
       const startQuoteIndex = messages.indexOf("'")
       const endQuoteIndex = messages.lastIndexOf("'")
-
+      console.log('startQuoteIndex !== -1 :>> ', startQuoteIndex !== -1);
+      console.log('endQuoteIndex !== -1 :>> ', endQuoteIndex !== -1);
       if (startQuoteIndex !== -1 && endQuoteIndex !== -1) {
         const field = messages.slice(startQuoteIndex + 1, endQuoteIndex)
         const message = messages.slice(endQuoteIndex + 2) // Agregamos 2 para saltar el espacio y el texto "is required"
         errors.push({
           field,
-          message: fxI18n.__(message.replace(' ', '_')),
+          message: fxI18n.__(message.replace(/ /g, '_')),
+        })
+      } else if (messages && key && key !== '0') {
+        errors.push({
+          field: key.split('.')[1],
+          message: fxI18n.__(messages.replace(/ /g, '_')),
         })
       } else {
         errors.push({

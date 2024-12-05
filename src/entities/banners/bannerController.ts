@@ -91,7 +91,7 @@ export class BannersController extends Controller {
   ): Promise<{ success: boolean, item: IBannerAttributes | null, message?: string }> {
     try {
       await this.bannerService.validate(requestBody)
-      if (requestBody.images) {
+      if (requestBody?.images) {
         requestBody.images = await fxMoveImages(requestBody.images)
       }
       const vItem: IBannerAttributes | null = await this.bannerService.update(requestBody, bannerId)

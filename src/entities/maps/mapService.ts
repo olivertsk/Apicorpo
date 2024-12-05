@@ -92,5 +92,19 @@ class MapsService {
       throw error
     }
   }
+  async deleteImagesName(name: string): Promise<void> {
+    try {
+      const vImagesName: IMapInstance | null = await modelMap.findOne({
+        where: {
+          image: name
+        }
+      })
+      await vImagesName?.update({
+        image: ''
+      })
+    } catch (error) {
+      throw error
+    }
+  }
 }
 export default new MapsService()

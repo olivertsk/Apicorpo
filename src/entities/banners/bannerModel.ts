@@ -7,6 +7,7 @@ export interface IBannerAttributes {
   images?: string | null
   name: string
   description?: string | null
+  alt?: string | null
   status?: boolean
   position: EPositionBanner
   createdAt?: Date
@@ -36,6 +37,7 @@ export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> &
   & {
     status: boolean | true
     description?: string | null
+    alt?: string | null
     position?: EPositionBanner | EPositionBanner.HomePrincipal
   };
 export interface IBannerInstance
@@ -75,6 +77,12 @@ export const vBannerModelAttributes: SequelizeAttributes<IBannerAttributes> = {
   description: {
     type: DataTypes.STRING,
     field: "description",
+    allowNull: true,
+    defaultValue: null
+  },
+  alt: {
+    type: DataTypes.STRING,
+    field: "alt",
     allowNull: true,
     defaultValue: null
   },

@@ -7,6 +7,18 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"FileType": {
+				"type": "string",
+				"enum": [
+					"products",
+					"departments",
+					"categories",
+					"banners",
+					"maps",
+					null
+				],
+				"nullable": true
+			},
 			"IViewAttributes": {
 				"properties": {
 					"id": {
@@ -415,6 +427,43 @@
 					"name": {
 						"type": "string",
 						"nullable": true
+					},
+					"departmentId": {
+						"type": "string",
+						"nullable": true
+					},
+					"departmentIds": {
+						"type": "string",
+						"nullable": true
+					},
+					"categoryId": {
+						"type": "string",
+						"nullable": true
+					},
+					"categoryIds": {
+						"type": "string",
+						"nullable": true
+					},
+					"minPrice": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"maxPrice": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"order": {
+						"type": "string",
+						"enum": [
+							"maxPrice",
+							"minPrice"
+						]
+					},
+					"typeSearch": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -525,6 +574,10 @@
 									"$ref": "#/components/schemas/IProductImageCreationAttributes"
 								},
 								"type": "array"
+							},
+							"coverImage": {
+								"type": "string",
+								"nullable": true
 							},
 							"longDescription": {
 								"type": "string",
@@ -1036,6 +1089,10 @@
 					"isSalient": {
 						"type": "boolean",
 						"nullable": true
+					},
+					"departmentId": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -1124,6 +1181,10 @@
 						"type": "string"
 					},
 					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"alt": {
 						"type": "string",
 						"nullable": true
 					},
@@ -1248,6 +1309,10 @@
 									}
 								]
 							},
+							"alt": {
+								"type": "string",
+								"nullable": true
+							},
 							"description": {
 								"type": "string",
 								"nullable": true
@@ -1365,6 +1430,71 @@
 									"file",
 									"files"
 								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/files/delete": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"File"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"type": {
+										"allOf": [
+											{
+												"$ref": "#/components/schemas/FileType"
+											}
+										],
+										"nullable": true
+									},
+									"fileName": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"fileName"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -2254,6 +2384,76 @@
 					{
 						"in": "query",
 						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentIds",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categoryId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categoryIds",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "order",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"maxPrice",
+								"minPrice"
+							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "typeSearch",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -3210,6 +3410,14 @@
 						"required": false,
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentId",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]

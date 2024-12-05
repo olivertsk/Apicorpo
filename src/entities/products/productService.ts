@@ -1,6 +1,6 @@
-import { modelProduct, modelProductImages } from '@db/index'
-import { type FindOptions } from 'sequelize'
-import type { IProductAttributes, IProductCreationAttributes, IResponseAllProduct, IProductInstance } from '@entities/products/productModel'
+import { modelCategory, modelDepartment, modelProduct, modelProductImages } from '@db/index'
+import { Op, type FindOptions } from 'sequelize'
+import type { IProductAttributes, IProductCreationAttributes, IResponseAllProduct, IProductInstance, IProductAttributesResponse, IProductFilter } from '@entities/products/productModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 import { IProductImageAttributes, IProductImageCreationAttributes, IProductImageInstance } from './productImagesModel'
 
@@ -9,20 +9,52 @@ class ProductsService {
     const dataValidate = modelProduct.build(data)
     await dataValidate.validate()
   }
-  public async get(id: string): Promise<IProductAttributes | null> {
+  public async get(params: { auth: boolean, id: string }): Promise<IProductAttributes | null> {
     try {
       const vResponse: IProductAttributes | null = await modelProduct.findOne({
         where: {
-          id,
+          id: params.id,
         },
+        include: [
+          {
+            model: modelProductImages,
+            as: 'images',
+            required: false
+          },
+          {
+            model: modelDepartment,
+            as: 'department',
+            required: false
+          },
+          {
+            model: modelCategory,
+            as: 'category',
+            required: false
+          }
+        ]
       })
-      return vResponse
+      let prodoctReponse: IProductAttributesResponse = JSON.parse(JSON.stringify(vResponse))
+      if (!params.auth) {
+        const paramsRelations = { 
+          limit: 10,
+          name: prodoctReponse.name,
+          departmentId: prodoctReponse.departmentId,
+          categoryId: prodoctReponse.categoryId,
+          notProductId: prodoctReponse.id
+        }
+        const relations = await this.relation(paramsRelations)
+        prodoctReponse = {
+          ...prodoctReponse,
+          relations: relations.data
+        }
+      }
+      return prodoctReponse
     } catch (error) {
       throw error
     }
   }
 
-  public async all(pParam: any): Promise<IResponseAllProduct> {
+  public async all(pParam: IProductFilter): Promise<IResponseAllProduct> {
     try {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
@@ -36,9 +68,82 @@ class ProductsService {
       whereStatement.include = [
         {
           model: modelProductImages,
-          as: 'images'
+          as: 'images',
+          required: false
+        },
+        {
+          model: modelDepartment,
+          as: 'department',
+          required: false
+        },
+        {
+          model: modelCategory,
+          as: 'category',
+          required: false
         }
       ]
+      if (pParam?.departmentIds) {
+        // let departmentIds = pParam.departmentIds
+        // if (typeof departmentIds === 'string') {
+        //   departmentIds = departmentIds.split(',')
+        // }
+        whereStatement.where = {
+            ...whereStatement.where,
+            departmentId: {
+                [Op.in]: pParam?.departmentIds.split(',')
+            }
+        }
+      }
+      if (pParam?.departmentId) {
+        let departmentId = pParam.departmentId
+        whereStatement.where = {
+          ...whereStatement.where,
+          departmentId: departmentId
+        }
+      }
+      if (pParam?.categoryIds) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          categoryId: {
+            [Op.in]: pParam.categoryIds.split(',')
+          }
+        };
+      }
+      if (pParam?.categoryId) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          categoryId: pParam.categoryId
+        };
+      }
+      if (pParam?.minPrice) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.and]: {
+            [Op.or]: [
+              { price: { [Op.gte]: pParam.minPrice } },
+              { promotionalPrice: { [Op.gte]: pParam.minPrice } }
+            ]
+          }
+        }
+      }
+      if (pParam?.maxPrice) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.and]: {
+            [Op.or]: [
+              { price: { [Op.lte]: pParam.maxPrice } },
+              { promotionalPrice: { [Op.lte]: pParam.maxPrice } }
+            ]
+          }
+        }
+      }
+      if (pParam?.order) {
+        const type = pParam.order === 'maxPrice' ? 'DESC' : 'ASC'
+        whereStatement.order = [['price', type], ['promotionalPrice', type]]
+      }
+      if (!whereStatement.order) {
+        whereStatement.order = [['createdAt', 'DESC']]
+      }
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllProduct = await fxReponseServices(
@@ -49,6 +154,64 @@ class ProductsService {
         )
         return vResponsePaginate
       }
+      return { data: vResponse }
+    } catch (error) {
+      console.log('error :>> ', error);
+      throw error
+    }
+  }
+
+  public async relation(pParam: any): Promise<IResponseAllProduct> {
+    try {
+      let whereStatement: FindOptions = {}
+      whereStatement.include = [
+        {
+          model: modelProductImages,
+          as: 'images',
+          required: false
+        },
+        {
+          model: modelDepartment,
+          as: 'department',
+          required: false
+        },
+        {
+          model: modelCategory,
+          as: 'category',
+          required: false
+        }
+      ]
+      if (pParam?.name) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.or]: {
+            name: pParam.name
+          }
+        }
+      }
+      if (pParam?.departmentId) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.or]: {
+            departmentId: pParam.departmentId
+          }
+        }
+      }
+      if (pParam?.categoryId) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.or]: {
+            categoryId: pParam.categoryId
+          }
+        }
+      }
+      if (pParam?.notProductId) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          id: { [Op.not]: pParam.notProductId }
+        }
+      }
+      const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
       return { data: vResponse }
     } catch (error) {
       throw error
@@ -115,6 +278,23 @@ class ProductsService {
       const vImagesForDetele: IProductImageInstance | null = await modelProductImages.findOne({
         where: {
           id: pId
+        }
+      })
+      const nameImages = vImagesForDetele?.file || ''
+      const record = await vImagesForDetele?.destroy({ force: true })
+      if (!record) {
+        return null
+      }
+      return nameImages
+    } catch (error) {
+      throw error
+    }
+  }
+  async deleteImagesName(name: string): Promise<string | null> {
+    try {
+      const vImagesForDetele: IProductImageInstance | null = await modelProductImages.findOne({
+        where: {
+          file: name
         }
       })
       const nameImages = vImagesForDetele?.file || ''

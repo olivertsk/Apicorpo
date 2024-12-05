@@ -24,6 +24,26 @@ export interface IProductAttributes {
   deletedAt?: Date | null
 }
 
+export interface IProductAttributesResponse {
+  id?: string
+  name: string
+  code: string
+  departmentId?: string | null
+  categoryId?: string | null
+  status?: boolean
+  description?: string | null
+  longDescription?: string | null
+  price: number
+  promotionalPrice?: number | null
+  stock: number
+  brand?: string | null
+  taxRate?: number | null
+  coverImage?: string | null
+  createdAt?: Date | null
+  updatedAt?: Date | null
+  relations?: IProductAttributes[]
+}
+
 export interface IResponseAllProduct {
   total?: number
   totalPage?: number
@@ -35,6 +55,14 @@ export interface IProductFilter {
   pag?: number
   limit?: number
   name?: string | null
+  departmentId?: string | null
+  departmentIds?: string | null
+  categoryId?: string | null
+  categoryIds?: string | null
+  minPrice?: number | null
+  maxPrice?: number | null
+  order?: 'maxPrice' | 'minPrice'
+  typeSearch?: string | null
 }
 export type IProductCreationAttributes = Pick<IProductAttributes, 'id' | 'departmentId' | 'categoryId' | 'description'> & 
   Partial<Pick<IProductAttributes, 'name' | 'code' | 'price' >>
@@ -45,6 +73,7 @@ export type IProductCreationAttributes = Pick<IProductAttributes, 'id' | 'depart
     brand?: string | null
     taxRate?: number | null
     longDescription?: string | null
+    coverImage?: string | null
     images?: IProductImageCreationAttributes[]
   };
 export interface IProductInstance
@@ -147,6 +176,12 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     allowNull: true,
     defaultValue: 0
   },
+  coverImage: {
+    type: DataTypes.STRING,
+    field: 'cover_image',
+    allowNull: true,
+    defaultValue: ''
+  },
 }
 
 export function fxProductFactory(sequelize: Sequelize) {
@@ -157,19 +192,27 @@ export function fxProductFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'products',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
+      // defaultScope: {
+      //   order: [['createdAt', 'DESC']],
+      // },
       freezeTableName: true,
       timestamps: true,
       paranoid: true,
     }
   )
   vData.associate = function (models: ModelRegistry) {
-    const { modelProduct, modelProductImages } = models
+    const { modelProduct, modelProductImages, modelDepartment, modelCategory } = models
     modelProduct.hasMany(modelProductImages, {
       foreignKey: 'productId',
       as: 'images',
+    })
+    modelProduct.belongsTo(modelDepartment, {
+      foreignKey: 'departmentId',
+      as: 'department',
+    })
+    modelProduct.belongsTo(modelCategory, {
+      foreignKey: 'categoryId',
+      as: 'category',
     })
   }
   vData.prototype.toJSON = function () {
