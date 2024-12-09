@@ -17,8 +17,10 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
   if (authHeader) {
     const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader;
     try {
-      const verifyJWT = await fxVerifyJWT(token)
-      req.auth = verifyJWT
+      if (token && token !== 'undefined' && token !== 'null') {
+        const verifyJWT = await fxVerifyJWT(token)
+        req.auth = verifyJWT
+      }
       next()
     } catch (error) {
       console.log('viene por expressAuth');

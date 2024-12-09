@@ -63,6 +63,8 @@ export interface IProductFilter {
   maxPrice?: number | null
   order?: 'maxPrice' | 'minPrice'
   typeSearch?: string | null
+  userId?: string | null
+  isClient?: boolean
 }
 export type IProductCreationAttributes = Pick<IProductAttributes, 'id' | 'departmentId' | 'categoryId' | 'description'> & 
   Partial<Pick<IProductAttributes, 'name' | 'code' | 'price' >>
@@ -201,7 +203,13 @@ export function fxProductFactory(sequelize: Sequelize) {
     }
   )
   vData.associate = function (models: ModelRegistry) {
-    const { modelProduct, modelProductImages, modelDepartment, modelCategory } = models
+    const {
+      modelProduct,
+      modelProductImages,
+      modelDepartment,
+      modelCategory,
+      modelFavoriteProduct,
+    } = models
     modelProduct.hasMany(modelProductImages, {
       foreignKey: 'productId',
       as: 'images',
@@ -213,6 +221,10 @@ export function fxProductFactory(sequelize: Sequelize) {
     modelProduct.belongsTo(modelCategory, {
       foreignKey: 'categoryId',
       as: 'category',
+    })
+    modelProduct.hasOne(modelFavoriteProduct, {
+      foreignKey: 'productId',
+      as: 'favorite',
     })
   }
   vData.prototype.toJSON = function () {

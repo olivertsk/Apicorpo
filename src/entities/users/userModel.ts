@@ -35,11 +35,11 @@ export interface IUserFilter {
   limit?: number
   name?: string | null
 }
-export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'avatar'> & 
-  Partial<Pick<IUserAttributes, 'email' | 'name' | 'password' >>
-  & {
-  passwordConfirmation?: string | null
-  };
+export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'password'> &
+  Partial<Pick<IUserAttributes, 'name'>> & {
+    passwordConfirmation?: string | null
+    avatar?: string
+  }
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
     IUserAttributes {}

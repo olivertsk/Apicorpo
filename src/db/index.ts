@@ -13,6 +13,7 @@ import { fxProductFactory } from '@products/productModel'
 import { fxProductImageFactory } from '@products/productImagesModel'
 import { fxBannerFactory } from '@entities/banners/bannerModel'
 import { fxMapFactory } from '@entities/maps/mapModel'
+import { fxFavoriteProductFactory } from '@products/favoriteProductModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -31,6 +32,7 @@ export const modelProduct = fxProductFactory(sequelize)
 export const modelProductImages = fxProductImageFactory(sequelize)
 export const modelBanner = fxBannerFactory(sequelize)
 export const modelMap = fxMapFactory(sequelize)
+export const modelFavoriteProduct = fxFavoriteProductFactory(sequelize)
 // export const modelPermission = fxPermissionFactory(sequelize)
 
 const models = {
@@ -43,7 +45,8 @@ const models = {
   modelProduct,
   modelProductImages,
   modelBanner,
-  modelMap
+  modelMap,
+  modelFavoriteProduct
 }
 
 export type ModelRegistry = typeof models

@@ -29,6 +29,7 @@ export interface IMapFilter {
   pag?: number
   limit?: number
   name?: string | null
+  isClient?: boolean
 }
 export type IMapCreationAttributes = Pick<IMapAttributes, 'id'> & 
   Partial<Pick<IMapAttributes, 'name' | 'image' | 'map'>>

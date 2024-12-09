@@ -260,21 +260,9 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IUserAttributes.id-or-avatar_": {
+			"Pick_IUserAttributes.id-or-email-or-password_": {
 				"properties": {
 					"id": {
-						"type": "string"
-					},
-					"avatar": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Partial_Pick_IUserAttributes.email-or-name-or-password__": {
-				"properties": {
-					"name": {
 						"type": "string"
 					},
 					"email": {
@@ -284,19 +272,35 @@
 						"type": "string"
 					}
 				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IUserAttributes.name__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"description": "Make all properties in T optional"
 			},
 			"IUserCreationAttributes": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/Pick_IUserAttributes.id-or-avatar_"
+						"$ref": "#/components/schemas/Pick_IUserAttributes.id-or-email-or-password_"
 					},
 					{
-						"$ref": "#/components/schemas/Partial_Pick_IUserAttributes.email-or-name-or-password__"
+						"$ref": "#/components/schemas/Partial_Pick_IUserAttributes.name__"
 					},
 					{
 						"properties": {
+							"avatar": {
+								"type": "string"
+							},
 							"passwordConfirmation": {
 								"type": "string",
 								"nullable": true
@@ -464,6 +468,13 @@
 					"typeSearch": {
 						"type": "string",
 						"nullable": true
+					},
+					"userId": {
+						"type": "string",
+						"nullable": true
+					},
+					"isClient": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -619,6 +630,124 @@
 					}
 				]
 			},
+			"IFavoriteProductAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"productId": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"productId",
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllFavoriteProduct": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IFavoriteProductAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IFavoriteProductFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"userId": {
+						"type": "string",
+						"nullable": true
+					},
+					"isClient": {
+						"type": "boolean",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IFavoriteProductAttributes.productId_": {
+				"properties": {
+					"productId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"productId"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IFavoriteProductAttributes.id-or-userId__": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"IFavoriteProductCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IFavoriteProductAttributes.productId_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IFavoriteProductAttributes.id-or-userId__"
+					}
+				]
+			},
 			"IMapAttributes": {
 				"properties": {
 					"id": {
@@ -715,6 +844,9 @@
 					"name": {
 						"type": "string",
 						"nullable": true
+					},
+					"isClient": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -914,6 +1046,13 @@
 					},
 					"product": {
 						"type": "boolean"
+					},
+					"userId": {
+						"type": "string",
+						"nullable": true
+					},
+					"isClient": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -1093,6 +1232,9 @@
 					"departmentId": {
 						"type": "string",
 						"nullable": true
+					},
+					"isClient": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -1257,6 +1399,9 @@
 					},
 					"position": {
 						"$ref": "#/components/schemas/EPositionBanner"
+					},
+					"isClient": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -2308,7 +2453,13 @@
 				"tags": [
 					"Product"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -2361,7 +2512,13 @@
 				"tags": [
 					"Product"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -2457,6 +2614,22 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -2687,6 +2860,327 @@
 				]
 			}
 		},
+		"/favoriteProducts/show/{favoriteProductId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IFavoriteProductAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"FavoriteProduct"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "favoriteProductId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/favoriteProducts/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IFavoriteProductAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllFavoriteProduct"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"FavoriteProduct"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/favoriteProducts/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IFavoriteProductAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"FavoriteProduct"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IFavoriteProductCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/favoriteProducts/update/{favoriteProductId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IFavoriteProductAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"FavoriteProduct"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "favoriteProductId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IFavoriteProductCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/favoriteProducts/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"FavoriteProduct"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/maps/show/{mapId}": {
 			"get": {
 				"operationId": "Get",
@@ -2800,6 +3294,14 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -3116,6 +3618,22 @@
 						"schema": {
 							"type": "boolean"
 						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
 					}
 				]
 			}
@@ -3419,6 +3937,14 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
 					}
 				]
 			}
@@ -3719,6 +4245,14 @@
 						"required": false,
 						"schema": {
 							"$ref": "#/components/schemas/EPositionBanner"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]

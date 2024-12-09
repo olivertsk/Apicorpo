@@ -31,6 +31,7 @@ export interface IBannerFilter {
   limit?: number
   name?: string | null
   position?: EPositionBanner
+  isClient?: boolean
 }
 export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> & 
   Partial<Pick<IBannerAttributes, 'name' | 'images'>>

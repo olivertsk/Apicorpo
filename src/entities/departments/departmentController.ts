@@ -56,9 +56,8 @@ export class DepartmentsController extends Controller {
     message?: string
   }> {
     try {
-      const auth = requestBody?.auth?.rolId
-      console.log('holaaaaaa');
-      console.log('auth :>> ', auth);
+      const auth = requestBody?.auth
+      pQueryParams.userId = auth?.id || null
       // TODO Verificar si es admin para filtrar los status false
       const vResponse: IDepartmentAttributes[] | IResponseAllDepartment = await this.departmentService.all(pQueryParams)
       this.setStatus(200)

@@ -30,22 +30,25 @@ export class ProductsController extends Controller {
     this.productService = ProductService
   }
 
+  @Security('bearerAuth', ['optional'])
   @Get('/show/{productId}')
   public async get(
-    @Path() productId: string, @Request() requestBody: { auth: IUserAttributes }
-  ): Promise<{ data: IProductAttributes | null, message?: string }> {
+    @Path() productId: string,
+    @Request() requestBody: { auth: IUserAttributes }
+  ): Promise<{ data: IProductAttributes | null; message?: string }> {
     try {
       const auth = requestBody?.auth || false
       const params = {
         auth: auth ? true : false,
-        id: productId
+        id: productId,
+        userId: auth.id || null,
       }
       const vResponse: IProductAttributes | null = await this.productService.get(params)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
-      this.setStatus(500);
-      return { data: null, message: 'Ocurrió un error' };
+      this.setStatus(500)
+      return { data: null, message: 'Ocurrió un error' }
     }
   }
 
@@ -55,27 +58,35 @@ export class ProductsController extends Controller {
    * @param {number} count - Cantidad de datos por página.
    * @returns {Promise<{ data: { products: IProduct[], message?: string }, status: boolean }>}
    */
+  @Security('bearerAuth', ['optional'])
   @Get('/all')
-  public async all(@Queries() pQueryParams: IProductFilter): Promise<{
+  public async all(
+    @Queries() pQueryParams: IProductFilter,
+    @Request() req: { auth: IUserAttributes }
+  ): Promise<{
     data: IProductAttributes[] | IResponseAllProduct
     message?: string
   }> {
     try {
-      const vResponse: IProductAttributes[] | IResponseAllProduct = await this.productService.all(pQueryParams)
+      if (req?.auth?.id) {
+        pQueryParams.userId = req.auth.id
+      }
+      const vResponse: IProductAttributes[] | IResponseAllProduct =
+        await this.productService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
-      this.setStatus(500);
-      return { data: [], message: 'Ocurrió un error' };
+      this.setStatus(500)
+      return { data: [], message: 'Ocurrió un error' }
     }
   }
-  
-  @Security('bearerAuth', ["admin"])
+
+  @Security('bearerAuth', ['admin'])
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
   public async create(
     @Body() requestBody: IProductCreationAttributes
-  ): Promise<{ success: boolean, item: IProductAttributes | null, message?: string }> {
+  ): Promise<{ success: boolean; item: IProductAttributes | null; message?: string }> {
     try {
       await this.productService.validate(requestBody)
       let imagesData: IProductImageCreationAttributes[] = []
@@ -86,11 +97,11 @@ export class ProductsController extends Controller {
       if (requestBody?.coverImage) {
         requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
       }
-      const vItem: IProductAttributes | null = await this.productService.create(requestBody);
+      const vItem: IProductAttributes | null = await this.productService.create(requestBody)
       if (imagesData?.length) {
         for (const key in imagesData) {
           if (Object.prototype.hasOwnProperty.call(imagesData, key)) {
-            const image = imagesData[key];
+            const image = imagesData[key]
             if (image.file) {
               const newNameImages = await fxMoveImages(image?.file)
               imagesData[key].file = newNameImages
@@ -100,20 +111,20 @@ export class ProductsController extends Controller {
         }
         await this.productService.bulkProductImages(imagesData)
       }
-      this.setStatus(201); // set return status 201
+      this.setStatus(201) // set return status 201
       return { success: true, item: vItem }
     } catch (error) {
       throw error
     }
   }
 
-  @Security('bearerAuth', ["admin"])
+  @Security('bearerAuth', ['admin'])
   @SuccessResponse('200', 'Update') // Custom success response
   @Put('/update/{productId}')
   public async update(
     @Path() productId: string,
     @Body() requestBody: IProductCreationAttributes
-  ): Promise<{ success: boolean, item: IProductAttributes | null, message?: string }> {
+  ): Promise<{ success: boolean; item: IProductAttributes | null; message?: string }> {
     try {
       await this.productService.validate(requestBody)
       let imagesData: IProductImageCreationAttributes[] = []
@@ -124,12 +135,15 @@ export class ProductsController extends Controller {
       if (requestBody?.coverImage) {
         requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
       }
-      const vItem: IProductAttributes | null = await this.productService.update(requestBody, productId)
+      const vItem: IProductAttributes | null = await this.productService.update(
+        requestBody,
+        productId
+      )
       if (vItem) {
         if (imagesData?.length) {
           for (const key in imagesData) {
             if (Object.prototype.hasOwnProperty.call(imagesData, key)) {
-              const image = imagesData[key];
+              const image = imagesData[key]
               if (image.file) {
                 const newNameImages = await fxMoveImages(image?.file)
                 imagesData[key].file = newNameImages
@@ -139,10 +153,10 @@ export class ProductsController extends Controller {
           }
           await this.productService.bulkProductImages(imagesData)
         }
-        this.setStatus(200); // set return status 200
+        this.setStatus(200) // set return status 200
         return { success: true, item: vItem }
       }
-      this.setStatus(404); // set return status 404
+      this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
       throw error
@@ -156,13 +170,13 @@ export class ProductsController extends Controller {
    * @returns {Promise<{ status: boolean }>}
    */
   @Delete('/deleted/{key}')
-  @Security('bearerAuth', ["admin"])
+  @Security('bearerAuth', ['admin'])
   public async softDeleteRecord(
-    @Path() key: string,
-  ): Promise<{ success: boolean, message?: string }> {
+    @Path() key: string
+  ): Promise<{ success: boolean; message?: string }> {
     try {
-      this.setStatus(200); // set return success 201
-      const vResponse = await this.productService.softDeleteRecord(key);
+      this.setStatus(200) // set return success 201
+      const vResponse = await this.productService.softDeleteRecord(key)
       if (vResponse) {
         this.setStatus(200)
         return { success: true }
@@ -174,7 +188,6 @@ export class ProductsController extends Controller {
     }
   }
 
-  
   /**
    * @summary Eliminar una images de productos por ID.
    * @param {string} key - ID de la item a eliminar.
@@ -182,13 +195,11 @@ export class ProductsController extends Controller {
    * @returns {Promise<{ status: boolean }>}
    */
   @Delete('/imagesDelete/{key}')
-  @Security('bearerAuth', ["admin"])
-  public async imagesDelete(
-    @Path() key: string,
-  ): Promise<{ success: boolean, message?: string }> {
+  @Security('bearerAuth', ['admin'])
+  public async imagesDelete(@Path() key: string): Promise<{ success: boolean; message?: string }> {
     try {
-      this.setStatus(200); // set return success 201
-      const vResponse = await this.productService.deleteImages(key);
+      this.setStatus(200) // set return success 201
+      const vResponse = await this.productService.deleteImages(key)
       if (vResponse) {
         await fxDeleteImages(vResponse)
         this.setStatus(200)

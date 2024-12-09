@@ -28,6 +28,7 @@ export interface ICategoryFilter {
   name?: string | null
   isSalient?: boolean | null
   departmentId?: string | null
+  isClient?: boolean
 }
 export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> & 
   Partial<Pick<ICategoryAttributes, 'name' >>

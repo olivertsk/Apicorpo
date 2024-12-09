@@ -1,4 +1,4 @@
-import { modelDepartment, modelProduct } from '@db/index'
+import { modelDepartment, modelFavoriteProduct, modelProduct } from '@db/index'
 import { type FindOptions } from 'sequelize'
 import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
@@ -42,8 +42,17 @@ class DepartmentsService {
         whereStatement.include = [
           {
             model: modelProduct,
-            as: 'products'
-          }
+            as: 'products',
+            include: [
+              {
+                model: modelFavoriteProduct,
+                as: 'favorite',
+                required: false,
+                where: { userId: pParam ?.userId },
+                attributes: ['id'],
+              },
+            ],
+          },
         ]
       }
       const vResponse: IDepartmentAttributes[] = await modelDepartment.findAll(whereStatement)

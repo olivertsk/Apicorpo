@@ -28,6 +28,8 @@ export interface IDepartmentFilter {
   name?: string | null
   isSalient?: boolean | null
   product?: boolean
+  userId?: string | null
+  isClient?: boolean
 }
 export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description' | 'icon'> & 
   Partial<Pick<IDepartmentAttributes, 'name' >>
