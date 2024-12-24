@@ -1,7 +1,7 @@
 {
 	"email": "correo",
-	"customValidator": "customValidator",
-	"isEmail": "isEmail",
+	"customValidator": "no es valido",
+	"isEmail": "email",
 	"Debe_guardar_primero_el_template": "Debe guardar primero el template",
 	"incorrect_password": "Las contraseñas son diferentes",
 	"password": "password",
@@ -11,9 +11,16 @@
 	"capital_letter_required": "Es necesaria una letra mayuscula",
 	"already_in_use": "ya esta en uso",
 	"the": "El",
-	"thecorreoya esta en uso": "thecorreoya esta en uso",
-	"the correo ya esta en uso": "the correo ya esta en uso",
+	"thecorreoya esta en uso": "el correo ya esta en uso",
+	"the correo ya esta en uso": "el correo ya esta en uso",
 	"": "",
 	"file_not_found": "el archivo es requerido",
-	"invalid_string_value": "es requerido"
+	"invalid_string_value": "es requerido",
+	"is_required": "es requerido",
+	"invalid_float_number": "debe ser un numero",
+	"invalid_password": "La contraseña actual es incorrecta",
+	"required_login": "Debe estar logueado",
+	"not_include_product": "No tiene productos para comprar",
+	"invalid_user": "Usuario no encontrado",
+	"email_send": "Correo enviado"
 }

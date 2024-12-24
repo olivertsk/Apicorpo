@@ -3,3 +3,4 @@ uploads/storage/*
 uploads/temp/*
 node_modules
 build
+/scripts

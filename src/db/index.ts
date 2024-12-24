@@ -14,12 +14,15 @@ import { fxProductImageFactory } from '@products/productImagesModel'
 import { fxBannerFactory } from '@entities/banners/bannerModel'
 import { fxMapFactory } from '@entities/maps/mapModel'
 import { fxFavoriteProductFactory } from '@products/favoriteProductModel'
+import { fxOrdersFactory } from '@entities/orders/orderModel'
+import { fxOrderProductFactory } from '@entities/orders/orderProductModel'
+import { fxPasswordResetFactory } from '@users/passwordResetModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
 const sequelize = new Sequelize(database.database, database.username, database.password, {
   ...database,
-  logging: true,
+  logging: false,
   dialect: database?.dialect || 'mysql',
 })
 
@@ -34,6 +37,9 @@ export const modelBanner = fxBannerFactory(sequelize)
 export const modelMap = fxMapFactory(sequelize)
 export const modelFavoriteProduct = fxFavoriteProductFactory(sequelize)
 // export const modelPermission = fxPermissionFactory(sequelize)
+export const modelOrder = fxOrdersFactory(sequelize)
+export const modelOrderProducto = fxOrderProductFactory(sequelize)
+export const modelPasswordReset = fxPasswordResetFactory(sequelize)
 
 const models = {
   modelUser,
@@ -46,7 +52,10 @@ const models = {
   modelProductImages,
   modelBanner,
   modelMap,
-  modelFavoriteProduct
+  modelFavoriteProduct,
+  modelOrder,
+  modelOrderProducto,
+  modelPasswordReset,
 }
 
 export type ModelRegistry = typeof models

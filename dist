@@ -1,0 +1,13 @@
+MY_PORT=5002
+NODE_ENV=development
+JWT_SECRET_KEY=MyS3cr3t_JWT$ecret!2024.
+JWT_EXPIRES=false
+DB_HOST=https://italo:5007/
+DB_HOST_TEST=https://italo:5007/
+
+SQL_DIALECT=mysql
+DB_USER=root
+DB_PASSWORD=
+DB_HOST=localhost
+DB_NAME=api-corpo
+DB_PORT=3306

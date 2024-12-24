@@ -165,7 +165,8 @@
 					},
 					"dni": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"nullable": true
 					},
 					"dniType": {
 						"type": "string"
@@ -188,6 +189,10 @@
 					"status": {
 						"type": "boolean"
 					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
 					"tokenPush": {
 						"type": "string"
 					},
@@ -207,7 +212,6 @@
 				"required": [
 					"name",
 					"email",
-					"dni",
 					"dniType",
 					"password",
 					"rolId"
@@ -298,6 +302,14 @@
 					},
 					{
 						"properties": {
+							"rolId": {
+								"type": "string",
+								"nullable": true
+							},
+							"location": {
+								"type": "string",
+								"nullable": true
+							},
 							"avatar": {
 								"type": "string"
 							},
@@ -306,6 +318,57 @@
 								"nullable": true
 							}
 						},
+						"type": "object"
+					}
+				]
+			},
+			"Pick_IUserAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"IUserUpdatenAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IUserAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IUserAttributes.name__"
+					},
+					{
+						"properties": {
+							"phoneNumber": {
+								"type": "string",
+								"nullable": true
+							},
+							"dniType": {
+								"type": "string"
+							},
+							"dni": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							},
+							"lastName": {
+								"type": "string",
+								"nullable": true
+							},
+							"location": {
+								"type": "string",
+								"nullable": true
+							},
+							"avatar": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"required": [
+							"dniType"
+						],
 						"type": "object"
 					}
 				]
@@ -345,6 +408,11 @@
 						"format": "double"
 					},
 					"promotionalPrice": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"priceWithTax": {
 						"type": "number",
 						"format": "double",
 						"nullable": true
@@ -432,6 +500,10 @@
 						"type": "string",
 						"nullable": true
 					},
+					"search": {
+						"type": "string",
+						"nullable": true
+					},
 					"departmentId": {
 						"type": "string",
 						"nullable": true
@@ -444,7 +516,7 @@
 						"type": "string",
 						"nullable": true
 					},
-					"categoryIds": {
+					"categoriesIds": {
 						"type": "string",
 						"nullable": true
 					},
@@ -498,7 +570,7 @@
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"Partial_Pick_IProductAttributes.name-or-code-or-price__": {
+			"Partial_Pick_IProductAttributes.name-or-code-or-price-or-priceWithTax__": {
 				"properties": {
 					"name": {
 						"type": "string"
@@ -507,6 +579,10 @@
 						"type": "string"
 					},
 					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"priceWithTax": {
 						"type": "number",
 						"format": "double"
 					}
@@ -576,7 +652,7 @@
 						"$ref": "#/components/schemas/Pick_IProductAttributes.id-or-departmentId-or-categoryId-or-description_"
 					},
 					{
-						"$ref": "#/components/schemas/Partial_Pick_IProductAttributes.name-or-code-or-price__"
+						"$ref": "#/components/schemas/Partial_Pick_IProductAttributes.name-or-code-or-price-or-priceWithTax__"
 					},
 					{
 						"properties": {
@@ -748,6 +824,234 @@
 					}
 				]
 			},
+			"IOrderAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"dni": {
+						"type": "string"
+					},
+					"nameClient": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"observation": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"amountWithoutTax": {
+						"type": "number",
+						"format": "double"
+					},
+					"valueTax": {
+						"type": "number",
+						"format": "double"
+					},
+					"location": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"userId",
+					"dni",
+					"nameClient",
+					"phoneNumber",
+					"observation",
+					"date",
+					"amount",
+					"amountWithoutTax",
+					"valueTax"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllOrder": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IOrderAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IOrderFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IOrderAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IOrderAttributes.userId-or-dni-or-observation-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location__": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"dni": {
+						"type": "string"
+					},
+					"observation": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"amountWithoutTax": {
+						"type": "number",
+						"format": "double"
+					},
+					"valueTax": {
+						"type": "number",
+						"format": "double"
+					},
+					"location": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"Pick_IOrderProductAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IOrderProductAttributes.productId-or-orderId-or-code-or-salePrice-or-valueTax-or-quantity-or-subtotalTax-or-subtotal__": {
+				"properties": {
+					"code": {
+						"type": "string"
+					},
+					"productId": {
+						"type": "string"
+					},
+					"valueTax": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderId": {
+						"type": "string"
+					},
+					"salePrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"subtotalTax": {
+						"type": "number",
+						"format": "double"
+					},
+					"subtotal": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"IOrderProductCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IOrderProductAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IOrderProductAttributes.productId-or-orderId-or-code-or-salePrice-or-valueTax-or-quantity-or-subtotalTax-or-subtotal__"
+					}
+				]
+			},
+			"IOrderCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IOrderAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IOrderAttributes.userId-or-dni-or-observation-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location__"
+					},
+					{
+						"properties": {
+							"products": {
+								"items": {
+									"$ref": "#/components/schemas/IOrderProductCreationAttributes"
+								},
+								"type": "array"
+							}
+						},
+						"type": "object"
+					}
+				]
+			},
 			"IMapAttributes": {
 				"properties": {
 					"id": {
@@ -792,7 +1096,8 @@
 					},
 					"deletedAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -886,6 +1191,13 @@
 					},
 					{
 						"properties": {
+							"deletedAt": {
+								"type": "number",
+								"enum": [
+									null
+								],
+								"nullable": true
+							},
 							"order": {
 								"anyOf": [
 									{
@@ -928,7 +1240,6 @@
 							}
 						},
 						"required": [
-							"order",
 							"status"
 						],
 						"type": "object"
@@ -1052,6 +1363,9 @@
 						"nullable": true
 					},
 					"isClient": {
+						"type": "boolean"
+					},
+					"categories": {
 						"type": "boolean"
 					}
 				},
@@ -1306,7 +1620,8 @@
 			"EPositionBanner": {
 				"enum": [
 					"homePrincipal",
-					"homeSecondary"
+					"homeSecondary",
+					"homeTertiary"
 				],
 				"type": "string"
 			},
@@ -1335,6 +1650,10 @@
 					},
 					"position": {
 						"$ref": "#/components/schemas/EPositionBanner"
+					},
+					"mobileImage": {
+						"type": "string",
+						"nullable": true
 					},
 					"createdAt": {
 						"type": "string",
@@ -1444,6 +1763,10 @@
 					},
 					{
 						"properties": {
+							"mobileImage": {
+								"type": "string",
+								"nullable": true
+							},
 							"position": {
 								"anyOf": [
 									{
@@ -2419,6 +2742,266 @@
 				"parameters": []
 			}
 		},
+		"/auth/password": {
+			"patch": {
+				"operationId": "PasswordUpdate",
+				"responses": {
+					"201": {
+						"description": "User Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {},
+										"token": {
+											"type": "string"
+										},
+										"user": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IUserAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"user",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtiene los detalles del usuario autenticado.",
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "- Solicitud HTTP con información de autenticación.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"oldPasword": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									},
+									"passwordConfirmation": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"oldPasword",
+									"password",
+									"passwordConfirmation"
+								],
+								"type": "object",
+								"description": "- Solicitud HTTP con información de autenticación."
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/update/{userId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IUserAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUserUpdatenAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/passwordReset": {
+			"post": {
+				"operationId": "PasswordReset",
+				"responses": {
+					"201": {
+						"description": "User Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtiene los detalles del usuario autenticado.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "- Solicitud HTTP con información de autenticación.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object",
+								"description": "- Solicitud HTTP con información de autenticación."
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/passwordRecovery": {
+			"post": {
+				"operationId": "PasswordRecovery",
+				"responses": {
+					"201": {
+						"description": "User Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {},
+										"token": {
+											"type": "string"
+										},
+										"user": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IUserAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"user",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cambiar la contraseña, por codigo (al recuperar) o por contraseña anterior.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "- Solicitud HTTP con información de autenticación.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"code": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									},
+									"passwordConfirmation": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"code",
+									"password",
+									"passwordConfirmation"
+								],
+								"type": "object",
+								"description": "- Solicitud HTTP con información de autenticación."
+							}
+						}
+					}
+				}
+			}
+		},
 		"/products/show/{productId}": {
 			"get": {
 				"operationId": "Get",
@@ -2548,6 +3131,14 @@
 					},
 					{
 						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "departmentId",
 						"required": false,
 						"schema": {
@@ -2572,7 +3163,178 @@
 					},
 					{
 						"in": "query",
-						"name": "categoryIds",
+						"name": "categoriesIds",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "order",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"maxPrice",
+								"minPrice"
+							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "typeSearch",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/products/search": {
+			"get": {
+				"operationId": "Search",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IProductAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllProduct"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Product"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "departmentIds",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categoryId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categoriesIds",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -3181,6 +3943,291 @@
 				]
 			}
 		},
+		"/orders/show/{orderId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IOrderAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Order"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/orders/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IOrderAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllOrder"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Order"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/orders/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IOrderAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Order"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IOrderCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/update/{orderId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IOrderAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Order"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IOrderCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"Order"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/maps/show/{mapId}": {
 			"get": {
 				"operationId": "Get",
@@ -3630,6 +4677,14 @@
 					{
 						"in": "query",
 						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categories",
 						"required": false,
 						"schema": {
 							"type": "boolean"

@@ -81,6 +81,35 @@ export class ProductsController extends Controller {
     }
   }
 
+  /**
+   * @summary Obtener todos los datos con paginación.
+   * @param {number} page - Número de página.
+   * @param {number} count - Cantidad de datos por página.
+   * @returns {Promise<{ data: { products: IProduct[], message?: string }, status: boolean }>}
+   */
+  @Security('bearerAuth', ['optional'])
+  @Get('/search')
+  public async search(
+    @Queries() pQueryParams: IProductFilter,
+    @Request() req: { auth: IUserAttributes }
+  ): Promise<{
+    data: IProductAttributes[] | IResponseAllProduct
+    message?: string
+  }> {
+    try {
+      if (req?.auth?.id) {
+        pQueryParams.userId = req.auth.id
+      }
+      const vResponse: IProductAttributes[] | IResponseAllProduct =
+        await this.productService.all(pQueryParams)
+      this.setStatus(200)
+      return { data: vResponse }
+    } catch (error) {
+      this.setStatus(500)
+      return { data: [], message: 'Ocurrió un error' }
+    }
+  }
+
   @Security('bearerAuth', ['admin'])
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
@@ -96,6 +125,20 @@ export class ProductsController extends Controller {
       }
       if (requestBody?.coverImage) {
         requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
+      }
+      console.log(
+        'requestBody.priceWithTax :>> ',
+        typeof requestBody.priceWithTax,
+        requestBody.priceWithTax,
+        !requestBody.priceWithTax
+      )
+      if (!requestBody.priceWithTax) {
+        requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
+        console.log('requestBody.priceWithTax 2 :>> ', requestBody.priceWithTax);
+      }
+      console.log('requestBody.taxRate :>> ', requestBody.taxRate, !requestBody.taxRate)
+      if (!requestBody.taxRate) {
+        requestBody.taxRate = 0
       }
       const vItem: IProductAttributes | null = await this.productService.create(requestBody)
       if (imagesData?.length) {
@@ -134,6 +177,12 @@ export class ProductsController extends Controller {
       }
       if (requestBody?.coverImage) {
         requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
+      }
+      if (!requestBody.priceWithTax) {
+        requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
+      }
+      if (!requestBody.taxRate) {
+        requestBody.taxRate = 0
       }
       const vItem: IProductAttributes | null = await this.productService.update(
         requestBody,

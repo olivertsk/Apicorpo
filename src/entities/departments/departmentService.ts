@@ -1,4 +1,4 @@
-import { modelDepartment, modelFavoriteProduct, modelProduct } from '@db/index'
+import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct } from '@db/index'
 import { type FindOptions } from 'sequelize'
 import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
@@ -38,6 +38,12 @@ class DepartmentsService {
           isSalient: pParam.isSalient
         }
       }
+      if (pParam?.isClient) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          status: true,
+        }
+      }
       if (pParam?.product) {
         whereStatement.include = [
           {
@@ -48,10 +54,22 @@ class DepartmentsService {
                 model: modelFavoriteProduct,
                 as: 'favorite',
                 required: false,
-                where: { userId: pParam ?.userId },
+                where: { userId: pParam?.userId },
                 attributes: ['id'],
               },
             ],
+          },
+        ]
+      }
+      if (pParam?.categories) {
+        whereStatement.include = [
+          {
+            model: modelCategory,
+            as: 'categories',
+            attributes: ['id', 'icon', 'name', 'description'],
+            where: {
+              status: true
+            }
           },
         ]
       }

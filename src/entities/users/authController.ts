@@ -8,14 +8,18 @@ import {
   SuccessResponse,
   Tags,
   Security,
+  Patch,
+  Put,
   // Queries
 } from 'tsoa'
-import { IUserAttributes, IUserCreationAttributes } from '@users/userModel'
+import { IUserAttributes, IUserCreationAttributes, IUserUpdatenAttributes } from '@users/userModel'
 import UsersService from '@users/userService'
 import AppConfig from '@config/AppConfig'
 import * as argon2 from 'argon2'
 import jwt, { type Secret } from 'jsonwebtoken'
 import { fxI18n } from '@utils/i18n'
+import { fxSendMail } from '@utils/sendMail'
+import randomstring from 'randomstring'
 
 interface IPasswordVerified {
   field: string
@@ -45,10 +49,16 @@ export class AuthController extends Controller {
       console.log('requestBody.passwordConfirmation :>> ', requestBody.passwordConfirmation)
       if (!requestBody.password || requestBody.password !== requestBody.passwordConfirmation) {
         this.setStatus(401)
-        return { success: false, user: null, message: [{
-          field: fxI18n.__('password'),
-          message: fxI18n.__('incorrect_password'),
-        }]}
+        return {
+          success: false,
+          user: null,
+          message: [
+            {
+              field: fxI18n.__('password'),
+              message: fxI18n.__('incorrect_password'),
+            },
+          ],
+        }
       }
       const validatePassword = this.validatePassword(requestBody.password)
       if (validatePassword) {
@@ -136,6 +146,192 @@ export class AuthController extends Controller {
         return { success: false, user: null }
       }
     } catch (error) {
+      throw error
+    }
+  }
+  /**
+   * Obtiene los detalles del usuario autenticado.
+   * @param pRequestBody - Solicitud HTTP con información de autenticación.
+   * @returns Detalles del usuario autenticado.
+   */
+  @Security('bearerAuth', ['optional'])
+  @Patch('/password')
+  @SuccessResponse('201', 'User Found')
+  public async passwordUpdate(
+    @Request() pRequest: { auth: IUserAttributes },
+    @Body() pRequestBody: { passwordConfirmation: string; password: string; oldPasword: string }
+  ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
+    try {
+      if (!pRequest?.auth?.id) {
+        this.setStatus(401)
+        return { success: false, user: null }
+      }
+      if (!pRequestBody.password || pRequestBody.password !== pRequestBody.passwordConfirmation) {
+        this.setStatus(401)
+        return {
+          success: false,
+          user: null,
+          message: [
+            {
+              field: fxI18n.__('password'),
+              message: fxI18n.__('incorrect_password'),
+            },
+          ],
+        }
+      }
+      const vUser: IUserAttributes | null = await this.userService.getUserWithPassword(
+        pRequest.auth.id
+      )
+      const validatePassword = this.validatePassword(pRequestBody.password)
+      if (validatePassword) {
+        this.setStatus(401)
+        return { success: false, user: null, message: validatePassword }
+      }
+      if (vUser) {
+        const vPasswordIsValid = await argon2.verify(vUser?.password, pRequestBody.oldPasword)
+        if (vPasswordIsValid) {
+          // No devolver la contraseña, incluso si está hasheada
+          const vHashedPassword = await argon2.hash(pRequestBody.password)
+          const vItem: IUserAttributes | null = await this.userService.updatePassword(
+            { password: vHashedPassword },
+            pRequest?.auth?.id
+          )
+          if (vItem) {
+            this.setStatus(200) // HTTP 200 OK
+            return { success: true, user: null }
+          }
+        }
+      }
+      this.setStatus(401)
+      return { success: false, user: null, message: fxI18n.__('invalid_password') }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  @Security('bearerAuth', ['optional'])
+  @SuccessResponse('200', 'Update') // Custom success response
+  @Put('/update/{userId}')
+  public async update(
+    @Request() pRequest: { auth: IUserAttributes },
+    @Body() requestBody: IUserUpdatenAttributes
+  ): Promise<{ success: boolean; item: IUserAttributes | null; message?: string }> {
+    try {
+      const userId = pRequest.auth.id
+      if (!userId) {
+        this.setStatus(404) // set return status 404
+        return { success: false, item: null, message: fxI18n.__('item_not_found') }
+      }
+      await this.userService.validate(requestBody, userId)
+      if ('password' in requestBody) {
+        delete requestBody.password
+      }
+      const vItem: IUserAttributes | null = await this.userService.update(requestBody, userId)
+      console.log('vItem :>> ', JSON.stringify(vItem))
+      if (vItem) {
+        this.setStatus(200) // set return status 200
+        return { success: true, item: vItem }
+      }
+      this.setStatus(404) // set return status 404
+      return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
+    } catch (error) {
+      console.log('error :>> ', error)
+      throw error
+    }
+  }
+
+  /**
+   * Obtiene los detalles del usuario autenticado.
+   * @param pRequestBody - Solicitud HTTP con información de autenticación.
+   * @returns Detalles del usuario autenticado.
+   */
+  @Post('/passwordReset')
+  @SuccessResponse('201', 'User Found')
+  public async passwordReset(
+    @Body() pRequestBody: { email: string }
+  ): Promise<{ success: boolean; message?: any }> {
+    try {
+      const vUser: IUserAttributes | null = await this.userService.login(pRequestBody.email)
+      if (vUser) {
+        const code = randomstring.generate(40)
+        await this.userService.createPasswordReset({
+          code,
+          email: vUser.email,
+        })
+        const emailData = {
+          userName: vUser.name,
+          email: vUser.email,
+          code,
+        }
+        fxSendMail(emailData, 'password_recovery', 'Recuperar contraseña')
+        this.setStatus(200)
+        return { success: true, message: fxI18n.__('email_send') }
+      }
+      this.setStatus(401)
+      return { success: false, message: fxI18n.__('invalid_user') }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
+   * Cambiar la contraseña, por codigo (al recuperar) o por contraseña anterior.
+   * @param pRequestBody - Solicitud HTTP con información de autenticación.
+   * @returns Detalles del usuario autenticado.
+   */
+  @Post('/passwordRecovery')
+  @SuccessResponse('201', 'User Found')
+  public async passwordRecovery(
+    @Body()
+    pRequestBody: {
+      passwordConfirmation: string
+      password: string
+      code: string
+    }
+  ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
+    try {
+      if (!pRequestBody.password || pRequestBody.password !== pRequestBody.passwordConfirmation) {
+        this.setStatus(401)
+        return {
+          success: false,
+          user: null,
+          message: [
+            {
+              field: fxI18n.__('password'),
+              message: fxI18n.__('incorrect_password'),
+            },
+          ],
+        }
+      }
+      const validatePassword = this.validatePassword(pRequestBody.password)
+      if (validatePassword) {
+        this.setStatus(401)
+        return { success: false, user: null, message: validatePassword }
+      }
+      const vPasswordReset = await this.userService.getPasswordReset(pRequestBody.code)
+      if (!vPasswordReset) {
+        this.setStatus(404)
+        return { success: false, user: null }
+      }
+      let vUser: IUserAttributes | null = await this.userService.login(vPasswordReset)
+      if (vUser?.id) {
+        // No devolver la contraseña, incluso si está hasheada
+        const vHashedPassword = await argon2.hash(pRequestBody.password)
+        const vItem: IUserAttributes | null = await this.userService.updatePassword(
+          { password: vHashedPassword },
+          vUser.id
+        )
+        if (vItem) {
+          console.log('deberia responder 200');
+          this.setStatus(200) // HTTP 200 OK
+          return { success: true, user: null }
+        }
+      }
+      console.log('no consiguio usuario');
+      this.setStatus(401)
+      return { success: false, user: null, message: fxI18n.__('invalid_password') }
+    } catch (error) {
+      console.log('error :>> ', error);
       throw error
     }
   }

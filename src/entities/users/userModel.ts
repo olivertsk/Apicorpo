@@ -10,13 +10,14 @@ export interface IUserAttributes {
   lastName?: string | null
   email: string
   avatar?: string | null
-  dni: number
+  dni?: number | null
   dniType: string
   phoneNumber?: string | null
   dob?: string | null
   password: string
   rolId: IRolAttributes['id'] | null
   status?: boolean
+  location?: string | null
   tokenPush?: string
   createdAt?: Date
   updatedAt?: Date
@@ -39,6 +40,17 @@ export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'pa
   Partial<Pick<IUserAttributes, 'name'>> & {
     passwordConfirmation?: string | null
     avatar?: string
+    location?: string | null
+    rolId?: IRolAttributes['id'] | null
+  }
+export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
+  Partial<Pick<IUserAttributes, 'name'>> & {
+    avatar?: string | null
+    location?: string | null
+    lastName?: string | null
+    dni?: number | null
+    dniType: string
+    phoneNumber?: string | null
   }
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
@@ -74,7 +86,7 @@ export const vUserModelAttributes: SequelizeAttributes<IUserAttributes> = {
     type: DataTypes.STRING,
     field: 'last_name',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   email: {
     type: DataTypes.STRING,
@@ -98,25 +110,25 @@ export const vUserModelAttributes: SequelizeAttributes<IUserAttributes> = {
     type: DataTypes.INTEGER,
     field: 'dni',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   dniType: {
     type: DataTypes.STRING,
     field: 'dni_type',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   phoneNumber: {
     type: DataTypes.STRING,
     field: 'phone_number',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   dob: {
     type: DataTypes.STRING,
     field: 'date_of_birthdate',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   password: {
     type: DataTypes.STRING,
@@ -126,6 +138,12 @@ export const vUserModelAttributes: SequelizeAttributes<IUserAttributes> = {
   status: {
     type: DataTypes.BOOLEAN,
     field: 'status',
+    defaultValue: true,
+    allowNull: true,
+  },
+  location: {
+    type: DataTypes.STRING,
+    field: 'location',
     defaultValue: true,
     allowNull: true,
   },
@@ -165,7 +183,9 @@ export function fxUserFactory(sequelize: Sequelize) {
       },
       scopes: {
         withPassword: {
-          attributes: ['id', 'email', 'rolId', 'password', 'name'],
+          attributes: {
+            include: ['password'],
+          },
         },
       },
       freezeTableName: true,

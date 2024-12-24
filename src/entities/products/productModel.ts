@@ -15,6 +15,7 @@ export interface IProductAttributes {
   longDescription?: string | null
   price: number
   promotionalPrice?: number | null
+  priceWithTax?: number | null
   stock: number
   brand?: string | null
   taxRate?: number | null
@@ -55,10 +56,11 @@ export interface IProductFilter {
   pag?: number
   limit?: number
   name?: string | null
+  search?: string | null
   departmentId?: string | null
   departmentIds?: string | null
   categoryId?: string | null
-  categoryIds?: string | null
+  categoriesIds?: string | null
   minPrice?: number | null
   maxPrice?: number | null
   order?: 'maxPrice' | 'minPrice'
@@ -66,9 +68,11 @@ export interface IProductFilter {
   userId?: string | null
   isClient?: boolean
 }
-export type IProductCreationAttributes = Pick<IProductAttributes, 'id' | 'departmentId' | 'categoryId' | 'description'> & 
-  Partial<Pick<IProductAttributes, 'name' | 'code' | 'price' >>
-  & {
+export type IProductCreationAttributes = Pick<
+  IProductAttributes,
+  'id' | 'departmentId' | 'categoryId' | 'description'
+> &
+  Partial<Pick<IProductAttributes, 'name' | 'code' | 'price' | 'priceWithTax'>> & {
     status?: boolean | true
     promotionalPrice?: number | null
     stock?: number
@@ -77,7 +81,7 @@ export type IProductCreationAttributes = Pick<IProductAttributes, 'id' | 'depart
     longDescription?: string | null
     coverImage?: string | null
     images?: IProductImageCreationAttributes[]
-  };
+  }
 export interface IProductInstance
   extends Model<IProductAttributes, IProductCreationAttributes>,
     IProductAttributes {}
@@ -160,11 +164,17 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     allowNull: true,
     defaultValue: null,
   },
+  priceWithTax: {
+    type: DataTypes.FLOAT,
+    field: 'price_with_tax',
+    allowNull: true,
+    defaultValue: null,
+  },
   stock: {
     type: DataTypes.INTEGER,
     field: 'stock',
     allowNull: true,
-    defaultValue: 0
+    defaultValue: 0,
   },
   brand: {
     type: DataTypes.STRING,
@@ -176,13 +186,13 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     type: DataTypes.FLOAT,
     field: 'tax_rate',
     allowNull: true,
-    defaultValue: 0
+    defaultValue: 0,
   },
   coverImage: {
     type: DataTypes.STRING,
     field: 'cover_image',
     allowNull: true,
-    defaultValue: ''
+    defaultValue: '',
   },
 }
 

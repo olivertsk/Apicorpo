@@ -102,6 +102,7 @@ export class MapsController extends Controller {
       this.setStatus(404); // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
+      console.log('error :>> ', error);
       throw error
     }
   }

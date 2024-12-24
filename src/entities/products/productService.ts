@@ -121,11 +121,11 @@ class ProductsService {
           departmentId: departmentId,
         }
       }
-      if (pParam?.categoryIds) {
+      if (pParam?.categoriesIds) {
         whereStatement.where = {
           ...whereStatement.where,
           categoryId: {
-            [Op.in]: pParam.categoryIds.split(','),
+            [Op.in]: pParam.categoriesIds.split(','),
           },
         }
       }
@@ -140,8 +140,8 @@ class ProductsService {
           ...whereStatement.where,
           [Op.and]: {
             [Op.or]: [
-              { price: { [Op.gte]: pParam.minPrice } },
-              { promotionalPrice: { [Op.gte]: pParam.minPrice } },
+              { price: { [Op.gte]: Number(pParam.minPrice) } },
+              { promotionalPrice: { [Op.gte]: Number(pParam.minPrice) } },
             ],
           },
         }
@@ -151,8 +151,8 @@ class ProductsService {
           ...whereStatement.where,
           [Op.and]: {
             [Op.or]: [
-              { price: { [Op.lte]: pParam.maxPrice } },
-              { promotionalPrice: { [Op.lte]: pParam.maxPrice } },
+              { price: { [Op.lte]: Number(pParam.maxPrice) } },
+              { promotionalPrice: { [Op.lte]: Number(pParam.maxPrice) } },
             ],
           },
         }
@@ -229,6 +229,7 @@ class ProductsService {
         }
       }
       if (pParam?.notProductId) {
+        console.log('pParam?.notProductId :>> ', pParam?.notProductId);
         whereStatement.where = {
           ...whereStatement.where,
           id: { [Op.not]: pParam.notProductId },

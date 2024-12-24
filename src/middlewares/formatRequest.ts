@@ -31,9 +31,9 @@ export const formatRequest = async (req: Request, _res: Response, next: NextFunc
         body[key] = null
       }
     }
-    body?.deletedAt && delete body.deletedAt
-    body?.createdAt && delete body.createdAt
-    body?.updatedAt && delete body.updatedAt
+    'deletedAt' in body && delete body.deletedAt
+    'createdAt' in body && delete body.createdAt
+    'updatedAt' in body && delete body.updatedAt
   }
   req.body = body
   next()

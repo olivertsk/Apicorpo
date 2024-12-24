@@ -15,7 +15,7 @@ export interface IMapAttributes {
   order: number
   createdAt?: Date
   updatedAt?: Date
-  deletedAt?: Date
+  deletedAt?: Date | null
 }
 
 export interface IResponseAllMap {
@@ -31,16 +31,16 @@ export interface IMapFilter {
   name?: string | null
   isClient?: boolean
 }
-export type IMapCreationAttributes = Pick<IMapAttributes, 'id'> & 
-  Partial<Pick<IMapAttributes, 'name' | 'image' | 'map'>>
-  & {
+export type IMapCreationAttributes = Pick<IMapAttributes, 'id'> &
+  Partial<Pick<IMapAttributes, 'name' | 'image' | 'map'>> & {
     status: boolean | true
     description?: string | null
     address?: string
     phoneNumber?: string
     email?: string
-    order: number | 0
-  };
+    order?: number | 0
+    deletedAt?: null
+  }
 export interface IMapInstance
   extends Model<IMapAttributes, IMapCreationAttributes>,
     IMapAttributes {}
@@ -115,7 +115,7 @@ export const vMapModelAttributes: SequelizeAttributes<IMapAttributes> = {
   order: {
     type: DataTypes.STRING,
     field: 'order',
-    defaultValue: true,
+    defaultValue: 0,
     allowNull: true,
   },
 }
@@ -129,6 +129,9 @@ export function fxMapFactory(sequelize: Sequelize) {
     {
       tableName: 'maps',
       defaultScope: {
+        attributes: {
+          exclude: ['deletedAt'],
+        },
         order: [['createdAt', 'DESC']],
       },
       freezeTableName: true,

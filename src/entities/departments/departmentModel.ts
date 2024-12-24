@@ -30,6 +30,7 @@ export interface IDepartmentFilter {
   product?: boolean
   userId?: string | null
   isClient?: boolean
+  categories?: boolean
 }
 export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description' | 'icon'> & 
   Partial<Pick<IDepartmentAttributes, 'name' >>
@@ -108,11 +109,16 @@ export function fxDepartmentFactory(sequelize: Sequelize) {
     }
   )
   vData.associate = function (models: ModelRegistry) {
-    const { modelProduct, modelDepartment } = models
+    const { modelProduct, modelDepartment, modelCategory } = models
     modelDepartment.hasMany(modelProduct, {
       foreignKey: 'departmentId',
       sourceKey: 'id',
       as: 'products',
+    })
+    modelDepartment.hasMany(modelCategory, {
+      foreignKey: 'departmentId',
+      sourceKey: 'id',
+      as: 'categories',
     })
   }
   vData.prototype.toJSON = function () {

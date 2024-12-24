@@ -10,6 +10,7 @@ export interface IBannerAttributes {
   alt?: string | null
   status?: boolean
   position: EPositionBanner
+  mobileImage?: string | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
@@ -17,7 +18,8 @@ export interface IBannerAttributes {
 
 export enum EPositionBanner {
   HomePrincipal = 'homePrincipal',
-  HomeSecondary = 'homeSecondary'
+  HomeSecondary = 'homeSecondary',
+  HomeTertiary = 'homeTertiary'
 }
 export interface IResponseAllBanner {
   total?: number
@@ -33,14 +35,14 @@ export interface IBannerFilter {
   position?: EPositionBanner
   isClient?: boolean
 }
-export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> & 
-  Partial<Pick<IBannerAttributes, 'name' | 'images'>>
-  & {
+export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> &
+  Partial<Pick<IBannerAttributes, 'name' | 'images'>> & {
     status: boolean | true
     description?: string | null
     alt?: string | null
     position?: EPositionBanner | EPositionBanner.HomePrincipal
-  };
+    mobileImage?: string | null
+  }
 export interface IBannerInstance
   extends Model<IBannerAttributes, IBannerCreationAttributes>,
     IBannerAttributes {}
@@ -67,25 +69,25 @@ export const vBannerModelAttributes: SequelizeAttributes<IBannerAttributes> = {
   },
   images: {
     type: DataTypes.STRING,
-    field: "images",
-    allowNull: false
+    field: 'images',
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
-    field: "name",
-    allowNull: false
+    field: 'name',
+    allowNull: false,
   },
   description: {
     type: DataTypes.STRING,
-    field: "description",
+    field: 'description',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   alt: {
     type: DataTypes.STRING,
-    field: "alt",
+    field: 'alt',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   status: {
     type: DataTypes.BOOLEAN,
@@ -97,6 +99,12 @@ export const vBannerModelAttributes: SequelizeAttributes<IBannerAttributes> = {
     type: DataTypes.STRING,
     field: 'position',
     defaultValue: true,
+    allowNull: true,
+  },
+  mobileImage: {
+    type: DataTypes.STRING,
+    field: 'mobile_image',
+    defaultValue: null,
     allowNull: true,
   },
 }

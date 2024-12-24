@@ -1,12 +1,12 @@
-import { modelRol, modelUser } from '@db/index'
+import { modelPasswordReset, modelRol, modelUser } from '@db/index'
 import { type FindOptions, ValidationErrorItem, ValidationError, Op } from 'sequelize'
-import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance } from '@users/userModel'
+import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance, IUserUpdatenAttributes } from '@users/userModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
+import { IPasswordResetAttributes, IPasswordResetCreationAttributes } from './passwordResetModel'
 
 class UsersService {
   async validate(data: any, userId: string | null = null) {
-    console.log('data :>> ', data);
     const fieldsToCheck = ['email']
     for (const field of fieldsToCheck) {
       if (data[field]) {
@@ -16,10 +16,9 @@ class UsersService {
         if (userId) {
           whereStatement.where = {
             ...whereStatement.where,
-            id: { [Op.not]: userId }
+            id: { [Op.not]: userId },
           }
         }
-        console.log('whereStatement.where :>> ', whereStatement.where);
         const existingUser = await modelUser.findOne(whereStatement)
         if (existingUser) {
           const fielTanslate = fxI18n.__(field)
@@ -35,7 +34,6 @@ class UsersService {
               []
             ),
           ]
-          console.log('errorItems :>> ', errorItems);
           throw new ValidationError('Validation error', errorItems)
         }
       }
@@ -68,7 +66,7 @@ class UsersService {
             as: 'rol',
             required: false,
           },
-        ]
+        ],
       })
       return vResponse
     } catch (error) {
@@ -105,6 +103,16 @@ class UsersService {
 
   public async create(userCreationParams: IUserCreationAttributes): Promise<IUserAttributes> {
     try {
+      if (!userCreationParams?.rolId) {
+        const rol = await modelRol.findOne({
+          where: {
+            name: 'client',
+          },
+        })
+        if (rol) {
+          userCreationParams.rolId = rol.id
+        }
+      }
       const vResponse: IUserAttributes = await modelUser.create(userCreationParams)
       return vResponse
     } catch (error) {
@@ -112,13 +120,48 @@ class UsersService {
     }
   }
 
-  public async update(userCreationParams: IUserCreationAttributes, id: string): Promise<IUserAttributes | null> {
+  public async update(
+    userCreationParams: IUserCreationAttributes | IUserUpdatenAttributes,
+    id: string
+  ): Promise<IUserAttributes | null> {
+    try {
+      if (id) {
+        const vResponse: IUserInstance | null = await modelUser.findOne({
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt', 'status', 'rol'],
+          },
+          where: {
+            id: id,
+          },
+          include: [
+            {
+              model: modelRol,
+              as: 'rol',
+            },
+          ],
+        })
+        if (vResponse === null) {
+          return null
+        }
+        await vResponse.update(userCreationParams)
+        return vResponse
+      }
+      return null
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async updatePassword(
+    userCreationParams: { password: string },
+    id: string
+  ): Promise<IUserAttributes | null> {
     try {
       if (id) {
         const vResponse: IUserInstance | null = await modelUser.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null
@@ -134,7 +177,26 @@ class UsersService {
 
   public async login(pEmail: string): Promise<IUserAttributes | null> {
     try {
-      const vUser: IUserAttributes | null = await modelUser.scope('withPassword').findOne({ where: { email: pEmail } })
+      const vUser: IUserAttributes | null = await modelUser.scope('withPassword').findOne({
+        where: { email: pEmail },
+        include: [
+          {
+            model: modelRol,
+            as: 'rol',
+          },
+        ],
+      })
+      return vUser
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async getUserWithPassword(pId: string): Promise<IUserAttributes | null> {
+    try {
+      const vUser: IUserAttributes | null = await modelUser.scope('withPassword').findOne({
+        where: { id: pId },
+      })
       return vUser
     } catch (error) {
       throw error
@@ -153,6 +215,35 @@ class UsersService {
         return false
       }
       return true
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async createPasswordReset(
+    itemCreationParams: IPasswordResetAttributes
+  ): Promise<IPasswordResetCreationAttributes> {
+    try {
+      await modelPasswordReset.destroy({ where: { email: itemCreationParams.email } })
+      const vResponse: IPasswordResetAttributes =
+        await modelPasswordReset.create(itemCreationParams)
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+  public async getPasswordReset(code: string): Promise<string | null> {
+    try {
+      const vResponse: IPasswordResetAttributes | null = await modelPasswordReset.findOne({
+        where: { code },
+      })
+      if (vResponse) {
+        const email = vResponse.email
+        await modelPasswordReset.destroy({ where: { code } })
+        return email
+      } else {
+        return null
+      }
     } catch (error) {
       throw error
     }

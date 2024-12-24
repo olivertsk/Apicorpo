@@ -74,6 +74,9 @@ export class BannersController extends Controller {
       if (requestBody.images) {
         requestBody.images = await fxMoveImages(requestBody.images)
       }
+      if (requestBody.mobileImage) {
+        requestBody.mobileImage = await fxMoveImages(requestBody.mobileImage)
+      }
       const vItem: IBannerAttributes | null = await this.bannerService.create(requestBody)
       this.setStatus(201); // set return status 201
       return { success: true, item: vItem }
@@ -93,6 +96,9 @@ export class BannersController extends Controller {
       await this.bannerService.validate(requestBody)
       if (requestBody?.images) {
         requestBody.images = await fxMoveImages(requestBody.images)
+      }
+      if (requestBody?.mobileImage) {
+        requestBody.mobileImage = await fxMoveImages(requestBody.mobileImage)
       }
       const vItem: IBannerAttributes | null = await this.bannerService.update(requestBody, bannerId)
       if (vItem) {
