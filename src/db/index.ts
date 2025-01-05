@@ -17,6 +17,7 @@ import { fxFavoriteProductFactory } from '@products/favoriteProductModel'
 import { fxOrdersFactory } from '@entities/orders/orderModel'
 import { fxOrderProductFactory } from '@entities/orders/orderProductModel'
 import { fxPasswordResetFactory } from '@users/passwordResetModel'
+import { fxBulkUploadLogFactory } from '@entities/integration/BulkUploadLog'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -40,6 +41,7 @@ export const modelFavoriteProduct = fxFavoriteProductFactory(sequelize)
 export const modelOrder = fxOrdersFactory(sequelize)
 export const modelOrderProducto = fxOrderProductFactory(sequelize)
 export const modelPasswordReset = fxPasswordResetFactory(sequelize)
+export const modelBulkUploadLog = fxBulkUploadLogFactory(sequelize)
 
 const models = {
   modelUser,
@@ -56,6 +58,7 @@ const models = {
   modelOrder,
   modelOrderProducto,
   modelPasswordReset,
+  modelBulkUploadLog,
 }
 
 export type ModelRegistry = typeof models

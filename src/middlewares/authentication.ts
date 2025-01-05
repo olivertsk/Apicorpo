@@ -34,6 +34,7 @@ export async function expressAuthentication(
         }
         if (scopes && scopes.length > 0 && !scopes.includes(null)) {
           const userRoles = rolUser.rol.name || ''
+          console.log('userRoles :>> ', userRoles);
           const hasRole = scopes.some((scope) => {
             if (scope === "admin") {
               return userRoles === 'admin'

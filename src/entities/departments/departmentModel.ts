@@ -8,6 +8,7 @@ export interface IDepartmentAttributes {
   icon?: string | null
   name: string
   description?: string | null
+  code?: string | null
   status: boolean | true
   isSalient: boolean | true
   createdAt?: Date
@@ -32,12 +33,12 @@ export interface IDepartmentFilter {
   isClient?: boolean
   categories?: boolean
 }
-export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description' | 'icon'> & 
-  Partial<Pick<IDepartmentAttributes, 'name' >>
-  & {
+export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description' | 'icon'> &
+  Partial<Pick<IDepartmentAttributes, 'name'>> & {
     status: boolean | true
     isSalient: boolean | false
-  };
+    code?: string | null
+  }
 export interface IDepartmentInstance
   extends Model<IDepartmentAttributes, IDepartmentCreationAttributes>,
     IDepartmentAttributes {}
@@ -71,6 +72,12 @@ export const vDepartmentModelAttributes: SequelizeAttributes<IDepartmentAttribut
     type: DataTypes.STRING,
     field: "name",
     allowNull: false
+  },
+  code: {
+    type: DataTypes.STRING,
+    field: "code",
+    allowNull: true,
+    defaultValue: null
   },
   description: {
     type: DataTypes.STRING,

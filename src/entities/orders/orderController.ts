@@ -13,22 +13,27 @@ import {
   Put,
   Request,
 } from 'tsoa'
-import { IOrderAttributes, IOrderCreationAttributes, IResponseAllOrder, IOrderFilter } from '@entities/orders/orderModel';
+import { IOrderAttributes, IOrderCreationAttributes, IResponseAllOrder, IOrderFilter, EStatusOrder } from '@entities/orders/orderModel';
 import OrderService from '@entities/orders/orderService';
 import { fxI18n } from '@utils/i18n';
 import { IUserAttributes } from '@users/userModel';
 import { IOrderProductCreationAttributes } from './orderProductModel';
+import NotificationService from '@entities/notification/NotificationService';
+import UserService from '@users/userService';
  
 @Route('orders')
 @Tags('Order')
 export class OrdersController extends Controller {
   private orderService: typeof OrderService
+  private userService: typeof UserService
 
   constructor() {
     super()
     this.orderService = OrderService
+    this.userService = UserService
   }
 
+  @Security('bearerAuth', ['admin'])
   @Get('/show/{orderId}')
   public async get(
     @Path() orderId: string
@@ -50,19 +55,38 @@ export class OrdersController extends Controller {
    * @param {number} count - Cantidad de datos por página.
    * @returns {Promise<{ data: { orders: IOrder[], message?: string }, status: boolean }>}
    */
+  @Security('bearerAuth', ['optional'])
   @Get('/all')
-  public async all(@Queries() pQueryParams: IOrderFilter): Promise<{
+  public async all(
+    @Queries() pQueryParams: IOrderFilter,
+    @Request() request: { auth: IUserAttributes }
+  ): Promise<{
     data: IOrderAttributes[] | IResponseAllOrder
     message?: string
   }> {
     try {
+      console.log('request?.auth?.id :>> ', request?.auth?.id);
+      if (!request?.auth?.id) {
+        this.setStatus(500)
+        return { data: [], message: 'Token invalido' }
+      }
+      if (pQueryParams?.isClient) {
+        pQueryParams.userId = request?.auth?.id
+      } else {
+        const user = await this.userService.getRol(request.auth.id)
+        const userJSON = JSON.parse(JSON.stringify(user))
+        if (userJSON?.rol.name === 'admin') {
+          pQueryParams.rolType = 'admin'
+        }
+        pQueryParams.userId = userJSON?.id
+      }
       const vResponse: IOrderAttributes[] | IResponseAllOrder =
         await this.orderService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
       this.setStatus(500)
-      return { data: [], message: 'Ocurrió un error' }
+      throw error
     }
   }
 
@@ -87,12 +111,24 @@ export class OrdersController extends Controller {
         if (typeof products === 'string') {
           products = JSON.parse(products)
         }
-        console.log('products :>> ', products);
       } else {
         this.setStatus(500) // set return status 201
         return { success: true, item: null, message: fxI18n.__('not_include_product') }
       }
-
+      if (!requestBody?.status) {
+        requestBody.status = EStatusOrder.Pending
+      }
+      const rol = await this.userService.showRolName('admin')
+      if (rol) {
+        const rolJSON = JSON.parse(JSON.stringify(rol))
+        const users = rolJSON.users
+        const notificationData = {
+          title: 'Tienes una nueva order',
+          body: 'Alguien realizo una compra',
+        }
+        const tokens = users.map((user: any) => user.tokenPush)
+        await NotificationService.sendNotification([tokens], notificationData)
+      }
       await this.orderService.validate(requestBody)
       const vItem: IOrderAttributes | null = await this.orderService.create(requestBody)
       if (products.length) {
@@ -120,6 +156,48 @@ export class OrdersController extends Controller {
       await this.orderService.validate(requestBody)
       const vItem: IOrderAttributes | null = await this.orderService.update(requestBody, orderId)
       if (vItem) {
+        this.setStatus(200) // set return status 200
+        return { success: true, item: vItem }
+      }
+      this.setStatus(404) // set return status 404
+      return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
+    } catch (error) {
+      console.log('error :>> ', error)
+      throw error
+    }
+  }
+
+  /**
+   * @summary Actualizar el estado de una Orden
+   * @param {string} key - ID de la orden.
+   * @param body - { status: EStatusOrder, reason: string } nuevo estatus de la orden.
+   * @returns {Promise<{ status: boolean }>}
+   */
+  @Security('bearerAuth', ['admin'])
+  @SuccessResponse('200', 'Update') // Custom success response
+  @Put('/updateStatus/{orderId}')
+  public async updateStatus(
+    @Path() orderId: string,
+    @Body() body: { status: EStatusOrder; reason?: string | null; adminId?: string | null },
+    @Request() request: { auth: IUserAttributes }
+  ): Promise<{ success: boolean; item: IOrderAttributes | null; message?: string }> {
+    try {
+      body.adminId = request?.auth?.id || null
+      const vItem: IOrderAttributes | null = await this.orderService.updateStatus(body, orderId)
+      if (vItem) {
+        const user = await this.userService.get(vItem.userId)
+        if (user && user?.tokenPush) {
+          const titleNotification =
+            body.status === EStatusOrder.Approve
+              ? 'Tu orden ha sido Aprobada'
+              : 'Tu orden ha sido Rechazada'
+          const notificationData = {
+            title: titleNotification,
+            body: body?.reason || '',
+          }
+          // const tokens = users.map((user: any) => user.tokenPush)
+          await NotificationService.sendNotification([user.tokenPush], notificationData)
+        }
         this.setStatus(200) // set return status 200
         return { success: true, item: vItem }
       }

@@ -1,5 +1,5 @@
 import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct } from '@db/index'
-import { type FindOptions } from 'sequelize'
+import { Op, type FindOptions } from 'sequelize'
 import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
@@ -21,6 +21,36 @@ class DepartmentsService {
     }
   }
 
+  public async firstOrCreateCode(data: {
+    code: string
+    name: string
+  }): Promise<IDepartmentAttributes | null> {
+    try {
+      let vItem: IDepartmentAttributes | undefined
+      const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
+        where: {
+          [Op.or]: [{ code: data.code }, { name: data.name }],
+        },
+      })
+      if (vResponse) {
+        if (vResponse.code === null) {
+          vResponse.code = data.code
+          await vResponse.save()
+        }
+        vItem = vResponse
+      } else {
+        vItem = await this.create({
+          ...data,
+          status: true,
+          isSalient: false,
+        })
+      }
+      return vItem
+    } catch (error) {
+      throw error
+    }
+  }
+
   public async all(pParam: any): Promise<IResponseAllDepartment> {
     try {
       let whereStatement: FindOptions = {}
@@ -35,7 +65,7 @@ class DepartmentsService {
       if ('isSalient' in pParam && pParam.isSalient !== undefined && pParam.isSalient !== null) {
         whereStatement.where = {
           ...whereStatement.where,
-          isSalient: pParam.isSalient
+          isSalient: pParam.isSalient,
         }
       }
       if (pParam?.isClient) {
@@ -68,8 +98,8 @@ class DepartmentsService {
             as: 'categories',
             attributes: ['id', 'icon', 'name', 'description'],
             where: {
-              status: true
-            }
+              status: true,
+            },
           },
         ]
       }
@@ -89,7 +119,9 @@ class DepartmentsService {
     }
   }
 
-  public async create(viewCreationParams: IDepartmentCreationAttributes): Promise<IDepartmentAttributes> {
+  public async create(
+    viewCreationParams: IDepartmentCreationAttributes
+  ): Promise<IDepartmentAttributes> {
     try {
       const vResponse: IDepartmentAttributes = await modelDepartment.create(viewCreationParams)
       return vResponse
@@ -98,13 +130,16 @@ class DepartmentsService {
     }
   }
 
-  public async update(itemCreationParams: IDepartmentCreationAttributes, id: string): Promise<IDepartmentAttributes | null> {
+  public async update(
+    itemCreationParams: IDepartmentCreationAttributes,
+    id: string
+  ): Promise<IDepartmentAttributes | null> {
     try {
       if (id) {
         const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null
@@ -122,11 +157,11 @@ class DepartmentsService {
     try {
       const vImagesName: IDepartmentInstance | null = await modelDepartment.findOne({
         where: {
-          icon: name
-        }
+          icon: name,
+        },
       })
       await vImagesName?.update({
-        icon: ''
+        icon: '',
       })
     } catch (error) {
       throw error

@@ -3,35 +3,54 @@ import { type Sequelize, type Model, DataTypes } from 'sequelize';
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { IOrderProductCreationAttributes } from './orderProductModel';
+import { ModelRegistry } from '@db/index';
 
+export enum EWasSent {
+  noSent = 0,
+  sentOrder = 1,
+  sentProductOrder = 2,
+}
 export interface IOrderAttributes {
-  id: string
+  id?: string
   userId: string
-  dni: string
+  dni: string | number
+  dniType: string
   nameClient: string
   phoneNumber: string
-  observation: string
+  observation: string | null
   date: string
   amount: number
   amountWithoutTax: number
   valueTax: number
   location?: string
+  status?: EStatusOrder | null
+  adminId?: string | null
+  updatedStatus: string
+  reason?: string | null
+  wasSent?: EWasSent
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
 }
-
+export enum EStatusOrder {
+  Pending = 'pending',
+  Approve = 'approve',
+  Decline = 'decline',
+}
 export interface IResponseAllOrder {
   total?: number;
   totalPage?: number;
   data: IOrderAttributes[];
   actualPage?: number;
+  status?: EStatusOrder | null
 }
 
 export interface IOrderFilter {
   pag?: number;
   limit?: number;
-  
+  isClient?: boolean
+  rolType?: string
+  userId?: string
 }
 
 export type IOrderCreationAttributes = Pick<IOrderAttributes, 'id'> &
@@ -39,16 +58,20 @@ export type IOrderCreationAttributes = Pick<IOrderAttributes, 'id'> &
     Pick<
       IOrderAttributes,
       | 'userId'
+      | 'dniType'
       | 'dni'
-      | 'observation'
       | 'date'
       | 'amount'
       | 'amountWithoutTax'
       | 'valueTax'
       | 'location'
+      | 'nameClient'
+      | 'phoneNumber'
     >
   > & {
     products?: IOrderProductCreationAttributes[]
+    observation?: string | null
+    status?: EStatusOrder | null
   }
 
 export interface IOrderInstance
@@ -91,6 +114,10 @@ export const vOrdersModelAttributes: SequelizeAttributes<IOrderAttributes> = {
     type: DataTypes.STRING,
     field: 'dni',
   },
+  dniType: {
+    type: DataTypes.STRING,
+    field: 'dni_type',
+  },
   nameClient: {
     type: DataTypes.STRING,
     field: 'name_client',
@@ -129,7 +156,37 @@ export const vOrdersModelAttributes: SequelizeAttributes<IOrderAttributes> = {
     type: DataTypes.STRING,
     field: 'location',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
+  },
+  status: {
+    type: DataTypes.STRING,
+    field: 'status',
+    allowNull: true,
+    defaultValue: null,
+  },
+  adminId: {
+    type: DataTypes.STRING,
+    field: 'admin_id',
+    allowNull: true,
+    defaultValue: null,
+  },
+  updatedStatus: {
+    field: 'updated_status',
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null,
+  },
+  reason: {
+    field: 'reason',
+    type: DataTypes.TEXT,
+    allowNull: true,
+    defaultValue: null,
+  },
+  wasSent: {
+    field: 'was_sent',
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
   },
 }
 
@@ -146,6 +203,22 @@ export function fxOrdersFactory(sequelize: Sequelize) {
       paranoid: true,
     }
   );
+
+  vData.associate = function (models: ModelRegistry) {
+    const { modelOrder, modelOrderProducto, modelUser } = models
+    modelOrder.hasMany(modelOrderProducto, {
+      foreignKey: 'orderId',
+      as: 'products',
+    })
+    modelOrder.belongsTo(modelUser, {
+      foreignKey: 'adminId',
+      as: 'admin',
+    })
+    modelOrder.belongsTo(modelUser, {
+      foreignKey: 'userId',
+      as: 'user',
+    })
+  }
 
   vData.prototype.toJSON = function () {
     const values = { ...this.get() };

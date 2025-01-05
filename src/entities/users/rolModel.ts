@@ -1,6 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
+import { ModelRegistry } from '@db/index'
 
 export interface IRolAttributes {
   id?: string
@@ -71,7 +72,13 @@ export function fxRolFactory(sequelize: Sequelize) {
       paranoid: true,
     }
   )
-
+  vRol.associate = function (models: ModelRegistry) {
+    const { modelUser, modelRol } = models
+    modelRol.hasMany(modelUser, {
+      foreignKey: 'rolId',
+      as: 'users',
+    })
+  }
   vRol.prototype.toJSON = function () {
     const values = { ...this.get() }
     delete values.password

@@ -824,6 +824,22 @@
 					}
 				]
 			},
+			"EStatusOrder": {
+				"enum": [
+					"pending",
+					"approve",
+					"decline"
+				],
+				"type": "string"
+			},
+			"EWasSent": {
+				"enum": [
+					0,
+					1,
+					2
+				],
+				"type": "number"
+			},
 			"IOrderAttributes": {
 				"properties": {
 					"id": {
@@ -833,6 +849,17 @@
 						"type": "string"
 					},
 					"dni": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"dniType": {
 						"type": "string"
 					},
 					"nameClient": {
@@ -842,7 +869,8 @@
 						"type": "string"
 					},
 					"observation": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"date": {
 						"type": "string"
@@ -862,6 +890,28 @@
 					"location": {
 						"type": "string"
 					},
+					"status": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/EStatusOrder"
+							}
+						],
+						"nullable": true
+					},
+					"adminId": {
+						"type": "string",
+						"nullable": true
+					},
+					"updatedStatus": {
+						"type": "string"
+					},
+					"reason": {
+						"type": "string",
+						"nullable": true
+					},
+					"wasSent": {
+						"$ref": "#/components/schemas/EWasSent"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -877,16 +927,17 @@
 					}
 				},
 				"required": [
-					"id",
 					"userId",
 					"dni",
+					"dniType",
 					"nameClient",
 					"phoneNumber",
 					"observation",
 					"date",
 					"amount",
 					"amountWithoutTax",
-					"valueTax"
+					"valueTax",
+					"updatedStatus"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -910,6 +961,14 @@
 					"actualPage": {
 						"type": "number",
 						"format": "double"
+					},
+					"status": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/EStatusOrder"
+							}
+						],
+						"nullable": true
 					}
 				},
 				"required": [
@@ -927,6 +986,15 @@
 					"limit": {
 						"type": "number",
 						"format": "double"
+					},
+					"isClient": {
+						"type": "boolean"
+					},
+					"rolType": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -938,22 +1006,27 @@
 						"type": "string"
 					}
 				},
-				"required": [
-					"id"
-				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"Partial_Pick_IOrderAttributes.userId-or-dni-or-observation-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location__": {
+			"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__": {
 				"properties": {
 					"userId": {
 						"type": "string"
 					},
-					"dni": {
+					"dniType": {
 						"type": "string"
 					},
-					"observation": {
-						"type": "string"
+					"dni": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"date": {
 						"type": "string"
@@ -971,6 +1044,12 @@
 						"format": "double"
 					},
 					"location": {
+						"type": "string"
+					},
+					"nameClient": {
+						"type": "string"
+					},
+					"phoneNumber": {
 						"type": "string"
 					}
 				},
@@ -1037,10 +1116,22 @@
 						"$ref": "#/components/schemas/Pick_IOrderAttributes.id_"
 					},
 					{
-						"$ref": "#/components/schemas/Partial_Pick_IOrderAttributes.userId-or-dni-or-observation-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location__"
+						"$ref": "#/components/schemas/Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__"
 					},
 					{
 						"properties": {
+							"status": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/EStatusOrder"
+									}
+								],
+								"nullable": true
+							},
+							"observation": {
+								"type": "string",
+								"nullable": true
+							},
 							"products": {
 								"items": {
 									"$ref": "#/components/schemas/IOrderProductCreationAttributes"
@@ -1262,6 +1353,10 @@
 						"type": "string",
 						"nullable": true
 					},
+					"code": {
+						"type": "string",
+						"nullable": true
+					},
 					"status": {
 						"anyOf": [
 							{
@@ -1406,6 +1501,10 @@
 					},
 					{
 						"properties": {
+							"code": {
+								"type": "string",
+								"nullable": true
+							},
 							"isSalient": {
 								"anyOf": [
 									{
@@ -1453,6 +1552,9 @@
 					"name": {
 						"type": "string"
 					},
+					"code": {
+						"type": "string"
+					},
 					"description": {
 						"type": "string",
 						"nullable": true
@@ -1493,6 +1595,7 @@
 				},
 				"required": [
 					"name",
+					"code",
 					"status"
 				],
 				"type": "object",
@@ -1596,6 +1699,10 @@
 								"type": "string",
 								"nullable": true
 							},
+							"code": {
+								"type": "string",
+								"nullable": true
+							},
 							"status": {
 								"anyOf": [
 									{
@@ -1621,7 +1728,9 @@
 				"enum": [
 					"homePrincipal",
 					"homeSecondary",
-					"homeTertiary"
+					"homeTertiary",
+					"TikTok",
+					"Instagram"
 				],
 				"type": "string"
 			},
@@ -2308,7 +2417,13 @@
 				"tags": [
 					"User"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -2502,6 +2617,73 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/IUserCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/updateTokenPush": {
+			"put": {
+				"operationId": "UpdateTokenPush",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IUserAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "actualizar el token push de un usuario.",
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"tokenPush": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"tokenPush"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -3977,7 +4159,13 @@
 				"tags": [
 					"Order"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -4030,7 +4218,13 @@
 				"tags": [
 					"Order"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
@@ -4048,6 +4242,30 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "rolType",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]
@@ -4172,6 +4390,92 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/IOrderCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/orders/updateStatus/{orderId}": {
+			"put": {
+				"operationId": "UpdateStatus",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IOrderAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Actualizar el estado de una Orden",
+				"tags": [
+					"Order"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "- { status: EStatusOrder, reason: string } nuevo estatus de la orden.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"adminId": {
+										"type": "string",
+										"nullable": true
+									},
+									"reason": {
+										"type": "string",
+										"nullable": true
+									},
+									"status": {
+										"$ref": "#/components/schemas/EStatusOrder"
+									}
+								},
+								"required": [
+									"status"
+								],
+								"type": "object",
+								"description": "- { status: EStatusOrder, reason: string } nuevo estatus de la orden."
 							}
 						}
 					}

@@ -6,6 +6,7 @@ export interface ICategoryAttributes {
   id?: string
   icon?: string | null
   name: string
+  code: string
   description?: string | null
   status: boolean | true
   departmentId?: string | null
@@ -30,13 +31,13 @@ export interface ICategoryFilter {
   departmentId?: string | null
   isClient?: boolean
 }
-export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> & 
-  Partial<Pick<ICategoryAttributes, 'name' >>
-  & {
+export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> &
+  Partial<Pick<ICategoryAttributes, 'name'>> & {
     status: boolean | true
+    code?: string | null
     departmentId?: string | null
     isSalient?: boolean | null
-  };
+  }
 export interface ICategoryInstance
   extends Model<ICategoryAttributes, ICategoryCreationAttributes>,
     ICategoryAttributes {}
@@ -63,19 +64,19 @@ export const vCategoryModelAttributes: SequelizeAttributes<ICategoryAttributes> 
   },
   icon: {
     type: DataTypes.STRING,
-    field: "icon",
-    allowNull: false
+    field: 'icon',
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
-    field: "name",
-    allowNull: false
+    field: 'name',
+    allowNull: false,
   },
   description: {
     type: DataTypes.STRING,
-    field: "description",
+    field: 'description',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   status: {
     type: DataTypes.BOOLEAN,
@@ -98,6 +99,11 @@ export const vCategoryModelAttributes: SequelizeAttributes<ICategoryAttributes> 
       model: 'departments',
       key: 'id',
     },
+  },
+  code: {
+    type: DataTypes.STRING,
+    field: 'code',
+    allowNull: false,
   },
 }
 

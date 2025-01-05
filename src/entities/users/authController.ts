@@ -45,8 +45,6 @@ export class AuthController extends Controller {
     @Body() requestBody: IUserCreationAttributes
   ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
     try {
-      console.log('requestBody.password :>> ', requestBody.password)
-      console.log('requestBody.passwordConfirmation :>> ', requestBody.passwordConfirmation)
       if (!requestBody.password || requestBody.password !== requestBody.passwordConfirmation) {
         this.setStatus(401)
         return {

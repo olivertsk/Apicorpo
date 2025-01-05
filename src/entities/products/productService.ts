@@ -36,9 +36,7 @@ class ProductsService {
           required: false,
         },
       ]
-      console.log('pParams :>> ', pParams);
       if (pParams?.userId) {
-        console.log('deberia cumplirse')
         whereStatement.include.push({
           model: modelFavoriteProduct,
           as: 'favorite',
@@ -229,7 +227,7 @@ class ProductsService {
         }
       }
       if (pParam?.notProductId) {
-        console.log('pParam?.notProductId :>> ', pParam?.notProductId);
+        console.log('pParam?.notProductId :>> ', pParam?.notProductId)
         whereStatement.where = {
           ...whereStatement.where,
           id: { [Op.not]: pParam.notProductId },
@@ -288,6 +286,7 @@ class ProductsService {
       throw error
     }
   }
+
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
       const record = await modelProduct.update(
@@ -304,6 +303,7 @@ class ProductsService {
       throw error
     }
   }
+
   async deleteImages(pId: string): Promise<string | null> {
     try {
       const vImagesForDetele: IProductImageInstance | null = await modelProductImages.findOne({
@@ -321,6 +321,7 @@ class ProductsService {
       throw error
     }
   }
+
   async deleteImagesName(name: string): Promise<string | null> {
     try {
       const vImagesForDetele: IProductImageInstance | null = await modelProductImages.findOne({
@@ -334,6 +335,28 @@ class ProductsService {
         return null
       }
       return nameImages
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async saveMasive(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
+    try {
+      const vResponse: IProductAttributes[] = await modelProduct.bulkCreate(dataParams, {
+        updateOnDuplicate: ['code'],
+      })
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async storeCategories(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
+    try {
+      const vResponse: IProductAttributes[] = await modelProduct.bulkCreate(dataParams, {
+        updateOnDuplicate: ['code'],
+      })
+      return vResponse
     } catch (error) {
       throw error
     }

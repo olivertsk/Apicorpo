@@ -4,6 +4,7 @@ import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserI
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
 import { IPasswordResetAttributes, IPasswordResetCreationAttributes } from './passwordResetModel'
+import { IRolAttributes } from './rolModel'
 
 class UsersService {
   async validate(data: any, userId: string | null = null) {
@@ -41,6 +42,7 @@ class UsersService {
     const dataValidate = modelUser.build(data)
     await dataValidate.validate()
   }
+
   public async get(id: string): Promise<IUserAttributes | null> {
     try {
       const vResponse: IUserAttributes | null = await modelUser.findOne({
@@ -65,6 +67,26 @@ class UsersService {
             model: modelRol,
             as: 'rol',
             required: false,
+          },
+        ],
+      })
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async showRolName(name: string): Promise<IRolAttributes | null> {
+    try {
+      const vResponse: IRolAttributes | null = await modelRol.findOne({
+        where: {
+          name,
+        },
+        include: [
+          {
+            model: modelUser,
+            as: 'users',
+            attributes: ['id', 'name', 'tokenPush'],
           },
         ],
       })
@@ -144,6 +166,31 @@ class UsersService {
           return null
         }
         await vResponse.update(userCreationParams)
+        return vResponse
+      }
+      return null
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async updateToken(
+    tokenPush: string,
+    id: string
+  ): Promise<IUserAttributes | null> {
+    try {
+      if (id) {
+        const vResponse: IUserInstance | null = await modelUser.findOne({
+          where: {
+            id: id,
+          }
+        })
+        if (vResponse === null) {
+          return null
+        }
+        await vResponse.update({
+          tokenPush
+        })
         return vResponse
       }
       return null
@@ -232,6 +279,7 @@ class UsersService {
       throw error
     }
   }
+
   public async getPasswordReset(code: string): Promise<string | null> {
     try {
       const vResponse: IPasswordResetAttributes | null = await modelPasswordReset.findOne({

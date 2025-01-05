@@ -1,5 +1,5 @@
 import { modelCategory } from '@db/index'
-import { type FindOptions } from 'sequelize'
+import { Op, type FindOptions } from 'sequelize'
 import type { ICategoryAttributes, ICategoryCreationAttributes, IResponseAllCategory, ICategoryInstance } from '@entities/categories/categoryModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
@@ -21,6 +21,35 @@ class CategoriesService {
     }
   }
 
+  public async firstOrCreateCode(data: {
+    code: string
+    name: string
+  }): Promise<ICategoryAttributes | null> {
+    try {
+      let vItem: ICategoryAttributes | undefined
+      const vResponse: ICategoryInstance | null = await modelCategory.findOne({
+        where: {
+          [Op.or]: [{ code: data.code }, { name: data.name }],
+        },
+      })
+      if (vResponse) {
+        if (vResponse.code === null) {
+          vResponse.code = data.code
+          await vResponse.save()
+        }
+        vItem = vResponse
+      } else {
+        vItem = await this.create({
+          ...data,
+          status: true,
+          isSalient: false,
+        })
+      }
+      return vItem
+    } catch (error) {
+      throw error
+    }
+  }
   public async all(pParam: any): Promise<IResponseAllCategory> {
     try {
       let whereStatement: FindOptions = {}
@@ -35,13 +64,13 @@ class CategoriesService {
       if ('isSalient' in pParam && pParam.isSalient !== undefined && pParam.isSalient !== null) {
         whereStatement.where = {
           ...whereStatement.where,
-          isSalient: pParam.isSalient
+          isSalient: pParam.isSalient,
         }
       }
       if (pParam?.departmentId) {
         whereStatement.where = {
           ...whereStatement.where,
-          departmentId: pParam.departmentId
+          departmentId: pParam.departmentId,
         }
       }
       const vResponse: ICategoryAttributes[] = await modelCategory.findAll(whereStatement)
@@ -60,7 +89,9 @@ class CategoriesService {
     }
   }
 
-  public async create(viewCreationParams: ICategoryCreationAttributes): Promise<ICategoryAttributes> {
+  public async create(
+    viewCreationParams: ICategoryCreationAttributes
+  ): Promise<ICategoryAttributes> {
     try {
       const vResponse: ICategoryAttributes = await modelCategory.create(viewCreationParams)
       return vResponse
@@ -69,13 +100,16 @@ class CategoriesService {
     }
   }
 
-  public async update(itemCreationParams: ICategoryCreationAttributes, id: string): Promise<ICategoryAttributes | null> {
+  public async update(
+    itemCreationParams: ICategoryCreationAttributes,
+    id: string
+  ): Promise<ICategoryAttributes | null> {
     try {
       if (id) {
         const vResponse: ICategoryInstance | null = await modelCategory.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null
@@ -108,11 +142,11 @@ class CategoriesService {
     try {
       const vImagesName: ICategoryInstance | null = await modelCategory.findOne({
         where: {
-          icon: name
-        }
+          icon: name,
+        },
       })
       await vImagesName?.update({
-        icon: ''
+        icon: '',
       })
     } catch (error) {
       throw error

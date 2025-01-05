@@ -19,7 +19,9 @@ export interface IBannerAttributes {
 export enum EPositionBanner {
   HomePrincipal = 'homePrincipal',
   HomeSecondary = 'homeSecondary',
-  HomeTertiary = 'homeTertiary'
+  HomeTertiary = 'homeTertiary',
+  TikTok = 'TikTok',
+  Instagram = 'Instagram'
 }
 export interface IResponseAllBanner {
   total?: number

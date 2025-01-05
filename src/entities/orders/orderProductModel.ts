@@ -1,6 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
+import { ModelRegistry } from '@db/index'
 
 export interface IOrderProductAttributes {
   id?: string
@@ -136,6 +137,14 @@ export function fxOrderProductFactory(sequelize: Sequelize) {
       paranoid: true,
     }
   )
+
+  vData.associate = function (models: ModelRegistry) {
+    const { modelOrderProducto, modelProduct } = models
+    modelOrderProducto.belongsTo(modelProduct, {
+      foreignKey: 'productId',
+      as: 'product',
+    })
+  }
 
   vData.prototype.toJSON = function () {
     const values = { ...this.get() }
