@@ -18,7 +18,7 @@ import OrderService from '@entities/orders/orderService';
 import { fxI18n } from '@utils/i18n';
 import { IUserAttributes } from '@users/userModel';
 import { IOrderProductCreationAttributes } from './orderProductModel';
-import NotificationService from '@entities/notification/SendNotificationService';
+import SendNotificationService from '@entities/notification/SendNotificationService';
 import UserService from '@users/userService';
  
 @Route('orders')
@@ -59,7 +59,6 @@ export class OrdersController extends Controller {
         }
         params.userId = userJSON?.id
       }
-      console.log('params :>> ', params);
       const vResponse: IOrderAttributes | null = await this.orderService.get(params)
       this.setStatus(200)
       return { data: vResponse }
@@ -152,8 +151,9 @@ export class OrdersController extends Controller {
             url: `/admin/orders?orderId=${vItem.id}`,
           },
         }
-        const tokens = users.map((user: any) => user.tokenPush)
-        await NotificationService.sendNotification([tokens], notificationData)
+        const tokens: string[] = users.map((user: any) => user.tokenPush)
+        const usersId: string[] = users.map((user: any) => user.id)
+        await SendNotificationService.sendNotification(tokens, notificationData, usersId)
       }
       if (products.length) {
         products.forEach((product) => {
@@ -222,7 +222,11 @@ export class OrdersController extends Controller {
             },
           }
           // const tokens = users.map((user: any) => user.tokenPush)
-          await NotificationService.sendNotification([user.tokenPush], notificationData)
+          if (user.id) {
+            await SendNotificationService.sendNotification([user.tokenPush], notificationData, [
+              user.id,
+            ])
+          }
         }
         this.setStatus(200) // set return status 200
         return { success: true, item: vItem }

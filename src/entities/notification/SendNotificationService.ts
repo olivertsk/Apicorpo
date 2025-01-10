@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin'
 import path from 'path'
+import NotificationService from './notificationService'
 
 interface NotificationData {
   title: string
@@ -9,8 +10,9 @@ interface NotificationData {
   }
 }
 
-class NotificationService {
+class SendNotificationService {
   private messaging: admin.messaging.Messaging
+  private notificationService: typeof NotificationService
 
   constructor() {
     const vRutaJSON = path.resolve(
@@ -22,35 +24,51 @@ class NotificationService {
     })
 
     this.messaging = admin.messaging()
+    this.notificationService = NotificationService
   }
 
-  public async sendNotification(tokens: string[], data: NotificationData): Promise<void> {
-    console.log('sendNotification', tokens, data)
+  public async sendNotification(tokens: string[], data: NotificationData, usersId: string[]): Promise<void> {
     try {
-      for (const token of tokens) {
-        try {
-          if (token) {
-            const notification = {
-              token: token,
-              notification: {
-                title: data.title,
-                body: data.body,
-              },
-              data: {
-                url: data.data?.url || '',
-                click_action: 'FCM_PLUGIN_ACTIVITY',
-              },
-              android: {
+      for (const key in tokens) {
+        if (Object.prototype.hasOwnProperty.call(tokens, key)) {
+          const token = tokens[key];
+          const userId = usersId[key];
+          try {
+            if (token) {
+              const notification = {
+                token: token,
                 notification: {
-                  sound: 'default', // O especifica el nombre de un archivo de sonido personalizado
+                  title: data.title,
+                  body: data.body,
                 },
-              },
+                data: {
+                  url: data.data?.url || '',
+                  click_action: 'FCM_PLUGIN_ACTIVITY',
+                },
+                android: {
+                  notification: {
+                    sound: 'default', // O especifica el nombre de un archivo de sonido personalizado
+                  },
+                },
+              }
+              await this.messaging.send(notification)
+              if (userId) {
+                await this.notificationService.create(
+                  {
+                    title: data.title,
+                    body: data.body,
+                    data: JSON.stringify(data.data),
+                    isView: false,
+                    url: data?.data?.url || '',
+                    userId
+                  }
+                )
+              }
             }
-            await this.messaging.send(notification)
+            console.log(`El token ${token} funciona`)
+          } catch (error: any) {
+            console.error(`El token ${token} no está registrado:`, error)
           }
-          console.log(`El token ${token} funciona`)
-        } catch (error: any) {
-          console.error(`El token ${token} no está registrado:`, error)
         }
       }
     } catch (error) {
@@ -59,4 +77,4 @@ class NotificationService {
   }
 }
 
-export default new NotificationService()
+export default new SendNotificationService()

@@ -15,10 +15,7 @@ export async function expressAuthentication(
 }> {
   if (securityName === 'bearerAuth') {
     const authHeader = request?.headers?.authorization
-    console.log('authHeader :>> ', authHeader);
-    console.log('scopes :>> ', scopes);
     if (authHeader) {
-      console.log('viene por auth')
       const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader
       try {
         const auth = jwt.verify(token, AppConfig.JWT_SECRET_KEY) as IUserAttributes
@@ -28,13 +25,11 @@ export async function expressAuthentication(
           rolUser = JSON.parse(JSON.stringify(rolUser))
         }
         if (scopes && scopes?.includes('optional')) {
-          console.log('paso por aca');
           request.auth = auth
           return { token, auth }
         }
         if (scopes && scopes.length > 0 && !scopes.includes(null)) {
           const userRoles = rolUser.rol.name || ''
-          console.log('userRoles :>> ', userRoles);
           const hasRole = scopes.some((scope) => {
             if (scope === "admin") {
               return userRoles === 'admin'

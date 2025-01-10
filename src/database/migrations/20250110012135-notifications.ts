@@ -44,6 +44,12 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
       },
+      url: {
+        type: DataTypes.STRING,
+        field: 'url',
+        allowNull: true,
+        defaultValue: null,
+      },
       userId: {
         type: DataTypes.UUID,
         field: 'user_id',

@@ -19,7 +19,7 @@ import { PaymentMethodsController } from './../entities/paymentMethods/paymentMe
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OrdersController } from './../entities/orders/orderController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { NotificationController } from './../entities/notification/NotificationController';
+import { notificationController } from './../entities/notification/notificationController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MapsController } from './../entities/maps/mapController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -465,6 +465,45 @@ const models: TsoaRoute.Models = {
     "IOrderCreationAttributes": {
         "dataType": "refAlias",
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IOrderAttributes.id_"},{"ref":"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"paymentMethodId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"typePayment":{"dataType":"union","subSchemas":[{"ref":"ETypePaymentMethods"},{"dataType":"enum","enums":[null]}]},"reference":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"EStatusOrder"},{"dataType":"enum","enums":[null]}]},"observation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"products":{"dataType":"array","array":{"dataType":"refAlias","ref":"IOrderProductCreationAttributes"}}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "INotificationAttributes": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "title": {"dataType":"string","required":true},
+            "body": {"dataType":"string","required":true},
+            "data": {"dataType":"string"},
+            "type": {"dataType":"string"},
+            "userId": {"dataType":"string","required":true},
+            "isView": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[false]}]},
+            "createdAt": {"dataType":"datetime"},
+            "updatedAt": {"dataType":"datetime"},
+            "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponseAllNotification": {
+        "dataType": "refObject",
+        "properties": {
+            "total": {"dataType":"double"},
+            "totalPage": {"dataType":"double"},
+            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"INotificationAttributes"},"required":true},
+            "actualPage": {"dataType":"double"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "INotificationFilter": {
+        "dataType": "refObject",
+        "properties": {
+            "pag": {"dataType":"double"},
+            "limit": {"dataType":"double"},
+            "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "userId": {"dataType":"string"},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IMapAttributes": {
@@ -2104,10 +2143,10 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/notifications/test/:tokenPush',
-            ...(fetchMiddlewares<RequestHandler>(NotificationController)),
-            ...(fetchMiddlewares<RequestHandler>(NotificationController.prototype.test)),
+            ...(fetchMiddlewares<RequestHandler>(notificationController)),
+            ...(fetchMiddlewares<RequestHandler>(notificationController.prototype.test)),
 
-            async function NotificationController_test(request: ExRequest, response: ExResponse, next: any) {
+            async function notificationController_test(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     tokenPush: {"in":"path","name":"tokenPush","required":true,"dataType":"string"},
             };
@@ -2118,7 +2157,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new NotificationController();
+                const controller = new notificationController();
 
               await templateService.apiHandler({
                 methodName: 'test',
@@ -2127,6 +2166,70 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/notifications/all',
+            authenticateMiddleware([{"bearerAuth":["optional"]}]),
+            ...(fetchMiddlewares<RequestHandler>(notificationController)),
+            ...(fetchMiddlewares<RequestHandler>(notificationController.prototype.all)),
+
+            async function notificationController_all(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    pQueryParams: {"in":"queries","name":"pQueryParams","required":true,"ref":"INotificationFilter"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new notificationController();
+
+              await templateService.apiHandler({
+                methodName: 'all',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.patch('/notifications/isView',
+            authenticateMiddleware([{"bearerAuth":["optional"]}]),
+            ...(fetchMiddlewares<RequestHandler>(notificationController)),
+            ...(fetchMiddlewares<RequestHandler>(notificationController.prototype.isView)),
+
+            async function notificationController_isView(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    pRequest: {"in":"request","name":"pRequest","required":true,"dataType":"object"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"notificationId":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new notificationController();
+
+              await templateService.apiHandler({
+                methodName: 'isView',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);
@@ -2336,6 +2439,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'downloadProductOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/A2/importardata.php',
+            ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
+            ...(fetchMiddlewares<RequestHandler>(A2IntegrationController.prototype.outputProduct)),
+
+            async function A2IntegrationController_outputProduct(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"dataType":"string","required":true}}},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new A2IntegrationController();
+
+              await templateService.apiHandler({
+                methodName: 'outputProduct',
                 controller,
                 response,
                 next,

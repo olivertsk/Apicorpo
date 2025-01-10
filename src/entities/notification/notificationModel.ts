@@ -9,6 +9,7 @@ export interface INotificationAttributes {
   data?: string
   type?: string
   userId: string
+  url: string
   isView?: boolean | false
   createdAt?: Date
   updatedAt?: Date
@@ -26,13 +27,15 @@ export interface INotificationFilter {
   pag?: number
   limit?: number
   name?: string | null
-  userId?: boolean
+  userId?: string
 }
-export type INotificationCreationAttributes = Pick<INotificationAttributes, 'title' | 'body' | 'userId'> &
-  Partial<Pick<INotificationAttributes, 'id' | 'body' | 'userId'>> & {
+export type INotificationCreationAttributes = Pick<INotificationAttributes, 'title' | 'body'> &
+  Partial<Pick<INotificationAttributes, 'id' | 'body'>> & {
     data?: string
+    url?: string
     type?: string
     isView?: boolean | false
+    userId?: string
   }
 export interface INotificationInstance
   extends Model<INotificationAttributes, INotificationCreationAttributes>,
@@ -76,6 +79,12 @@ export const vNotificationModelAttributes: SequelizeAttributes<INotificationAttr
   type: {
     type: DataTypes.STRING,
     field: 'type',
+    allowNull: true,
+    defaultValue: null,
+  },
+  url: {
+    type: DataTypes.STRING,
+    field: 'url',
     allowNull: true,
     defaultValue: null,
   },

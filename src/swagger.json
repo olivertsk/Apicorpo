@@ -1386,6 +1386,110 @@
 					}
 				]
 			},
+			"INotificationAttributes": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"nullable": true
+					},
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"isView": {
+						"anyOf": [
+							{
+								"type": "boolean"
+							},
+							{
+								"type": "boolean",
+								"enum": [
+									false
+								]
+							}
+						]
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"title",
+					"body",
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllNotification": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/INotificationAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"INotificationFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IMapAttributes": {
 				"properties": {
 					"id": {
@@ -5195,6 +5299,155 @@
 				]
 			}
 		},
+		"/notifications/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IResponseAllNotification"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Notification"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/notifications/isView": {
+			"patch": {
+				"operationId": "IsView",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/INotificationAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Marcar una notificacion como vista.",
+				"tags": [
+					"Notification"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": ": string } - notificationId id de la notificaion.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"notificationId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"notificationId"
+								],
+								"type": "object",
+								"description": ": string } - notificationId id de la notificaion."
+							}
+						}
+					}
+				}
+			}
+		},
 		"/maps/show/{mapId}": {
 			"get": {
 				"operationId": "Get",
@@ -5594,6 +5847,44 @@
 						}
 					}
 				]
+			}
+		},
+		"/A2/importardata.php": {
+			"post": {
+				"operationId": "OutputProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"A2"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"data": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"data"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/departments/show/{departmentId}": {
