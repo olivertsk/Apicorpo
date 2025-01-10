@@ -174,22 +174,45 @@ class UsersService {
     }
   }
 
-  public async updateToken(
-    tokenPush: string,
+  public async updateTokenPush(
+    tokenPush: IUserAttributes['tokenPush'],
     id: string
   ): Promise<IUserAttributes | null> {
     try {
       if (id) {
         const vResponse: IUserInstance | null = await modelUser.findOne({
+          attributes: ['id', 'tokenPush'],
           where: {
             id: id,
-          }
+          },
         })
         if (vResponse === null) {
           return null
         }
         await vResponse.update({
           tokenPush
+        })
+        return vResponse
+      }
+      return null
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async updateToken(tokenPush: string, id: string): Promise<IUserAttributes | null> {
+    try {
+      if (id) {
+        const vResponse: IUserInstance | null = await modelUser.findOne({
+          where: {
+            id: id,
+          },
+        })
+        if (vResponse === null) {
+          return null
+        }
+        await vResponse.update({
+          tokenPush,
         })
         return vResponse
       }

@@ -1,7 +1,4 @@
-import {
-  Body,
-  Controller
-} from 'tsoa'
+import { Body, Controller, Get, Tags, Route, Queries, Post } from 'tsoa'
 import { parse as json2csv } from 'json2csv'
 import OrderService from '@entities/orders/orderService'
 import DepartmentService from '@entities/departments/departmentService'
@@ -11,7 +8,9 @@ import BulkUploadLogService from './BulkUploadLogService'
 import { Item, OrderA2, OrderProductA2 } from './interfaces'
 import { IOrderAttributes } from '@entities/orders/orderModel'
 
-export default class A2IntegrationController extends Controller {
+@Tags('A2')
+@Route('A2')
+export class A2IntegrationController extends Controller {
   private orderService: typeof OrderService
   private departmentService: typeof DepartmentService
   private categoryService: typeof CategoryService
@@ -24,8 +23,21 @@ export default class A2IntegrationController extends Controller {
     this.categoryService = CategoryService
     this.productService = ProductService
   }
+
+  /**
+   * Descarga la orden en formato CSV.
+   * @route GET /archivophp.php
+   * @param {Object} requestBody - El cuerpo de la solicitud.
+   * @param {number | undefined} requestBody.wasSent - Indicador de si fue enviado.
+   * @param {boolean | undefined} requestBody.product - Indicador de producto.
+   * @param {string | undefined} requestBody.fecha - Fecha de la orden.
+   * @returns {Promise<string>} - Retorna un string CSV.
+   * @throws Will throw an error if there is an issue in the process.
+   */
+  @Get('/archivophp.php')
+  // @Hidden()
   public async downloadOrder(
-    @Body() requestBody: { wasSent: number; product: false; fecha: string }
+    @Queries() requestBody: { fecha?: string; wasSent?: number; product?: false }
   ) {
     try {
       requestBody.wasSent = 0
@@ -50,12 +62,12 @@ export default class A2IntegrationController extends Controller {
           impmov: item.valueTax,
           codved: 1,
           nomcli: item.dataUser?.name,
-          telcl1: item.dataUser?.phoneNumber || item.numberClient,
+          telcl1: item.dataUser?.phoneNumber || item.phoneNumber,
           email: item.dataUser.email,
-          dir1: item.direction,
+          dir1: item.location,
           nrocontrol: item?.observation || '1',
           forpag: 1,
-          nit: `${item.dataUser.nit},`,
+          nit: `${item.dataUser.dni},`,
         })
       }
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
@@ -69,8 +81,9 @@ export default class A2IntegrationController extends Controller {
     }
   }
 
+  @Get('/detalle.php')
   public async downloadProductOrder(
-    @Body() requestBody: { wasSent: number; product: boolean; fecha: string }
+    @Queries() requestBody: { wasSent?: number; product?: boolean; fecha?: string }
   ) {
     try {
       requestBody.wasSent = 1
@@ -190,6 +203,7 @@ export default class A2IntegrationController extends Controller {
     return result
   }
 
+  @Post('importardata.php')
   public async outputProduct(@Body() requestBody: { data: string }) {
     try {
       const pData = requestBody.data

@@ -18,6 +18,8 @@ import { fxOrdersFactory } from '@entities/orders/orderModel'
 import { fxOrderProductFactory } from '@entities/orders/orderProductModel'
 import { fxPasswordResetFactory } from '@users/passwordResetModel'
 import { fxBulkUploadLogFactory } from '@entities/integration/BulkUploadLog'
+import { fxPaymentMethodFactory } from '@entities/paymentMethods/paymentMethodModel'
+import { fxNotificationFactory } from '@entities/notification/NotificationModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -42,6 +44,8 @@ export const modelOrder = fxOrdersFactory(sequelize)
 export const modelOrderProducto = fxOrderProductFactory(sequelize)
 export const modelPasswordReset = fxPasswordResetFactory(sequelize)
 export const modelBulkUploadLog = fxBulkUploadLogFactory(sequelize)
+export const modelPaymentMethod = fxPaymentMethodFactory(sequelize)
+export const modelNotification = fxNotificationFactory(sequelize)
 
 const models = {
   modelUser,
@@ -59,6 +63,8 @@ const models = {
   modelOrderProducto,
   modelPasswordReset,
   modelBulkUploadLog,
+  modelPaymentMethod,
+  modelNotification,
 }
 
 export type ModelRegistry = typeof models

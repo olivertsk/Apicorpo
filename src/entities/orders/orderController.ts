@@ -18,7 +18,7 @@ import OrderService from '@entities/orders/orderService';
 import { fxI18n } from '@utils/i18n';
 import { IUserAttributes } from '@users/userModel';
 import { IOrderProductCreationAttributes } from './orderProductModel';
-import NotificationService from '@entities/notification/NotificationService';
+import NotificationService from '@entities/notification/SendNotificationService';
 import UserService from '@users/userService';
  
 @Route('orders')
@@ -33,13 +33,34 @@ export class OrdersController extends Controller {
     this.userService = UserService
   }
 
-  @Security('bearerAuth', ['admin'])
+  @Security('bearerAuth', ['optional'])
   @Get('/show/{orderId}')
   public async get(
-    @Path() orderId: string
+    @Path() orderId: string,
+    @Request() request: { auth: IUserAttributes }
   ): Promise<{ data: IOrderAttributes | null; message?: string }> {
     try {
-      const vResponse: IOrderAttributes | null = await this.orderService.get(orderId)
+      if (!request?.auth?.id) {
+        this.setStatus(500)
+        return { data: null, message: 'Token invalido' }
+      }
+      const params: { orderId: string; isClient: boolean; userId: string | undefined } = {
+        orderId,
+        isClient: true,
+        userId: '',
+      }
+      if (params?.isClient) {
+        params.userId = request?.auth?.id
+      } else {
+        const user = await this.userService.getRol(request.auth.id)
+        const userJSON = JSON.parse(JSON.stringify(user))
+        if (userJSON?.rol.name === 'admin') {
+          params.isClient = false
+        }
+        params.userId = userJSON?.id
+      }
+      console.log('params :>> ', params);
+      const vResponse: IOrderAttributes | null = await this.orderService.get(params)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -65,7 +86,7 @@ export class OrdersController extends Controller {
     message?: string
   }> {
     try {
-      console.log('request?.auth?.id :>> ', request?.auth?.id);
+      console.log('request?.auth?.id :>> ', request?.auth?.id)
       if (!request?.auth?.id) {
         this.setStatus(500)
         return { data: [], message: 'Token invalido' }
@@ -118,6 +139,8 @@ export class OrdersController extends Controller {
       if (!requestBody?.status) {
         requestBody.status = EStatusOrder.Pending
       }
+      await this.orderService.validate(requestBody)
+      const vItem: IOrderAttributes | null = await this.orderService.create(requestBody)
       const rol = await this.userService.showRolName('admin')
       if (rol) {
         const rolJSON = JSON.parse(JSON.stringify(rol))
@@ -125,12 +148,13 @@ export class OrdersController extends Controller {
         const notificationData = {
           title: 'Tienes una nueva order',
           body: 'Alguien realizo una compra',
+          data: {
+            url: `/admin/orders?orderId=${vItem.id}`,
+          },
         }
         const tokens = users.map((user: any) => user.tokenPush)
         await NotificationService.sendNotification([tokens], notificationData)
       }
-      await this.orderService.validate(requestBody)
-      const vItem: IOrderAttributes | null = await this.orderService.create(requestBody)
       if (products.length) {
         products.forEach((product) => {
           product.orderId = vItem.id
@@ -162,7 +186,6 @@ export class OrdersController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -194,6 +217,9 @@ export class OrdersController extends Controller {
           const notificationData = {
             title: titleNotification,
             body: body?.reason || '',
+            data: {
+              url: `/profile/orders?orderId=${vItem.id}`,
+            },
           }
           // const tokens = users.map((user: any) => user.tokenPush)
           await NotificationService.sendNotification([user.tokenPush], notificationData)

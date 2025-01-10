@@ -1,4 +1,4 @@
-import sequelize, { modelOrder, modelOrderProducto, modelProduct, modelUser } from '@db/index'
+import sequelize, { modelOrder, modelOrderProducto, modelPaymentMethod, modelProduct, modelUser } from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
 import { type IOrderAttributes, type IOrderCreationAttributes, type IResponseAllOrder, type IOrderInstance, EStatusOrder, EWasSent } from '@entities/orders/orderModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
@@ -9,12 +9,21 @@ class OrdersService {
     const dataValidate = modelOrder.build(data)
     await dataValidate.validate()
   }
-  public async get(id: string): Promise<IOrderAttributes | null> {
+  public async get(data: {
+    orderId: string
+    isClient: boolean
+    userId: string | undefined
+  }): Promise<IOrderAttributes | null> {
     try {
+      const whereCondition: any = {
+        id: data.orderId,
+      }
+
+      if (data.isClient && data.userId) {
+        whereCondition.userId = data.userId
+      }
       const vResponse: IOrderAttributes | null = await modelOrder.findOne({
-        where: {
-          id,
-        },
+        where: whereCondition,
         include: [
           {
             model: modelOrderProducto,
@@ -25,14 +34,31 @@ class OrdersService {
                 as: 'product',
               },
             ],
+            required: false,
           },
           {
             model: modelUser,
             as: 'user',
+            required: false,
           },
           {
             model: modelUser,
             as: 'admin',
+            required: false,
+          },
+          {
+            model: modelPaymentMethod,
+            as: 'method',
+            attributes: [
+              'type',
+              'name',
+              'dni',
+              'email',
+              'numberAccount',
+              'phoneNumber',
+              'accountType',
+            ],
+            required: false,
           },
         ],
       })
@@ -171,41 +197,46 @@ class OrdersService {
     }
   }
   public async downloadOrder(param: {
-    wasSent: number
-    product: boolean
-    fecha: string
+    fecha?: string
+    wasSent?: number
+    product?: boolean
   }): Promise<IOrderAttributes[]> {
     try {
-      const day = new Date(param.fecha).getDate()
-      const month = new Date(param.fecha).getMonth() + 1 // getMonth() is zero-based
-      const year = new Date(param.fecha).getFullYear()
+      let day
+      let month
+      let year
+      if (param?.fecha) {
+        day = new Date(param.fecha).getDate()
+        month = new Date(param.fecha).getMonth() + 1
+        year = new Date(param.fecha).getFullYear()
+      }
+      const whereCondition: any = {
+        ...(param.fecha && {
+          [Op.and]: [
+            sequelize.where(sequelize.fn('MONTH', sequelize.col('orders.createdAt')), month),
+            sequelize.where(sequelize.fn('DAY', sequelize.col('orders.createdAt')), day),
+            sequelize.where(sequelize.fn('YEAR', sequelize.col('orders.createdAt')), year),
+          ],
+        }),
+        ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
+        ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
+      }
+
+      // Actualizar el campo wasSent a 1 en todas las órdenes que cumplen la condición
+      await modelOrder.update({ wasSent: 1 }, { where: whereCondition })
       const orders: IOrderAttributes[] = await modelOrder.findAll({
         attributes: [
           'id',
           'userId',
-          'numberClient',
-          'direction',
-          'referencePoint',
+          'phoneNumber',
+          'location',
           'observation',
-          'time',
-          'type',
           'amount',
           'amountWithoutTax',
           'valueTax',
           'createdAt',
-          'tax',
         ],
-        where: {
-          ...(param.fecha && {
-            [Op.and]: [
-              sequelize.where(sequelize.fn('MONTH', sequelize.col('createdAt')), month),
-              sequelize.where(sequelize.fn('DAY', sequelize.col('createdAt')), day),
-              sequelize.where(sequelize.fn('YEAR', sequelize.col('createdAt')), year),
-            ],
-          }),
-          ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
-          ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
-        },
+        where: whereCondition,
         include: [
           {
             model: modelOrderProducto,
@@ -215,7 +246,7 @@ class OrdersService {
           {
             model: modelUser,
             as: 'dataUser',
-            attributes: ['id', 'name', 'email', 'dni', 'nit', 'phoneNumber', 'lastName'],
+            attributes: ['id', 'name', 'email', 'dni', 'phoneNumber', 'lastName'],
           },
           // {
           //   model: Payment,
@@ -241,6 +272,10 @@ class OrdersService {
         ],
         order: [['id', 'DESC']],
       })
+      await modelOrder.update(
+        { wasSent: param?.product ? EWasSent.sentProductOrder : EWasSent.sentOrder },
+        { where: whereCondition }
+      )
       return orders
     } catch (error) {
       throw error

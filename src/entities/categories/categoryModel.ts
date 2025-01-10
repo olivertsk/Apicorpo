@@ -6,7 +6,7 @@ export interface ICategoryAttributes {
   id?: string
   icon?: string | null
   name: string
-  code: string
+  code?: string | null
   description?: string | null
   status: boolean | true
   departmentId?: string | null

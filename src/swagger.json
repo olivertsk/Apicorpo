@@ -824,6 +824,217 @@
 					}
 				]
 			},
+			"ETypePaymentMethods": {
+				"enum": [
+					"cash",
+					"bank",
+					"zelle",
+					"pago movil"
+				],
+				"type": "string"
+			},
+			"IPaymentMethodAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/ETypePaymentMethods"
+					},
+					"name": {
+						"type": "string"
+					},
+					"dni": {
+						"type": "string",
+						"nullable": true
+					},
+					"email": {
+						"type": "string",
+						"nullable": true
+					},
+					"numberAccount": {
+						"type": "string",
+						"nullable": true
+					},
+					"phoneNumber": {
+						"type": "string",
+						"nullable": true
+					},
+					"accountType": {
+						"type": "string",
+						"nullable": true
+					},
+					"status": {
+						"anyOf": [
+							{
+								"type": "boolean"
+							},
+							{
+								"type": "boolean",
+								"enum": [
+									true
+								]
+							}
+						]
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"type",
+					"name",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllPaymentMethod": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IPaymentMethodAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaymentMethodFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"type": {
+						"$ref": "#/components/schemas/ETypePaymentMethods"
+					},
+					"isClient": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IPaymentMethodAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Partial_Pick_IPaymentMethodAttributes.name__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"ETypePaymentMethods.Cash": {
+				"enum": [
+					"cash"
+				],
+				"type": "string"
+			},
+			"IPaymentMethodCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IPaymentMethodAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IPaymentMethodAttributes.name__"
+					},
+					{
+						"properties": {
+							"phoneNumber": {
+								"type": "string",
+								"nullable": true
+							},
+							"type": {
+								"anyOf": [
+									{
+										"$ref": "#/components/schemas/ETypePaymentMethods"
+									},
+									{
+										"$ref": "#/components/schemas/ETypePaymentMethods.Cash"
+									}
+								]
+							},
+							"status": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											true
+										]
+									}
+								]
+							},
+							"accountType": {
+								"type": "string",
+								"nullable": true
+							},
+							"numberAccount": {
+								"type": "string",
+								"nullable": true
+							},
+							"email": {
+								"type": "string",
+								"nullable": true
+							},
+							"dni": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"required": [
+							"type",
+							"status"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"EStatusOrder": {
 				"enum": [
 					"pending",
@@ -911,6 +1122,22 @@
 					},
 					"wasSent": {
 						"$ref": "#/components/schemas/EWasSent"
+					},
+					"reference": {
+						"type": "string",
+						"nullable": true
+					},
+					"typePayment": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ETypePaymentMethods"
+							}
+						],
+						"nullable": true
+					},
+					"paymentMethodId": {
+						"type": "string",
+						"nullable": true
 					},
 					"createdAt": {
 						"type": "string",
@@ -1120,6 +1347,22 @@
 					},
 					{
 						"properties": {
+							"paymentMethodId": {
+								"type": "string",
+								"nullable": true
+							},
+							"typePayment": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ETypePaymentMethods"
+									}
+								],
+								"nullable": true
+							},
+							"reference": {
+								"type": "string",
+								"nullable": true
+							},
 							"status": {
 								"allOf": [
 									{
@@ -1553,7 +1796,8 @@
 						"type": "string"
 					},
 					"code": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"description": {
 						"type": "string",
@@ -1595,7 +1839,6 @@
 				},
 				"required": [
 					"name",
-					"code",
 					"status"
 				],
 				"type": "object",
@@ -3060,6 +3303,75 @@
 				}
 			}
 		},
+		"/auth/updateTokenPush": {
+			"patch": {
+				"operationId": "UpdateTokenPush",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IUserAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Actualizar el token push.",
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "- tokenPush en formato texto a actualizar.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"tokenPush": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"tokenPush"
+								],
+								"type": "object",
+								"description": "- tokenPush en formato texto a actualizar."
+							}
+						}
+					}
+				}
+			}
+		},
 		"/auth/passwordReset": {
 			"post": {
 				"operationId": "PasswordReset",
@@ -4125,6 +4437,315 @@
 				]
 			}
 		},
+		"/paymentMethods/show/{paymentMethodId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IPaymentMethodAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethod"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "paymentMethodId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/paymentMethods/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IPaymentMethodAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllPaymentMethod"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"PaymentMethod"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "type",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ETypePaymentMethods"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/paymentMethods/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IPaymentMethodAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethod"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IPaymentMethodCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/paymentMethods/update/{paymentMethodId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IPaymentMethodAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethod"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "paymentMethodId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IPaymentMethodCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/paymentMethods/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"PaymentMethod"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/orders/show/{orderId}": {
 			"get": {
 				"operationId": "Get",
@@ -4162,7 +4783,7 @@
 				"security": [
 					{
 						"bearerAuth": [
-							"admin"
+							"optional"
 						]
 					}
 				],
@@ -4532,6 +5153,48 @@
 				]
 			}
 		},
+		"/notifications/test/{tokenPush}": {
+			"get": {
+				"operationId": "Test",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notification"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tokenPush",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/maps/show/{mapId}": {
 			"get": {
 				"operationId": "Get",
@@ -4828,6 +5491,106 @@
 						"required": true,
 						"schema": {
 							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/A2/archivophp.php": {
+			"get": {
+				"operationId": "DownloadOrder",
+				"responses": {
+					"200": {
+						"description": "- Retorna un string CSV.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"description": "Descarga la orden en formato CSV.",
+				"tags": [
+					"A2"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "product",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"enum": [
+								false
+							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "wasSent",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "fecha",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/A2/detalle.php": {
+			"get": {
+				"operationId": "DownloadProductOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"A2"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "fecha",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "product",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "wasSent",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]

@@ -239,6 +239,39 @@ export class AuthController extends Controller {
   }
 
   /**
+   * Actualizar el token push.
+   * @param requestBody - tokenPush en formato texto a actualizar.
+   * @returns boolean.
+   */
+  @Security('bearerAuth', ['optional'])
+  @SuccessResponse('200', 'Update') // Custom success response
+  @Patch('/updateTokenPush')
+  public async updateTokenPush(
+    @Request() pRequest: { auth: IUserAttributes },
+    @Body() requestBody: { tokenPush: string }
+  ): Promise<{ success: boolean; item: IUserAttributes | null; message?: string }> {
+    try {
+      const userId = pRequest.auth.id
+      if (!userId) {
+        this.setStatus(404) // set return status 404
+        return { success: false, item: null, message: fxI18n.__('item_not_found') }
+      }
+      const vItem: IUserAttributes | null = await this.userService.updateTokenPush(
+        requestBody.tokenPush,
+        userId
+      )
+      if (vItem) {
+        this.setStatus(200) // set return status 200
+        return { success: true, item: vItem }
+      }
+      this.setStatus(404) // set return status 404
+      return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
    * Obtiene los detalles del usuario autenticado.
    * @param pRequestBody - Solicitud HTTP con información de autenticación.
    * @returns Detalles del usuario autenticado.
@@ -320,16 +353,16 @@ export class AuthController extends Controller {
           vUser.id
         )
         if (vItem) {
-          console.log('deberia responder 200');
+          console.log('deberia responder 200')
           this.setStatus(200) // HTTP 200 OK
           return { success: true, user: null }
         }
       }
-      console.log('no consiguio usuario');
+      console.log('no consiguio usuario')
       this.setStatus(401)
       return { success: false, user: null, message: fxI18n.__('invalid_password') }
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }

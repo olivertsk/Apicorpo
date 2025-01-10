@@ -1,61 +1,100 @@
-import * as admin from 'firebase-admin'
-import path from 'path'
+import { modelNotification } from '@db/index'
+import { type FindOptions } from 'sequelize'
+import { type INotificationAttributes, type INotificationCreationAttributes, type IResponseAllNotification, type INotificationInstance } from '@entities/notification/NotificationModel'
+import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
-interface NotificationData {
-  title: string
-  body: string
-  data?: string
-}
-
-class NotificationService {
-  private messaging: admin.messaging.Messaging
-
-  constructor() {
-    const vRutaJSON = path.resolve(
-      __dirname,
-      '../../duque-portafolio-firebase-adminsdk-v1arh-a9fb6dfa05.json'
-    )
-    console.log('vRutaJSON :>> ', vRutaJSON);
-    admin.initializeApp({
-      credential: admin.credential.cert(vRutaJSON),
-    })
-
-    this.messaging = admin.messaging()
+class NotificationsService {
+  async validate(data: any) {
+    const dataValidate = modelNotification.build(data)
+    await dataValidate.validate()
+  }
+  public async get(id: string): Promise<INotificationAttributes | null> {
+    try {
+      const vResponse: INotificationAttributes | null = await modelNotification.findOne({
+        where: {
+          id,
+        },
+      })
+      return vResponse
+    } catch (error) {
+      throw error
+    }
   }
 
-  public async sendNotification(tokens: string[], data: NotificationData): Promise<void> {
-    console.log('sendNotification', tokens, data)
+  public async all(pParam: any): Promise<IResponseAllNotification> {
     try {
-      for (const token of tokens) {
-        try {
-          if (token) {
-            const notification = {
-              token: token,
-              notification: {
-                title: data.title,
-                body: data.body,
-              },
-              data: {
-                // data: data?.data || '',
-                click_action: 'FCM_PLUGIN_ACTIVITY',
-              },
-              android: {
-                notification: {
-                  sound: 'default', // O especifica el nombre de un archivo de sonido personalizado
-                },
-              },
-            }
-            await this.messaging.send(notification)
-          }
-          console.log(`El token ${token} funciona`)
-        } catch (error: any) {
-          console.error(`El token ${token} no está registrado:`, error)
-        }
+      let whereStatement: FindOptions = {}
+      whereStatement = fxPaginate(pParam, whereStatement)
+      whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement.where = fxSearchILike(
+        pParam,
+        whereStatement,
+        pParam?.typeSearch || 'name',
+        modelNotification.name
+      )
+      whereStatement.where = {
+        ...whereStatement.where,
+        userId: pParam.userId
       }
+      const vResponse: INotificationAttributes[] = await modelNotification.findAll(whereStatement)
+      if (Number(pParam?.pag)) {
+        const vResponsePaginate: IResponseAllNotification = await fxReponseServices(
+          pParam,
+          whereStatement,
+          modelNotification.name,
+          vResponse
+        )
+        return vResponsePaginate
+      }
+      return { data: vResponse }
     } catch (error) {
-      console.error('Error al enviar la notificación:', error)
+      throw error
+    }
+  }
+
+  public async create(viewCreationParams: INotificationCreationAttributes): Promise<INotificationAttributes> {
+    try {
+      const vResponse: INotificationAttributes = await modelNotification.create(viewCreationParams)
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async update(itemCreationParams: INotificationCreationAttributes, id: string): Promise<INotificationAttributes | null> {
+    try {
+      if (id) {
+        const vResponse: INotificationInstance | null = await modelNotification.findOne({
+          where: {
+            id: id
+          }
+        })
+        if (vResponse === null) {
+          return null
+        }
+        await vResponse.update(itemCreationParams)
+        return vResponse
+      }
+      return null
+    } catch (error) {
+      throw error
+    }
+  }
+  async softDeleteRecord(pId: string): Promise<boolean> {
+    try {
+      const record = await modelNotification.update(
+        { deletedAt: new Date() },
+        {
+          where: { id: pId },
+        }
+      )
+      if (!record) {
+        return false
+      }
+      return true
+    } catch (error) {
+      throw error
     }
   }
 }
-
-export default new NotificationService()
+export default new NotificationsService()

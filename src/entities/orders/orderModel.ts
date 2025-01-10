@@ -4,6 +4,7 @@ import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { IOrderProductCreationAttributes } from './orderProductModel';
 import { ModelRegistry } from '@db/index';
+import { ETypePaymentMethods, IPaymentMethodInstance } from '@entities/paymentMethods/paymentMethodModel';
 
 export enum EWasSent {
   noSent = 0,
@@ -28,6 +29,9 @@ export interface IOrderAttributes {
   updatedStatus: string
   reason?: string | null
   wasSent?: EWasSent
+  reference?: string | null
+  typePayment?: ETypePaymentMethods | null
+  paymentMethodId?: IPaymentMethodInstance['id'] | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
@@ -72,6 +76,9 @@ export type IOrderCreationAttributes = Pick<IOrderAttributes, 'id'> &
     products?: IOrderProductCreationAttributes[]
     observation?: string | null
     status?: EStatusOrder | null
+    reference?: string | null
+    typePayment?: ETypePaymentMethods | null
+    paymentMethodId?: IPaymentMethodInstance['id'] | null
   }
 
 export interface IOrderInstance
@@ -188,6 +195,24 @@ export const vOrdersModelAttributes: SequelizeAttributes<IOrderAttributes> = {
     allowNull: true,
     defaultValue: 0,
   },
+  reference: {
+    type: DataTypes.STRING,
+    field: 'reference',
+    defaultValue: true,
+    allowNull: true,
+  },
+  typePayment: {
+    type: DataTypes.STRING,
+    field: 'type_payment',
+    defaultValue: true,
+    allowNull: true,
+  },
+  paymentMethodId: {
+    type: DataTypes.UUID,
+    field: 'payment_method_id',
+    defaultValue: true,
+    allowNull: true,
+  },
 }
 
 export function fxOrdersFactory(sequelize: Sequelize) {
@@ -205,7 +230,7 @@ export function fxOrdersFactory(sequelize: Sequelize) {
   );
 
   vData.associate = function (models: ModelRegistry) {
-    const { modelOrder, modelOrderProducto, modelUser } = models
+    const { modelOrder, modelOrderProducto, modelUser, modelPaymentMethod } = models
     modelOrder.hasMany(modelOrderProducto, {
       foreignKey: 'orderId',
       as: 'products',
@@ -217,6 +242,14 @@ export function fxOrdersFactory(sequelize: Sequelize) {
     modelOrder.belongsTo(modelUser, {
       foreignKey: 'userId',
       as: 'user',
+    })
+    modelOrder.belongsTo(modelUser, {
+      foreignKey: 'userId',
+      as: 'dataUser',
+    })
+    modelOrder.belongsTo(modelPaymentMethod, {
+      foreignKey: 'paymentMethodId',
+      as: 'method',
     })
   }
 
