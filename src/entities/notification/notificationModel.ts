@@ -28,6 +28,7 @@ export interface INotificationFilter {
   limit?: number
   name?: string | null
   userId?: string
+  isView?: boolean
 }
 export type INotificationCreationAttributes = Pick<INotificationAttributes, 'title' | 'body'> &
   Partial<Pick<INotificationAttributes, 'id' | 'body'>> & {

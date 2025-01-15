@@ -196,6 +196,9 @@
 					"tokenPush": {
 						"type": "string"
 					},
+					"receiveNotification": {
+						"type": "boolean"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -214,7 +217,8 @@
 					"email",
 					"dniType",
 					"password",
-					"rolId"
+					"rolId",
+					"receiveNotification"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -302,6 +306,9 @@
 					},
 					{
 						"properties": {
+							"receiveNotification": {
+								"type": "boolean"
+							},
 							"rolId": {
 								"type": "string",
 								"nullable": true
@@ -311,7 +318,8 @@
 								"nullable": true
 							},
 							"avatar": {
-								"type": "string"
+								"type": "string",
+								"nullable": true
 							},
 							"passwordConfirmation": {
 								"type": "string",
@@ -341,6 +349,9 @@
 					},
 					{
 						"properties": {
+							"receiveNotification": {
+								"type": "boolean"
+							},
 							"phoneNumber": {
 								"type": "string",
 								"nullable": true
@@ -1407,6 +1418,9 @@
 					"userId": {
 						"type": "string"
 					},
+					"url": {
+						"type": "string"
+					},
 					"isView": {
 						"anyOf": [
 							{
@@ -1437,7 +1451,8 @@
 				"required": [
 					"title",
 					"body",
-					"userId"
+					"userId",
+					"url"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1485,6 +1500,9 @@
 					},
 					"userId": {
 						"type": "string"
+					},
+					"isView": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -3600,6 +3618,44 @@
 				}
 			}
 		},
+		"/auth/deleted": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"201": {
+						"description": "User Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar mi usuario.",
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/products/show/{productId}": {
 			"get": {
 				"operationId": "Get",
@@ -5374,6 +5430,14 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isView",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]

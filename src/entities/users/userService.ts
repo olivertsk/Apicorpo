@@ -275,6 +275,7 @@ class UsersService {
 
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
+      console.log('pId :>> ', pId);
       const record = await modelUser.update(
         { deletedAt: new Date() },
         {
@@ -286,6 +287,7 @@ class UsersService {
       }
       return true
     } catch (error) {
+      console.log('error :>> ', error);
       throw error
     }
   }

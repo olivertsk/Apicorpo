@@ -10,6 +10,7 @@ import {
   Security,
   Patch,
   Put,
+  Delete,
   // Queries
 } from 'tsoa'
 import { IUserAttributes, IUserCreationAttributes, IUserUpdatenAttributes } from '@users/userModel'
@@ -363,6 +364,35 @@ export class AuthController extends Controller {
       return { success: false, user: null, message: fxI18n.__('invalid_password') }
     } catch (error) {
       console.log('error :>> ', error)
+      throw error
+    }
+  }
+
+  /**
+   * @summary Eliminar mi usuario.
+   * @param {string} key - ID de usuario a eliminar.
+   * @param pRequestBody - Solicitud HTTP con información de autenticación.
+   * @returns {Promise<{ success: boolean, message?: string }>}
+   */
+  @Delete('/deleted')
+  @Security('bearerAuth')
+  @SuccessResponse('201', 'User Found')
+  public async softDeleteRecord(
+    @Request() pRequestBody: { auth: IUserAttributes }
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      if (!pRequestBody?.auth?.id) {
+        this.setStatus(401)
+        return { success: false }
+      }
+       const vResponse = await this.userService.softDeleteRecord(pRequestBody?.auth?.id)
+       if (vResponse) {
+         this.setStatus(200)
+         return { success: true }
+       }
+       this.setStatus(400)
+       return { success: false, message: fxI18n.__('item_not_found') }
+    } catch (error) {
       throw error
     }
   }

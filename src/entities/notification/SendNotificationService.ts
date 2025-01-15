@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin'
 import path from 'path'
 import NotificationService from './notificationService'
+import UserService from '@users/userService'
 
 interface NotificationData {
   title: string
@@ -13,7 +14,7 @@ interface NotificationData {
 class SendNotificationService {
   private messaging: admin.messaging.Messaging
   private notificationService: typeof NotificationService
-
+  private user: typeof UserService
   constructor() {
     const vRutaJSON = path.resolve(
       __dirname,
@@ -25,14 +26,24 @@ class SendNotificationService {
 
     this.messaging = admin.messaging()
     this.notificationService = NotificationService
+    this.user = UserService
   }
 
-  public async sendNotification(tokens: string[], data: NotificationData, usersId: string[]): Promise<void> {
+  public async sendNotification(
+    tokens: string[],
+    data: NotificationData,
+    usersId: string[]
+  ): Promise<void> {
     try {
       for (const key in tokens) {
         if (Object.prototype.hasOwnProperty.call(tokens, key)) {
-          const token = tokens[key];
-          const userId = usersId[key];
+          const token = tokens[key]
+          const userId = usersId[key]
+          let receiveNotification = true
+          const user = await this.user.get(userId)
+          if (user)  {
+            receiveNotification = user.receiveNotification
+          }
           try {
             if (token) {
               const notification = {
@@ -51,18 +62,18 @@ class SendNotificationService {
                   },
                 },
               }
-              await this.messaging.send(notification)
+              if (receiveNotification) {
+                await this.messaging.send(notification)
+              }
               if (userId) {
-                await this.notificationService.create(
-                  {
-                    title: data.title,
-                    body: data.body,
-                    data: JSON.stringify(data.data),
-                    isView: false,
-                    url: data?.data?.url || '',
-                    userId
-                  }
-                )
+                await this.notificationService.create({
+                  title: data.title,
+                  body: data.body,
+                  data: JSON.stringify(data.data),
+                  isView: false,
+                  url: data?.data?.url || '',
+                  userId,
+                })
               }
             }
             console.log(`El token ${token} funciona`)

@@ -103,7 +103,8 @@ export const vCategoryModelAttributes: SequelizeAttributes<ICategoryAttributes> 
   code: {
     type: DataTypes.STRING,
     field: 'code',
-    allowNull: false,
+    defaultValue: null,
+    allowNull: true,
   },
 }
 

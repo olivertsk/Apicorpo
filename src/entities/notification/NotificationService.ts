@@ -37,6 +37,12 @@ class NotificationsService {
         ...whereStatement.where,
         userId: pParam.userId,
       }
+      if ('isView' in pParam) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          isView: pParam.isView,
+        }
+      }
       const vResponse: INotificationAttributes[] = await modelNotification.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllNotification = await fxReponseServices(

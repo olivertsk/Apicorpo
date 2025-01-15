@@ -19,6 +19,7 @@ export interface IUserAttributes {
   status?: boolean
   location?: string | null
   tokenPush?: string
+  receiveNotification: boolean
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
@@ -39,9 +40,10 @@ export interface IUserFilter {
 export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'password'> &
   Partial<Pick<IUserAttributes, 'name'>> & {
     passwordConfirmation?: string | null
-    avatar?: string
+    avatar?: string | null
     location?: string | null
     rolId?: IRolAttributes['id'] | null
+    receiveNotification?: boolean
   }
 export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
   Partial<Pick<IUserAttributes, 'name'>> & {
@@ -50,7 +52,8 @@ export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
     lastName?: string | null
     dni?: number | null
     dniType: string
-    phoneNumber?: string | null
+    phoneNumber?: string | null,
+    receiveNotification?: boolean
   }
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
@@ -162,6 +165,12 @@ export const vUserModelAttributes: SequelizeAttributes<IUserAttributes> = {
   tokenPush: {
     type: DataTypes.STRING,
     field: 'token_push',
+    defaultValue: true,
+    allowNull: true,
+  },
+  receiveNotification: {
+    type: DataTypes.BOOLEAN,
+    field: 'receive_notification',
     defaultValue: true,
     allowNull: true,
   },
