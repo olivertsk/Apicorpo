@@ -23,5 +23,6 @@
 	"not_include_product": "No tiene productos para comprar",
 	"invalid_user": "Usuario no encontrado",
 	"email_send": "Correo enviado",
-	"Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.dni\":{\"message\":\"invalid_string_value\",\"value\":null}},{\"requestBody.dni\":{\"message\":\"invalid_float_number\",\"value\":null}}]": "Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.dni\":{\"message\":\"invalid_string_value\",\"value\":null}},{\"requestBody.dni\":{\"message\":\"invalid_float_number\",\"value\":null}}]"
+	"Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.dni\":{\"message\":\"invalid_string_value\",\"value\":null}},{\"requestBody.dni\":{\"message\":\"invalid_float_number\",\"value\":null}}]": "Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.dni\":{\"message\":\"invalid_string_value\",\"value\":null}},{\"requestBody.dni\":{\"message\":\"invalid_float_number\",\"value\":null}}]",
+	"invalid_boolean_value": "invalid_boolean_value"
 }

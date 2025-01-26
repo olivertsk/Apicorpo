@@ -12,10 +12,10 @@ export interface IRolAttributes {
 }
 
 export interface IResponseAllRol {
-  total: number
-  totalPage: number
+  total?: number
+  totalPage?: number
   data: IRolAttributes[]
-  actualPage: number
+  actualPage?: number
 }
 
 export interface IRolFilter {

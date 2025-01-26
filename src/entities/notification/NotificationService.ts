@@ -1,6 +1,6 @@
 import { modelNotification } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type INotificationAttributes, type INotificationCreationAttributes, type IResponseAllNotification, type INotificationInstance } from '@entities/notification/NotificationModel'
+import { type INotificationAttributes, type INotificationCreationAttributes, type IResponseAllNotification, type INotificationInstance } from '@entities/notification/notificationModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 import { Transaction } from 'sequelize'
 

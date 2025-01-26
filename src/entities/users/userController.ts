@@ -19,6 +19,7 @@ import {
   IUserCreationAttributes,
   IResponseAllUser,
   IUserFilter,
+  IUserUpdatenAttributes,
 } from '@users/userModel'
 import UsersService from '@users/userService'
 import { fxI18n } from '@utils/i18n'
@@ -96,15 +97,13 @@ export class UsersController extends Controller {
   @Put('/update/{userId}')
   public async update(
     @Path() userId: string,
-    @Body() requestBody: IUserCreationAttributes
+    @Body() requestBody: IUserUpdatenAttributes
   ): Promise<{ success: boolean; item: IUserAttributes | null; message?: string }> {
     try {
       await this.userService.validate(requestBody, userId)
-      if (requestBody.password) {
-        const vHashedPassword = await argon2.hash(requestBody.password)
-        requestBody.password = vHashedPassword
+      if ('password' in requestBody) {
+        delete requestBody.password
       }
-      requestBody.passwordConfirmation && delete requestBody.passwordConfirmation
       const vItem: IUserAttributes | null = await this.userService.update(requestBody, userId)
       if (vItem) {
         this.setStatus(200) // set return status 200

@@ -9,6 +9,8 @@ import { ViewsController } from './../entities/views/viewController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UsersController } from './../entities/users/userController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { RolsController } from './../entities/users/rolController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../entities/users/authController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ProductsController } from './../entities/products/productController';
@@ -115,7 +117,7 @@ const models: TsoaRoute.Models = {
             "status": {"dataType":"boolean"},
             "location": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "tokenPush": {"dataType":"string"},
-            "receiveNotification": {"dataType":"boolean","required":true},
+            "receiveNotification": {"dataType":"boolean"},
             "createdAt": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
             "deletedAt": {"dataType":"datetime"},
@@ -139,6 +141,8 @@ const models: TsoaRoute.Models = {
         "properties": {
             "pag": {"dataType":"double"},
             "limit": {"dataType":"double"},
+            "email": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "role": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": false,
@@ -159,14 +163,67 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IUserAttributes.id-or-email-or-password_"},{"ref":"Partial_Pick_IUserAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"receiveNotification":{"dataType":"boolean"},"rolId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"avatar":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"passwordConfirmation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IUserAttributes.id_": {
+    "Pick_IUserAttributes.id-or-rolId_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"rolId":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"rolId":{"dataType":"string","required":true},"status":{"dataType":"boolean"},"tokenPush":{"dataType":"string"},"createdAt":{"dataType":"datetime"},"updatedAt":{"dataType":"datetime"},"deletedAt":{"dataType":"datetime"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_IUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email__","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IUserUpdatenAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IUserAttributes.id_"},{"ref":"Partial_Pick_IUserAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"receiveNotification":{"dataType":"boolean"},"phoneNumber":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"dniType":{"dataType":"string","required":true},"dni":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},"lastName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"avatar":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IUserAttributes.id-or-rolId_"},{"ref":"Omit_IUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email_"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IRolAttributes": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string"},
+            "name": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"datetime"},
+            "updatedAt": {"dataType":"datetime"},
+            "deletedAt": {"dataType":"datetime"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IResponseAllRol": {
+        "dataType": "refObject",
+        "properties": {
+            "total": {"dataType":"double"},
+            "totalPage": {"dataType":"double"},
+            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"IRolAttributes"},"required":true},
+            "actualPage": {"dataType":"double"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IRolFilter": {
+        "dataType": "refObject",
+        "properties": {
+            "pag": {"dataType":"double"},
+            "limit": {"dataType":"double"},
+            "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_IRolAttributes.id-or-name_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"name":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IRolCreationAttributes": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_IRolAttributes.id-or-name_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IProductAttributes": {
@@ -445,7 +502,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"userId":{"dataType":"string"},"dniType":{"dataType":"string"},"dni":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},"date":{"dataType":"string"},"amount":{"dataType":"double"},"amountWithoutTax":{"dataType":"double"},"valueTax":{"dataType":"double"},"location":{"dataType":"string"},"nameClient":{"dataType":"string"},"phoneNumber":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"location":{"dataType":"string"},"dni":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},"dniType":{"dataType":"string"},"phoneNumber":{"dataType":"string"},"userId":{"dataType":"string"},"date":{"dataType":"string"},"amount":{"dataType":"double"},"amountWithoutTax":{"dataType":"double"},"valueTax":{"dataType":"double"},"nameClient":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_IOrderProductAttributes.id_": {
@@ -478,7 +535,7 @@ const models: TsoaRoute.Models = {
             "type": {"dataType":"string"},
             "userId": {"dataType":"string","required":true},
             "url": {"dataType":"string","required":true},
-            "isView": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[false]}]},
+            "isView": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[true]}]},
             "createdAt": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
             "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},
@@ -504,7 +561,7 @@ const models: TsoaRoute.Models = {
             "limit": {"dataType":"double"},
             "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "userId": {"dataType":"string"},
-            "isView": {"dataType":"boolean"},
+            "isView": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[true]}]},
         },
         "additionalProperties": false,
     },
@@ -1086,7 +1143,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             async function UsersController_update(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IUserCreationAttributes"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IUserUpdatenAttributes"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1159,6 +1216,162 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new UsersController();
+
+              await templateService.apiHandler({
+                methodName: 'softDeleteRecord',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/rols/show/:rolId',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(RolsController)),
+            ...(fetchMiddlewares<RequestHandler>(RolsController.prototype.get)),
+
+            async function RolsController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    rolId: {"in":"path","name":"rolId","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new RolsController();
+
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/rols/all',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(RolsController)),
+            ...(fetchMiddlewares<RequestHandler>(RolsController.prototype.all)),
+
+            async function RolsController_all(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    pQueryParams: {"in":"queries","name":"pQueryParams","required":true,"ref":"IRolFilter"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new RolsController();
+
+              await templateService.apiHandler({
+                methodName: 'all',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/rols/create',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(RolsController)),
+            ...(fetchMiddlewares<RequestHandler>(RolsController.prototype.create)),
+
+            async function RolsController_create(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IRolCreationAttributes"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new RolsController();
+
+              await templateService.apiHandler({
+                methodName: 'create',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/rols/update/:rolId',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(RolsController)),
+            ...(fetchMiddlewares<RequestHandler>(RolsController.prototype.update)),
+
+            async function RolsController_update(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    rolId: {"in":"path","name":"rolId","required":true,"dataType":"string"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IRolCreationAttributes"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new RolsController();
+
+              await templateService.apiHandler({
+                methodName: 'update',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/rols/deleted/:key',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(RolsController)),
+            ...(fetchMiddlewares<RequestHandler>(RolsController.prototype.softDeleteRecord)),
+
+            async function RolsController_softDeleteRecord(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    key: {"in":"path","name":"key","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new RolsController();
 
               await templateService.apiHandler({
                 methodName: 'softDeleteRecord',

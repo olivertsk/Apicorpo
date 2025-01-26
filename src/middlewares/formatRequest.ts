@@ -35,6 +35,9 @@ export const formatRequest = async (req: Request, _res: Response, next: NextFunc
     'createdAt' in body && delete body.createdAt
     'updatedAt' in body && delete body.updatedAt
   }
+  if (typeof body.receiveNotification === 'string') {
+    body.receiveNotification = body.receiveNotification === '1' ? true : false
+  }
   req.body = body
   next()
 };

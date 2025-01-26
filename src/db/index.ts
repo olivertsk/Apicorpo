@@ -19,7 +19,7 @@ import { fxOrderProductFactory } from '@entities/orders/orderProductModel'
 import { fxPasswordResetFactory } from '@users/passwordResetModel'
 import { fxBulkUploadLogFactory } from '@entities/integration/BulkUploadLog'
 import { fxPaymentMethodFactory } from '@entities/paymentMethods/paymentMethodModel'
-import { fxNotificationFactory } from '@entities/notification/NotificationModel'
+import { fxNotificationFactory } from '@entities/notification/notificationModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 

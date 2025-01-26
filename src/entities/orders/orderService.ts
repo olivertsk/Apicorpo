@@ -111,6 +111,7 @@ class OrdersService {
       const vResponse: IOrderAttributes = await modelOrder.create(itemCreationParams)
       return vResponse
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }

@@ -1,7 +1,7 @@
 import { modelPasswordReset, modelRol, modelUser } from '@db/index'
 import { type FindOptions, ValidationErrorItem, ValidationError, Op } from 'sequelize'
 import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance, IUserUpdatenAttributes } from '@users/userModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import { fxOrderNameId, fxPaginate, fxReponseServices } from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
 import { IPasswordResetAttributes, IPasswordResetCreationAttributes } from './passwordResetModel'
 import { IRolAttributes } from './rolModel'
@@ -101,12 +101,34 @@ class UsersService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
-      whereStatement.where = fxSearchILike(
-        pParam,
-        whereStatement,
-        pParam?.typeSearch || 'name',
-        modelUser.name
-      )
+      if (pParam?.name) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.or]: {
+            dni: {
+              [Op.like]: `%${pParam.name}%`,
+            },
+            email: {
+              [Op.like]: `%${pParam.name}%`,
+            },
+            name: {
+              [Op.like]: `%${pParam.name}%`,
+            },
+          },
+        }
+      }
+      whereStatement.include = [
+        {
+          model: modelRol,
+          as: 'rol',
+        },
+      ]
+      if (pParam.role) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          rolId: pParam.role,
+        }
+      }
       const vResponse: IUserAttributes[] = await modelUser.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllUser = await fxReponseServices(
@@ -143,7 +165,7 @@ class UsersService {
   }
 
   public async update(
-    userCreationParams: IUserCreationAttributes | IUserUpdatenAttributes,
+    userCreationParams: IUserUpdatenAttributes,
     id: string
   ): Promise<IUserAttributes | null> {
     try {
@@ -190,7 +212,7 @@ class UsersService {
           return null
         }
         await vResponse.update({
-          tokenPush
+          tokenPush,
         })
         return vResponse
       }
@@ -275,7 +297,7 @@ class UsersService {
 
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
-      console.log('pId :>> ', pId);
+      console.log('pId :>> ', pId)
       const record = await modelUser.update(
         { deletedAt: new Date() },
         {
@@ -287,7 +309,7 @@ class UsersService {
       }
       return true
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }

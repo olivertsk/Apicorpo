@@ -1,6 +1,6 @@
 import { Controller, Get, Tags, Route, Path, Queries, Security, Request, SuccessResponse, Patch, Body } from 'tsoa'
 import SendNotificationService from './SendNotificationService';
-import { INotificationAttributes, INotificationFilter, IResponseAllNotification } from './NotificationModel';
+import { INotificationAttributes, INotificationFilter, IResponseAllNotification } from './notificationModel';
 import NotificationService from './notificationService'
 import { IUserAttributes } from '@users/userModel';
 import { fxI18n } from '@utils/i18n';

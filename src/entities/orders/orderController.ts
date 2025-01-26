@@ -49,16 +49,12 @@ export class OrdersController extends Controller {
         isClient: true,
         userId: '',
       }
-      if (params?.isClient) {
-        params.userId = request?.auth?.id
-      } else {
-        const user = await this.userService.getRol(request.auth.id)
-        const userJSON = JSON.parse(JSON.stringify(user))
-        if (userJSON?.rol.name === 'admin') {
-          params.isClient = false
-        }
-        params.userId = userJSON?.id
+      const user = await this.userService.getRol(request.auth.id)
+      const userJSON = JSON.parse(JSON.stringify(user))
+      if (userJSON?.rol.name === 'admin') {
+        params.isClient = false
       }
+      params.userId = userJSON?.id
       const vResponse: IOrderAttributes | null = await this.orderService.get(params)
       this.setStatus(200)
       return { data: vResponse }

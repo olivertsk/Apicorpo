@@ -19,7 +19,7 @@ export interface IUserAttributes {
   status?: boolean
   location?: string | null
   tokenPush?: string
-  receiveNotification: boolean
+  receiveNotification?: boolean
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
@@ -35,6 +35,8 @@ export interface IResponseAllUser {
 export interface IUserFilter {
   pag?: number
   limit?: number
+  email?: string | null
+  role?: string | null
   name?: string | null
 }
 export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'password'> &
@@ -45,16 +47,21 @@ export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'pa
     rolId?: IRolAttributes['id'] | null
     receiveNotification?: boolean
   }
-export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
-  Partial<Pick<IUserAttributes, 'name'>> & {
-    avatar?: string | null
-    location?: string | null
-    lastName?: string | null
-    dni?: number | null
-    dniType: string
-    phoneNumber?: string | null,
-    receiveNotification?: boolean
-  }
+export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id' | 'rolId'> &
+  Omit<
+    IUserAttributes,
+    | 'password'
+    | 'avatar'
+    | 'location'
+    | 'lastName'
+    | 'dni'
+    | 'dniType'
+    | 'phoneNumber'
+    | 'receiveNotification'
+    | 'dob'
+    | 'name'
+    | 'email'
+  >
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
     IUserAttributes {}

@@ -10,7 +10,7 @@ export interface INotificationAttributes {
   type?: string
   userId: string
   url: string
-  isView?: boolean | false
+  isView?: boolean | true
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
@@ -28,14 +28,14 @@ export interface INotificationFilter {
   limit?: number
   name?: string | null
   userId?: string
-  isView?: boolean
+  isView?: boolean | true
 }
 export type INotificationCreationAttributes = Pick<INotificationAttributes, 'title' | 'body'> &
   Partial<Pick<INotificationAttributes, 'id' | 'body'>> & {
     data?: string
     url?: string
     type?: string
-    isView?: boolean | false
+    isView?: boolean | true
     userId?: string
   }
 export interface INotificationInstance

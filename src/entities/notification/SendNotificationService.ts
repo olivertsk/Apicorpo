@@ -39,10 +39,10 @@ class SendNotificationService {
         if (Object.prototype.hasOwnProperty.call(tokens, key)) {
           const token = tokens[key]
           const userId = usersId[key]
-          let receiveNotification = true
+          let receiveNotification: boolean | undefined = true
           const user = await this.user.get(userId)
           if (user)  {
-            receiveNotification = user.receiveNotification
+            receiveNotification = 'receiveNotification' in user ? user.receiveNotification : true
           }
           try {
             if (token) {
