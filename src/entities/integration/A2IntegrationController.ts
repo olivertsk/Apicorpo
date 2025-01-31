@@ -100,18 +100,23 @@ export class A2IntegrationController extends Controller {
           if (item?.tax) {
             tax = item.tax
           }
+          console.log('item.product :>> ', item.product);
           const date = item.createdAt.toString().split('T')[0]
-          resposeOrder.push({
-            idm: item.idn,
-            id: item.product.idn,
-            codart: item?.product?.code || '',
-            fecmov: date,
-            canart: item.quantity,
-            preart: item.sale_price,
-            monimp: item.valueTax,
-            pisv: tax,
-            subtotal: item.subtotal,
-          })
+          if (item?.product) {
+            resposeOrder.push({
+              idm: item.idn,
+              id: item.product.idn,
+              codart: item?.product?.code || '',
+              fecmov: date,
+              canart: item.quantity,
+              preart: item.sale_price,
+              monimp: item.valueTax,
+              pisv: tax,
+              subtotal: item.subtotal,
+            })
+          } else {
+            console.log('item :>> ', item);
+          }
         }
       }
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
