@@ -32,6 +32,7 @@ export interface IOrderAttributes {
   reference?: string | null
   typePayment?: ETypePaymentMethods | null
   paymentMethodId?: IPaymentMethodInstance['id'] | null
+  code?: string
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
@@ -212,6 +213,12 @@ export const vOrdersModelAttributes: SequelizeAttributes<IOrderAttributes> = {
     field: 'payment_method_id',
     defaultValue: true,
     allowNull: true,
+  },
+  code: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    unique: true,
+    allowNull: false,
   },
 }
 

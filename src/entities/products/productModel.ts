@@ -20,6 +20,7 @@ export interface IProductAttributes {
   brand?: string | null
   taxRate?: number | null
   coverImage?: string | null
+  idn?: number
   createdAt?: Date | null
   updatedAt?: Date | null
   deletedAt?: Date | null
@@ -193,6 +194,12 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     field: 'cover_image',
     allowNull: true,
     defaultValue: '',
+  },
+  idn: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    unique: true,
+    allowNull: false,
   },
 }
 

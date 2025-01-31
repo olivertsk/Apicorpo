@@ -13,6 +13,7 @@ export interface IOrderProductAttributes {
   quantity: number
   subtotalTax: number
   subtotal: number
+  idn?: number
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
@@ -66,7 +67,7 @@ export const vOrderProductModelAttributes: SequelizeAttributes<IOrderProductAttr
     type: DataTypes.DATE,
     field: 'deletedAt',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   productId: {
     type: DataTypes.UUID,
@@ -115,6 +116,12 @@ export const vOrderProductModelAttributes: SequelizeAttributes<IOrderProductAttr
   subtotal: {
     type: DataTypes.FLOAT,
     field: 'subtotal',
+  },
+  idn: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    unique: true,
+    allowNull: false,
   },
 }
 

@@ -81,7 +81,6 @@ export class OrdersController extends Controller {
     message?: string
   }> {
     try {
-      console.log('request?.auth?.id :>> ', request?.auth?.id)
       if (!request?.auth?.id) {
         this.setStatus(500)
         return { data: [], message: 'Token invalido' }

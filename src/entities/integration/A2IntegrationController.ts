@@ -3,7 +3,7 @@ import { parse as json2csv } from 'json2csv'
 import OrderService from '@entities/orders/orderService'
 import DepartmentService from '@entities/departments/departmentService'
 import ProductService from '@products/productService'
-import CategoryService from '@entities/categories/categoryService'
+// import CategoryService from '@entities/categories/categoryService'
 import BulkUploadLogService from './BulkUploadLogService'
 import { Item, OrderA2, OrderProductA2 } from './interfaces'
 import { IOrderAttributes } from '@entities/orders/orderModel'
@@ -13,14 +13,14 @@ import { IOrderAttributes } from '@entities/orders/orderModel'
 export class A2IntegrationController extends Controller {
   private orderService: typeof OrderService
   private departmentService: typeof DepartmentService
-  private categoryService: typeof CategoryService
+  // private categoryService: typeof CategoryService
   private productService: typeof ProductService
 
   constructor() {
     super()
     this.orderService = OrderService
     this.departmentService = DepartmentService
-    this.categoryService = CategoryService
+    // this.categoryService = CategoryService
     this.productService = ProductService
   }
 
@@ -44,7 +44,6 @@ export class A2IntegrationController extends Controller {
       requestBody.product = false
       const data: IOrderAttributes[] = await this.orderService.downloadOrder(requestBody)
       if (data.length === 0) {
-        // return res.send('')
         this.setStatus(200)
         return ''
       }
@@ -54,26 +53,25 @@ export class A2IntegrationController extends Controller {
         const date = item.createdAt.toString().split('T')[0]
         resposeOrder.push({
           codfmv: '03',
-          id: item.id,
-          codcli: item.dataUser.dni,
+          id: item.code,
+          codcli: item?.dataUser?.dni || '',
           fecmov: date,
           monmov: item.amountWithoutTax,
           monnet: item.amount,
           impmov: item.valueTax,
           codved: 1,
-          nomcli: item.dataUser?.name,
+          nomcli: item?.dataUser?.name || item?.nameClient || '',
           telcl1: item.dataUser?.phoneNumber || item.phoneNumber,
-          email: item.dataUser.email,
-          dir1: item.location,
+          email: item?.dataUser?.email || '',
+          dir1: item?.location || '',
           nrocontrol: item?.observation || '1',
           forpag: 1,
           nit: `${item.dataUser.dni},`,
         })
       }
+      console.log('resposeOrder :>> ', resposeOrder);
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
       csv = csv.replace(/['"]+/g, '')
-      // res.header('Content-Type', 'text/plain')
-      // return res.send(csv)
       this.setHeader('Content-Type', 'text/plain')
       return csv
     } catch (error) {
@@ -104,8 +102,8 @@ export class A2IntegrationController extends Controller {
           }
           const date = item.createdAt.toString().split('T')[0]
           resposeOrder.push({
-            idm: item.id,
-            id: item.productId,
+            idm: item.idn,
+            id: item.product.idn,
             codart: item?.product?.code || '',
             fecmov: date,
             canart: item.quantity,
@@ -199,7 +197,6 @@ export class A2IntegrationController extends Controller {
         result[currentTable].push(finalItem)
       }
     }
-
     return result
   }
 
@@ -212,66 +209,21 @@ export class A2IntegrationController extends Controller {
       let products: any[] = []
       // let categoryIds: { categoryId: string; productCode: null }[] = []
       for (const item of jsonData.product) {
-        const catalogueCode = item.catalogueCode
-        const catalogue = jsonData.catalogue.find(
-          (catalogue: any) => catalogue.code === catalogueCode
-        )
-        let catalogueId = null
-        let categoryId = null
-        if (catalogue && catalogue?.name) {
-          if (catalogue.name.includes('D-')) {
-            const catalogueData = {
-              name: catalogue.name.replace('D-', ''),
-              code: catalogue.code,
-            }
-            catalogueId = (await this.departmentService.firstOrCreateCode(catalogueData))?.id
-          } else if (catalogue.name.includes('S-')) {
-            const categoryData = {
-              name: catalogue.name.replace('S-', ''),
-              code: catalogue.code,
-            }
-            const category = await this.categoryService.firstOrCreateCode(categoryData)
-            if (category) {
-              if (category?.departmentId && category.departmentId !== null) {
-                catalogueId = category.departmentId
-              }
-              categoryId = category.id
-            } else {
-              console.log('categoria no se creo S-', catalogue.name)
-            }
-          } else if (catalogue.name.includes('CH-')) {
-            const categoryData = {
-              name: catalogue.name.replace('CH-', ''),
-              code: catalogue.code,
-            }
-            const category = await this.categoryService.firstOrCreateCode(categoryData)
-            if (category) {
-              if (category?.departmentId && category.departmentId !== null) {
-                catalogueId = category.departmentId
-              }
-              if (category?.id) {
-                categoryId = category.id
-              }
-            } else {
-              console.log('categoria no se creo CH-', catalogue.name)
-            }
-          } else {
-            console.log('no concuerda ninguno', catalogue.name)
-          }
-        } else {
-          console.log('catalogue :>> ', catalogue)
-        }
+        // const catalogueCode = item.catalogueCode
+        // const catalogue = jsonData.find((catalogue: any) => catalogue.code === catalogueCode)
+        const catalogueId = (await this.departmentService.firstOrCreateCode(item.catalogueCode))?.id
+
         const product = {
           code: item.code,
           name: item.name,
           catalogueId: catalogueId,
-          categoryId: categoryId,
           price: item?.preve1 || item?.preve || item.price,
           existence: item.existence,
           tax: item.tax,
         }
         products.push(product)
       }
+
       const productsCreated = await this.productService.saveMasive(products)
       if (productsCreated) {
         let date: any = new Date()
@@ -284,14 +236,6 @@ export class A2IntegrationController extends Controller {
           date: date,
         }
         await BulkUploadLogService.create(bulk)
-        // if (categoryIds.length) {
-        //   for (const product of productsCreated) {
-        //     const arrCategory = categoryIds.filter((x) => x.productCode === product.code)
-        //     const arrCategoryId = arrCategory.map((x) => x.categoryId)
-        //     const arrCategoryText = arrCategoryId.join(',')
-        //     arrCategoryText && (await this.productService.storeCategories(arrCategoryText, product.id))
-        //   }
-        // }
       }
       this.setStatus(200)
       return jsonData

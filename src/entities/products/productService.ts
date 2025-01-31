@@ -343,18 +343,7 @@ class ProductsService {
   public async saveMasive(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
     try {
       const vResponse: IProductAttributes[] = await modelProduct.bulkCreate(dataParams, {
-        updateOnDuplicate: ['code'],
-      })
-      return vResponse
-    } catch (error) {
-      throw error
-    }
-  }
-
-  public async storeCategories(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
-    try {
-      const vResponse: IProductAttributes[] = await modelProduct.bulkCreate(dataParams, {
-        updateOnDuplicate: ['code'],
+        updateOnDuplicate: ['code', 'name', 'departmentId', 'price', 'stock', 'taxRate'],
       })
       return vResponse
     } catch (error) {

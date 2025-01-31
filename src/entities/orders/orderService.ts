@@ -223,11 +223,10 @@ class OrdersService {
         ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
       }
 
-      // Actualizar el campo wasSent a 1 en todas las órdenes que cumplen la condición
-      await modelOrder.update({ wasSent: 1 }, { where: whereCondition })
       const orders: IOrderAttributes[] = await modelOrder.findAll({
         attributes: [
           'id',
+          'code',
           'userId',
           'phoneNumber',
           'location',
@@ -236,6 +235,7 @@ class OrdersService {
           'amountWithoutTax',
           'valueTax',
           'createdAt',
+          'nameClient',
         ],
         where: whereCondition,
         include: [
@@ -243,36 +243,18 @@ class OrdersService {
             model: modelOrderProducto,
             as: 'products',
             include: [{ model: modelProduct, as: 'product' }],
+            required: false,
           },
           {
             model: modelUser,
             as: 'dataUser',
             attributes: ['id', 'name', 'email', 'dni', 'phoneNumber', 'lastName'],
+            required: false,
           },
-          // {
-          //   model: Payment,
-          //   as: 'payment',
-          //   attributes: [
-          //     'id',
-          //     'orderId',
-          //     'transactionId',
-          //     'amount',
-          //     'discount',
-          //     'type',
-          //     'issuingBank',
-          //     'receivingBank',
-          //     'reference',
-          //     'date',
-          //     'name',
-          //     'userId',
-          //     'description',
-          //     'tax',
-          //     'isPayment',
-          //   ],
-          // },
         ],
-        order: [['id', 'DESC']],
+        order: [['code', 'DESC']],
       })
+
       await modelOrder.update(
         { wasSent: param?.product ? EWasSent.sentProductOrder : EWasSent.sentOrder },
         { where: whereCondition }

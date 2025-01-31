@@ -1,5 +1,5 @@
 import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct } from '@db/index'
-import { Op, type FindOptions } from 'sequelize'
+import { type FindOptions } from 'sequelize'
 import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
@@ -21,31 +21,14 @@ class DepartmentsService {
     }
   }
 
-  public async firstOrCreateCode(data: {
-    code: string
-    name: string
-  }): Promise<IDepartmentAttributes | null> {
+  public async firstOrCreateCode(code: string): Promise<IDepartmentAttributes | null> {
     try {
-      let vItem: IDepartmentAttributes | undefined
       const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
         where: {
-          [Op.or]: [{ code: data.code }, { name: data.name }],
+          code: code,
         },
       })
-      if (vResponse) {
-        if (vResponse.code === null) {
-          vResponse.code = data.code
-          await vResponse.save()
-        }
-        vItem = vResponse
-      } else {
-        vItem = await this.create({
-          ...data,
-          status: true,
-          isSalient: false,
-        })
-      }
-      return vItem
+      return vResponse
     } catch (error) {
       throw error
     }
