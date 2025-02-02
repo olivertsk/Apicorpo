@@ -625,6 +625,25 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IMapAttributes.id_"},{"ref":"Partial_Pick_IMapAttributes.name-or-image-or-map__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"deletedAt":{"dataType":"enum","enums":[null]},"order":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[0]}]},"email":{"dataType":"string"},"phoneNumber":{"dataType":"string"},"address":{"dataType":"string"},"description":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[true]}],"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUploadZipReponseError": {
+        "dataType": "refObject",
+        "properties": {
+            "status": {"dataType":"boolean","required":true},
+            "file": {"dataType":"string","required":true},
+            "msg": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUploadZipReponse": {
+        "dataType": "refObject",
+        "properties": {
+            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"msg":{"dataType":"string","required":true},"file":{"dataType":"double","required":true},"status":{"dataType":"boolean","required":true}},"required":true},
+            "errors": {"dataType":"array","array":{"dataType":"refObject","ref":"IUploadZipReponseError"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IDepartmentAttributes": {
         "dataType": "refObject",
         "properties": {
@@ -2725,6 +2744,37 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 successStatus: undefined,
               });
             } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/A2/upload',
+            upload.fields([{"name":"file","maxCount":1,"multiple":false}]),
+            ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
+            ...(fetchMiddlewares<RequestHandler>(A2IntegrationController.prototype.uploadZip)),
+
+            async function A2IntegrationController_uploadZip(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+                const controller = new A2IntegrationController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadZip',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                console.log('err :>> ', err);
                 return next(err);
             }
         });

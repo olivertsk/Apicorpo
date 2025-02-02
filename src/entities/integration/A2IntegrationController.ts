@@ -1,4 +1,7 @@
-import { Body, Controller, Get, Tags, Route, Queries, Post } from 'tsoa'
+import { Body, Controller, Get, Tags, Route, Queries, Post, UploadedFile, Request } from 'tsoa'
+import * as unzipper from 'unzipper'
+import * as fs from 'fs'
+import * as path from 'path'
 import { parse as json2csv } from 'json2csv'
 import OrderService from '@entities/orders/orderService'
 import DepartmentService from '@entities/departments/departmentService'
@@ -8,6 +11,19 @@ import BulkUploadLogService from './BulkUploadLogService'
 import { Item, OrderA2, OrderProductA2 } from './interfaces'
 import { IOrderAttributes } from '@entities/orders/orderModel'
 
+interface IUploadZipReponseError {
+  status: boolean,
+  file: string,
+  msg: string
+}
+interface IUploadZipReponse {
+  result: {
+    status: boolean,
+    file: number,
+    msg: string
+  },
+  errors: IUploadZipReponseError[]
+}
 @Tags('A2')
 @Route('A2')
 export class A2IntegrationController extends Controller {
@@ -69,7 +85,7 @@ export class A2IntegrationController extends Controller {
           nit: `${item.dataUser.dni},`,
         })
       }
-      console.log('resposeOrder :>> ', resposeOrder);
+      console.log('resposeOrder :>> ', resposeOrder)
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
       csv = csv.replace(/['"]+/g, '')
       this.setHeader('Content-Type', 'text/plain')
@@ -100,7 +116,7 @@ export class A2IntegrationController extends Controller {
           if (item?.tax) {
             tax = item.tax
           }
-          console.log('item.product :>> ', item.product);
+          console.log('item.product :>> ', item.product)
           const date = item.createdAt.toString().split('T')[0]
           if (item?.product) {
             resposeOrder.push({
@@ -115,7 +131,7 @@ export class A2IntegrationController extends Controller {
               subtotal: item.subtotal,
             })
           } else {
-            console.log('item :>> ', item);
+            console.log('item :>> ', item)
           }
         }
       }
@@ -247,5 +263,162 @@ export class A2IntegrationController extends Controller {
     } catch (error) {
       throw error
     }
+  }
+
+  @Post('/upload')
+  public async uploadZip(
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req: any
+  ): Promise<{ data: IUploadZipReponse }> {
+    try {
+      const tempDir = path.join('./uploads', 'masive')
+      const uploadsDir = path.join('./uploads')
+
+      // Crear directorio temporal si no existe
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir)
+      }
+      // Descomprimir el archivo en el directorio temporal
+      fs.writeFileSync(`${uploadsDir}/p.zip`, file.buffer)
+
+      // Filtrar y mover imágenes
+      const files = await this.zipRead(`${uploadsDir}/p.zip`)
+      const data = await this.verifiFiles(files)
+      fs.rmdirSync(tempDir, { recursive: true })
+      fs.unlinkSync(`${uploadsDir}/p.zip`)
+      fs.mkdirSync(tempDir)
+      this.setStatus(200)
+      return { data: data }
+    } catch (error) {
+      console.log('error :>> ', error);
+      console.log('req :>> ', req);
+      throw error
+    }
+  }
+  private async zipRead(filename: string) {
+    const result: any = []
+    return new Promise(async function (resolve) {
+      const readable = fs.createReadStream(filename).pipe(unzipper.Parse())
+      readable.on('entry', async function (entry) {
+        const fileNameEntry = entry.path
+        const sizeEntry = entry.vars.uncompressedSize
+        const extension = entry.path.split('.')[1]
+        if (entry.type === 'File' && !fileNameEntry.includes('/')) {
+          await entry.pipe(fs.createWriteStream(`./uploads/masive/${fileNameEntry}`))
+          result.push({
+            fileNameEntry,
+            sizeEntry,
+            extension,
+          })
+        } else {
+          result.push({
+            fileNameEntry,
+            sizeEntry: 0,
+            extension: 'directory',
+          })
+          entry.autodrain()
+        }
+      })
+      readable.on('readable', () => {
+        let chunk
+        while (null !== (chunk = readable.read())) {
+          console.log(`read: ${chunk}`)
+        }
+      })
+      readable.on('end', (end: any) => {
+        console.log(end)
+        resolve(result)
+      })
+      readable.on('error', (err) => {
+        console.log(err)
+        resolve(result)
+      })
+    })
+  }
+  private async verifiFiles(data: any) {
+    const result: any = {
+      result: {
+        status: true,
+        file: 0,
+        msg: `Archivos cargados con exito`,
+      },
+      errors: [],
+    }
+    const imagesData: any = []
+    for (const item of data) {
+      const dateRam = `${new Date().getTime()}`
+      const sizeEntry = item.sizeEntry
+      const fileNameEntry = item.fileNameEntry
+      const extension = item.extension
+      if (sizeEntry > 3000000 || sizeEntry === 0) {
+        result.errors.push({
+          status: false,
+          file: fileNameEntry,
+          msg: `El archivo ${fileNameEntry} es muy pesado o no existe`,
+        })
+      }
+      if (
+        extension !== 'jpg' &&
+        extension !== 'jpeg' &&
+        extension !== 'png' &&
+        extension !== 'gif' &&
+        extension !== 'bmp' &&
+        extension !== 'webp'
+      ) {
+        result.errors.push({
+          status: false,
+          file: fileNameEntry,
+          msg: `El archivo ${fileNameEntry} no es permitido`,
+        })
+      }
+      let fileNameCount = fileNameEntry.lastIndexOf('.')
+      let fileName = fileNameEntry.slice(0, fileNameCount)
+
+      let position = 0
+      if (fileName.includes('-')) {
+        let codeArr = fileName.split('-')
+        position = codeArr[codeArr.length - 1]
+      }
+      // fileName = fileName.includes('-') ? fileName.split('-')[0] : fileName
+      let code = fileName
+      if (fileName.includes('-')) {
+        const indexOrden = code.lastIndexOf('-')
+        if (!isNaN(position) && Number(position) >= 0 && Number(position) <= 9) {
+          code = code.slice(0, indexOrden)
+        } else {
+          code = fileName
+        }
+      }
+      position = isNaN(position) ? 0 : Number(position)
+      const valid = await this.productService.findByCode(code)
+      if (valid) {
+        const oldPath = `./uploads/masive/${fileNameEntry}`
+        const newPath = `./uploads/storage/${valid.id}-${fileNameEntry}`
+        if (fs.existsSync(oldPath)) {
+          fs.renameSync(oldPath, newPath)
+        }
+        if (fs.existsSync(newPath)) {
+          // !isNaN(result.result?.file) ? (result.result.file = result.result?.file + 1) : 0
+          result.result.file = result.result?.file + 1
+          imagesData.push({
+            file: `${valid.id}-${fileNameEntry}?a=${dateRam}`,
+            productId: valid.id,
+            position,
+          })
+        }
+      } else {
+        const exist = await fs.existsSync(`./uploads/masive/files/${fileNameEntry}`)
+        if (exist) {
+          fs.unlinkSync(`./uploads/masive/files/${fileNameEntry}`)
+        }
+        result.errors.push({
+          status: false,
+          file: fileNameEntry,
+          msg: `El archivo ${fileNameEntry} no coincide con ningun producto`,
+        })
+      }
+    }
+    await this.productService.bulkProductImages(imagesData)
+    return result
   }
 }

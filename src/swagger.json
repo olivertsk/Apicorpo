@@ -1824,6 +1824,62 @@
 					}
 				]
 			},
+			"IUploadZipReponseError": {
+				"properties": {
+					"status": {
+						"type": "boolean"
+					},
+					"file": {
+						"type": "string"
+					},
+					"msg": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status",
+					"file",
+					"msg"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUploadZipReponse": {
+				"properties": {
+					"result": {
+						"properties": {
+							"msg": {
+								"type": "string"
+							},
+							"file": {
+								"type": "number",
+								"format": "double"
+							},
+							"status": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"msg",
+							"file",
+							"status"
+						],
+						"type": "object"
+					},
+					"errors": {
+						"items": {
+							"$ref": "#/components/schemas/IUploadZipReponseError"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"result",
+					"errors"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IDepartmentAttributes": {
 				"properties": {
 					"id": {
@@ -6371,6 +6427,55 @@
 									"data"
 								],
 								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/A2/upload": {
+			"post": {
+				"operationId": "UploadZip",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/IUploadZipReponse"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"A2"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
 							}
 						}
 					}

@@ -66,6 +66,18 @@ class ProductsService {
       throw error
     }
   }
+  public async findByCode(code: string): Promise<IProductAttributes | null> {
+    try {
+      const whereStatement: FindOptions = {}
+      whereStatement.where = {
+        code: code,
+      }
+      const vResponse: IProductAttributes | null = await modelProduct.findOne(whereStatement)
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
 
   public async all(pParam: IProductFilter): Promise<IResponseAllProduct> {
     try {
@@ -256,7 +268,7 @@ class ProductsService {
   ): Promise<IProductImageAttributes[]> {
     try {
       const vResponse: IProductImageAttributes[] = await modelProductImages.bulkCreate(dataParams, {
-        updateOnDuplicate: ['id'],
+        updateOnDuplicate: ['id', 'position', 'file', 'productId'],
       })
       return vResponse
     } catch (error) {
