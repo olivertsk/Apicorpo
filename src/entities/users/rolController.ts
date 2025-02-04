@@ -48,9 +48,8 @@ export class RolsController extends Controller {
 
   /**
    * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { rols: IRol[], message?: string }, status: boolean }>}
+   * @param {IRolFilter} pQueryParams - Filtros y parámetros de paginación.
+   * @returns {Promise<{ data: rols: IRol[], message?: string }>}
    */
   @Security('bearerAuth', ['admin'])
   @Get('/all')
@@ -59,8 +58,7 @@ export class RolsController extends Controller {
     message?: string
   }> {
     try {
-      const vResponse: IRolAttributes[] | IResponseAllRol =
-        await this.rolService.all(pQueryParams)
+      const vResponse: IRolAttributes[] | IResponseAllRol = await this.rolService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -72,9 +70,7 @@ export class RolsController extends Controller {
   @Security('bearerAuth', ['admin'])
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
-  public async create(
-    @Body() requestBody: IRolCreationAttributes
-  ): Promise<IRolAttributes | null> {
+  public async create(@Body() requestBody: IRolCreationAttributes): Promise<IRolAttributes | null> {
     try {
       this.setStatus(201) // set return status 201
       await this.rolService.validate(requestBody)
@@ -109,8 +105,7 @@ export class RolsController extends Controller {
   /**
    * @summary Eliminar un usuario por ID.
    * @param {string} key - ID de usuario a eliminar.
-   * @param pRequestBody - Solicitud HTTP con información de autenticación.
-   * @returns {Promise<{ success: boolean, message?: string }>}
+   * @returns {Promise<{ success: boolean, message?: string }>} - Resultado de la operacion
    */
   @Delete('/deleted/{key}')
   @Security('bearerAuth', ['admin'])

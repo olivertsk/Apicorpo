@@ -2679,7 +2679,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": ": IViewAttributes[] | IResponseAllView, message?: string }>}",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -2881,7 +2881,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Resultado de la operación.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -2984,7 +2984,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos paginados y un mensaje opcional.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -3217,7 +3217,7 @@
 						}
 					}
 				},
-				"summary": "actualizar el token push de un usuario.",
+				"summary": "Actualizar el token push de un usuario.",
 				"tags": [
 					"User"
 				],
@@ -3254,7 +3254,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Resultado de la operacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -3357,7 +3357,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": ": IRol[], message?: string }>}",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -3544,7 +3544,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Resultado de la operacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -4198,7 +4198,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos paginados y un mensaje opcional.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -4369,7 +4369,7 @@
 				"operationId": "Search",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": ": IProductAttributes[] | IResponseAllProduct, message?: string }>}",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -4665,7 +4665,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Resultado de la operacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -4715,7 +4715,7 @@
 				"operationId": "ImagesDelete",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la confirmacion del borrado.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -4818,7 +4818,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos paginados y un mensaje opcional.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5036,7 +5036,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la verificacion de la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5133,7 +5133,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5345,7 +5345,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5448,7 +5448,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5709,6 +5709,7 @@
 				],
 				"parameters": [
 					{
+						"description": "- ID de la orden.",
 						"in": "path",
 						"name": "orderId",
 						"required": true,
@@ -5718,7 +5719,6 @@
 					}
 				],
 				"requestBody": {
-					"description": "- { status: EStatusOrder, reason: string } nuevo estatus de la orden.",
 					"required": true,
 					"content": {
 						"application/json": {
@@ -5739,8 +5739,7 @@
 								"required": [
 									"status"
 								],
-								"type": "object",
-								"description": "- { status: EStatusOrder, reason: string } nuevo estatus de la orden."
+								"type": "object"
 							}
 						}
 					}
@@ -5752,7 +5751,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5844,7 +5843,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -5973,7 +5972,6 @@
 				],
 				"parameters": [],
 				"requestBody": {
-					"description": ": string } - notificationId id de la notificaion.",
 					"required": true,
 					"content": {
 						"application/json": {
@@ -5986,8 +5984,7 @@
 								"required": [
 									"notificationId"
 								],
-								"type": "object",
-								"description": ": string } - notificationId id de la notificaion."
+								"type": "object"
 							}
 						}
 					}
@@ -6046,7 +6043,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -6250,7 +6247,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -6534,7 +6531,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -6770,7 +6767,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -6867,7 +6864,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuleve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -7087,7 +7084,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -7184,7 +7181,7 @@
 				"operationId": "All",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con los datos",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -7396,7 +7393,7 @@
 				"operationId": "SoftDeleteRecord",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "- Promesa que resuelve con la eliminacion",
 						"content": {
 							"application/json": {
 								"schema": {

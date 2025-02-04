@@ -51,9 +51,8 @@ export class UsersController extends Controller {
 
   /**
    * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { users: IUser[], message?: string }, status: boolean }>}
+   * @param {IUserFilter} pQueryParams - Filtros y parámetros de paginación.
+   * @returns {Promise<{ data: IUserAttributes[] | IResponseAllUser, message?: string }>} - Promesa que resuelve con los datos paginados y un mensaje opcional.
    */
   @Security('bearerAuth', ['admin'])
   @Get('/all')
@@ -117,9 +116,9 @@ export class UsersController extends Controller {
   }
 
   /**
-   * @summary actualizar el token push de un usuario.
-   * @param pRequestBody - TokenPush es un string.
-   * @returns {Promise<{ success: boolean, message?: string }>}
+   * @summary Actualizar el token push de un usuario.
+   * @param { tokenPush: string } pRequestBody - TokenPush es un string.
+   * @returns {Promise<{ success: boolean, item: IUserAttributes | null, message?: string }>} - Promesa que resuelve con el estado de éxito, el elemento actualizado y un mensaje opcional.
    */
   @Security('bearerAuth', ['optional'])
   @SuccessResponse('200', 'Update') // Custom success response
@@ -148,8 +147,7 @@ export class UsersController extends Controller {
   /**
    * @summary Eliminar un usuario por ID.
    * @param {string} key - ID de usuario a eliminar.
-   * @param pRequestBody - Solicitud HTTP con información de autenticación.
-   * @returns {Promise<{ success: boolean, message?: string }>}
+   * @returns {Promise<{ success: boolean, message?: string }>} - Resultado de la operacion
    */
   @Delete('/deleted/{key}')
   @Security('bearerAuth', ['admin'])

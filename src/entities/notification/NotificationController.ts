@@ -34,9 +34,8 @@ export class notificationController extends Controller {
 
   /**
    * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { maps: IMap[], message?: string }, status: boolean }>}
+   * @param {INotificationFilter} pQueryParams - Número de página.
+   * @returns {Promise<{ data: IResponseAllNotification | null, message?: string }>} - Promesa que resuelve con los datos
    */
   @Security('bearerAuth', ['optional'])
   @Get('/all')
@@ -65,8 +64,8 @@ export class notificationController extends Controller {
 
   /**
    * Marcar una notificacion como vista.
-   * @param requestBody { notificationId: string } - notificationId id de la notificaion.
-   * @returns boolean.
+   * @param { notificationId: string } requestBody - notificationId id de la notificaion.
+   * @returns {Promise<{ success: boolean, item: INotificationAttributes | null, message?: string }>} - Promesa que resuelve confirmando la visualizacion
    */
   @Security('bearerAuth', ['optional'])
   @SuccessResponse('200', 'Update') // Custom success response
@@ -77,15 +76,15 @@ export class notificationController extends Controller {
   ): Promise<{ success: boolean; item: INotificationAttributes | null; message?: string }> {
     try {
       const userId = pRequest.auth.id
-      console.log('userId :>> ', userId);
+      console.log('userId :>> ', userId)
       if (!userId) {
-        console.log('noi tiene token');
+        console.log('noi tiene token')
         this.setStatus(404) // set return status 404
         return { success: false, item: null, message: fxI18n.__('item_not_found') }
       }
       const vItem: INotificationAttributes | null = await this.notificationService.updateView(
         requestBody.notificationId,
-        userId,
+        userId
       )
       if (vItem) {
         this.setStatus(200) // set return status 200
@@ -94,7 +93,7 @@ export class notificationController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }

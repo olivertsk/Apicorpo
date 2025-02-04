@@ -6,7 +6,7 @@ import { errorHandler } from './middlewares/errorHandler'
 import { expressAuthentication } from './middlewares/expressAuthentication'
 import cors from 'cors'
 import { formatRequest } from 'middlewares/formatRequest'
-// import multer from 'multer';
+import multer from 'multer';
 
 export const app = express()
 // const storage = multer.memoryStorage();
@@ -24,12 +24,24 @@ app.use(
 app.use(
   urlencoded({
     extended: true,
+    limit: '300mb'
   })
 )
-app.use(json())
+app.use(json({ limit: '300mb' }))
 app.use(formatRequest)
 app.use(expressAuthentication)
-RegisterRoutes(app)
+
+// const storage = multer.memoryStorage()
+// const upload = multer({ storage, limits: { fileSize: 300 * 1024 * 1024 } }) // 10MB
+
+RegisterRoutes(app, {
+  multer: multer({
+    limits: {
+      fileSize: 300 * 1024 * 1024,
+    },
+  }),
+})
+// RegisterRoutes(app)
 
 // app.post('/files/uploadFile', upload.single('file'), (_req, _res, next) => {
 //   console.log('estoy pasando por app');

@@ -67,9 +67,8 @@ export class OrdersController extends Controller {
 
   /**
    * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { orders: IOrder[], message?: string }, status: boolean }>}
+   * @param {IOrderFilter} pQueryParams - Número de página.
+   * @returns {Promise<{ data: IOrderAttributes[] | IResponseAllOrder, message?: string }>} - Promesa que resuelve con los datos
    */
   @Security('bearerAuth', ['optional'])
   @Get('/all')
@@ -187,9 +186,9 @@ export class OrdersController extends Controller {
 
   /**
    * @summary Actualizar el estado de una Orden
-   * @param {string} key - ID de la orden.
-   * @param body - { status: EStatusOrder, reason: string } nuevo estatus de la orden.
-   * @returns {Promise<{ status: boolean }>}
+   * @param {string} orderId - ID de la orden.
+   * @param { status: EStatusOrder; reason?: string | null; adminId?: string | null } body - Nuevo estatus de la orden.
+   * @returns {Promise<{ status: boolean, item: IOrderAttributes | null, message?: string }>} - Promesa que resuelve con la actualizacion
    */
   @Security('bearerAuth', ['admin'])
   @SuccessResponse('200', 'Update') // Custom success response
@@ -238,7 +237,7 @@ export class OrdersController extends Controller {
    * @summary Eliminar una item por ID.
    * @param {string} key - ID de la item a eliminar.
    * @param pRequestBody - Solicitud HTTP con información de autenticación.
-   * @returns {Promise<{ status: boolean }>}
+   * @returns {Promise<{ success: boolean, message?: string }>} - Promesa que resuelve con la eliminacion
    */
   @Delete('/deleted/{key}')
   @Security('bearerAuth', ['admin'])

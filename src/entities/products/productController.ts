@@ -54,9 +54,8 @@ export class ProductsController extends Controller {
 
   /**
    * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { products: IProduct[], message?: string }, status: boolean }>}
+   * @param {IProductFilter} pQueryParams - Filtros y Número de página.
+   * @returns {Promise<{ data: IProductAttributes[] | IResponseAllProduct, message?: string }>} - Promesa que resuelve con los datos paginados y un mensaje opcional.
    */
   @Security('bearerAuth', ['optional'])
   @Get('/all')
@@ -83,9 +82,8 @@ export class ProductsController extends Controller {
 
   /**
    * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: { products: IProduct[], message?: string }, status: boolean }>}
+   * @param {IProductFilter} pQueryParams - Filtros y datos de paginacion.
+   * @returns {Promise<{ data: products: IProductAttributes[] | IResponseAllProduct, message?: string }>}
    */
   @Security('bearerAuth', ['optional'])
   @Get('/search')
@@ -134,7 +132,7 @@ export class ProductsController extends Controller {
       )
       if (!requestBody.priceWithTax) {
         requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
-        console.log('requestBody.priceWithTax 2 :>> ', requestBody.priceWithTax);
+        console.log('requestBody.priceWithTax 2 :>> ', requestBody.priceWithTax)
       }
       console.log('requestBody.taxRate :>> ', requestBody.taxRate, !requestBody.taxRate)
       if (!requestBody.taxRate) {
@@ -215,8 +213,7 @@ export class ProductsController extends Controller {
   /**
    * @summary Eliminar una item por ID.
    * @param {string} key - ID de la item a eliminar.
-   * @param pRequestBody - Solicitud HTTP con información de autenticación.
-   * @returns {Promise<{ status: boolean }>}
+   * @returns {Promise<{ status: boolean, message?: string }>}  - Resultado de la operacion
    */
   @Delete('/deleted/{key}')
   @Security('bearerAuth', ['admin'])
@@ -241,7 +238,7 @@ export class ProductsController extends Controller {
    * @summary Eliminar una images de productos por ID.
    * @param {string} key - ID de la item a eliminar.
    * @param pRequestBody - Solicitud HTTP con información de autenticación.
-   * @returns {Promise<{ status: boolean }>}
+   * @returns {Promise<{ status: boolean, message?: string }>} - Promesa que resuelve con la confirmacion del borrado.
    */
   @Delete('/imagesDelete/{key}')
   @Security('bearerAuth', ['admin'])
