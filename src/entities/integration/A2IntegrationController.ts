@@ -39,7 +39,8 @@ export class A2IntegrationController extends Controller {
     // this.categoryService = CategoryService
     this.productService = ProductService
   }
-
+  // https://api.corpoindustri.com/A2/ + 'archivophp.php?fe=' + fecha + '&usu=' + usuario + '&cla='
+  //       + clave + '&bd=' + md + '&time=01';
   /**
    * Descarga la orden en formato CSV.
    * @route GET /archivophp.php
@@ -53,7 +54,17 @@ export class A2IntegrationController extends Controller {
   @Get('/archivophp.php')
   // @Hidden()
   public async downloadOrder(
-    @Queries() requestBody: { fecha?: string; wasSent?: number; product?: false }
+    @Queries()
+    requestBody: {
+      fecha?: string
+      wasSent?: number
+      product?: false
+      fe?: string
+      usu?: string
+      cla?: string
+      bd?: string
+      time?: string
+    }
   ) {
     try {
       requestBody.wasSent = 0
@@ -85,7 +96,6 @@ export class A2IntegrationController extends Controller {
           nit: `${item.dataUser.dni},`,
         })
       }
-      console.log('resposeOrder :>> ', resposeOrder)
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
       csv = csv.replace(/['"]+/g, '')
       this.setHeader('Content-Type', 'text/plain')
@@ -94,10 +104,20 @@ export class A2IntegrationController extends Controller {
       throw error
     }
   }
-
+  //  https://api.corpoindustri.com/A2/ + 'detalle.php?fe=' + fecha + '&usu=' + usuario + '&cla='
+  // + clave + '&bd=' + md + '&time=01';
   @Get('/detalle.php')
   public async downloadProductOrder(
-    @Queries() requestBody: { wasSent?: number; product?: boolean; fecha?: string }
+    @Queries()
+    requestBody: {
+      wasSent?: number
+      product?: boolean
+      fe?: string
+      usu?: string
+      cla?: string
+      bd?: string
+      time?: string
+    }
   ) {
     try {
       requestBody.wasSent = 1
@@ -290,8 +310,8 @@ export class A2IntegrationController extends Controller {
       this.setStatus(200)
       return { data: data }
     } catch (error) {
-      console.log('error :>> ', error);
-      console.log('req :>> ', req);
+      console.log('error :>> ', error)
+      console.log('req :>> ', req)
       throw error
     }
   }

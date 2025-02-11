@@ -198,7 +198,7 @@ class OrdersService {
     }
   }
   public async downloadOrder(param: {
-    fecha?: string
+    fe?: string
     wasSent?: number
     product?: boolean
   }): Promise<IOrderAttributes[]> {
@@ -206,23 +206,43 @@ class OrdersService {
       let day
       let month
       let year
-      if (param?.fecha) {
-        day = new Date(param.fecha).getDate()
-        month = new Date(param.fecha).getMonth() + 1
-        year = new Date(param.fecha).getFullYear()
+      if (param?.fe) {
+        console.log('param.fecha :>> ', param.fe);
+        day = new Date(param.fe).getDate()
+        month = new Date(param.fe).getMonth() + 1
+        year = new Date(param.fe).getFullYear()
       }
-      const whereCondition: any = {
-        ...(param.fecha && {
-          [Op.and]: [
-            sequelize.where(sequelize.fn('MONTH', sequelize.col('orders.createdAt')), month),
-            sequelize.where(sequelize.fn('DAY', sequelize.col('orders.createdAt')), day),
-            sequelize.where(sequelize.fn('YEAR', sequelize.col('orders.createdAt')), year),
-          ],
-        }),
-        ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
-        ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
+      let whereCondition: any
+      // const whereCondition: any = {
+      //   ...(param.fecha && {
+      //     [Op.and]: [
+      //       sequelize.where(sequelize.fn('MONTH', sequelize.col('orders.createdAt')), month),
+      //       sequelize.where(sequelize.fn('DAY', sequelize.col('orders.createdAt')), day),
+      //       sequelize.where(sequelize.fn('YEAR', sequelize.col('orders.createdAt')), year),
+      //     ],
+      //   }),
+      //   ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
+      //   ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
+      // }
+      console.log('object :>> ', day);
+      console.log('object :>> ', month);
+      console.log('object :>> ', year);
+      if ('fe' in param && param?.fe) {
+        whereCondition = {
+          ...(param.fe && {
+            [Op.and]: [
+              sequelize.where(sequelize.fn('MONTH', sequelize.col('orders.createdAt')), month),
+              sequelize.where(sequelize.fn('DAY', sequelize.col('orders.createdAt')), day),
+              sequelize.where(sequelize.fn('YEAR', sequelize.col('orders.createdAt')), year),
+            ],
+          }),
+        }
+      } else {
+        whereCondition = {
+          ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
+          ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
+        }
       }
-
       const orders: IOrderAttributes[] = await modelOrder.findAll({
         attributes: [
           'id',
@@ -254,11 +274,12 @@ class OrdersService {
         ],
         order: [['code', 'DESC']],
       })
-
-      await modelOrder.update(
-        { wasSent: param?.product ? EWasSent.sentProductOrder : EWasSent.sentOrder },
-        { where: whereCondition }
-      )
+      if ('fe' in param && param?.fe) {
+        await modelOrder.update(
+          { wasSent: param?.product ? EWasSent.sentProductOrder : EWasSent.sentOrder },
+          { where: whereCondition }
+        )
+      }
       return orders
     } catch (error) {
       throw error

@@ -2668,7 +2668,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsA2IntegrationController_downloadOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"product":{"dataType":"enum","enums":[false]},"wasSent":{"dataType":"double"},"fecha":{"dataType":"string"}}},
+                requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"time":{"dataType":"string"},"bd":{"dataType":"string"},"cla":{"dataType":"string"},"usu":{"dataType":"string"},"fe":{"dataType":"string"},"product":{"dataType":"enum","enums":[false]},"wasSent":{"dataType":"double"},"fecha":{"dataType":"string"}}},
         };
         app.get('/A2/archivophp.php',
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
@@ -2698,7 +2698,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsA2IntegrationController_downloadProductOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"fecha":{"dataType":"string"},"product":{"dataType":"boolean"},"wasSent":{"dataType":"double"}}},
+                requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"time":{"dataType":"string"},"bd":{"dataType":"string"},"cla":{"dataType":"string"},"usu":{"dataType":"string"},"fe":{"dataType":"string"},"product":{"dataType":"boolean"},"wasSent":{"dataType":"double"}}},
         };
         app.get('/A2/detalle.php',
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
