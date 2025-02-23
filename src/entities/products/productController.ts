@@ -194,11 +194,11 @@ export class ProductsController extends Controller {
               if (image.file) {
                 const newNameImages = await fxMoveImages(image?.file)
                 imagesData[key].file = newNameImages
-                imagesData[key].productId = vItem.id
+                imagesData[key].productId = productId
               }
             }
           }
-          await this.productService.bulkProductImages(imagesData)
+          await this.productService.bulkProductImages(imagesData, productId)
         }
         this.setStatus(200) // set return status 200
         return { success: true, item: vItem }

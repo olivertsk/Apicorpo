@@ -26,11 +26,11 @@ export interface IProductImageFilter {
   limit?: number
   name?: string | null
 }
-export type IProductImageCreationAttributes = Pick<IProductImageAttributes, 'id' | 'alt' | 'isVideo'> & 
-  Partial<Pick<IProductImageAttributes, 'file' | 'productId' >>
-  & {
+export type IProductImageCreationAttributes = Pick<IProductImageAttributes, 'id' | 'isVideo'> &
+  Partial<Pick<IProductImageAttributes, 'file' | 'productId'>> & {
     position?: number | 0
-  };
+    alt?: string | null
+  }
 export interface IProductImageInstance
   extends Model<IProductImageAttributes, IProductImageCreationAttributes>,
     IProductImageAttributes {}

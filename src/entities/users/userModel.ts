@@ -62,6 +62,18 @@ export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id' | 'rolId'> &
     | 'name'
     | 'email'
   >
+export type IAuthUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
+  Omit<IUserAttributes, 'password' | 'email' | 'rolId'> & {
+    avatar?: string | null
+    location?: string | null
+    lastName?: string | null
+    dni?: string | number | null
+    dniType?: string | null
+    phoneNumber?: string | null
+    receiveNotification?: boolean
+    dob?: string | null
+    name: string
+  }
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
     IUserAttributes {}

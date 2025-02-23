@@ -489,6 +489,138 @@
 			"IRolCreationAttributes": {
 				"$ref": "#/components/schemas/Pick_IRolAttributes.id-or-name_"
 			},
+			"Pick_IUserAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-email-or-rolId__": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"location": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"dni": {
+						"type": "number",
+						"format": "double"
+					},
+					"dniType": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"receiveNotification": {
+						"type": "boolean"
+					},
+					"dob": {
+						"type": "string"
+					},
+					"status": {
+						"type": "boolean"
+					},
+					"tokenPush": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"dniType"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_IUserAttributes.password-or-email-or-rolId_": {
+				"$ref": "#/components/schemas/Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-email-or-rolId__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"IAuthUserUpdatenAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IUserAttributes.id_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_IUserAttributes.password-or-email-or-rolId_"
+					},
+					{
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"dob": {
+								"type": "string",
+								"nullable": true
+							},
+							"receiveNotification": {
+								"type": "boolean"
+							},
+							"phoneNumber": {
+								"type": "string",
+								"nullable": true
+							},
+							"dniType": {
+								"type": "string",
+								"nullable": true
+							},
+							"dni": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "number",
+										"format": "double"
+									}
+								],
+								"nullable": true
+							},
+							"lastName": {
+								"type": "string",
+								"nullable": true
+							},
+							"location": {
+								"type": "string",
+								"nullable": true
+							},
+							"avatar": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"required": [
+							"name"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"IProductAttributes": {
 				"properties": {
 					"id": {
@@ -710,12 +842,9 @@
 				"type": "object",
 				"description": "Make all properties in T optional"
 			},
-			"Pick_IProductImageAttributes.id-or-alt-or-isVideo_": {
+			"Pick_IProductImageAttributes.id-or-isVideo_": {
 				"properties": {
 					"id": {
-						"type": "string"
-					},
-					"alt": {
 						"type": "string"
 					},
 					"isVideo": {
@@ -740,13 +869,17 @@
 			"IProductImageCreationAttributes": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/Pick_IProductImageAttributes.id-or-alt-or-isVideo_"
+						"$ref": "#/components/schemas/Pick_IProductImageAttributes.id-or-isVideo_"
 					},
 					{
 						"$ref": "#/components/schemas/Partial_Pick_IProductImageAttributes.file-or-productId__"
 					},
 					{
 						"properties": {
+							"alt": {
+								"type": "string",
+								"nullable": true
+							},
 							"position": {
 								"anyOf": [
 									{
@@ -3902,7 +4035,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IUserUpdatenAttributes"
+								"$ref": "#/components/schemas/IAuthUserUpdatenAttributes"
 							}
 						}
 					}
@@ -6292,7 +6425,7 @@
 				]
 			}
 		},
-		"/A2/archivophp.php": {
+		"/A2/archivophp2.php": {
 			"get": {
 				"operationId": "DownloadOrder",
 				"responses": {
@@ -6358,10 +6491,7 @@
 						"name": "product",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								false
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -6384,7 +6514,7 @@
 				]
 			}
 		},
-		"/A2/detalle.php": {
+		"/A2/detalle2.php": {
 			"get": {
 				"operationId": "DownloadProductOrder",
 				"responses": {
@@ -6488,6 +6618,28 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"time": {
+										"type": "string"
+									},
+									"bd": {
+										"type": "string"
+									},
+									"cla": {
+										"type": "string"
+									},
+									"usu": {
+										"type": "string"
+									},
+									"fe": {
+										"type": "string"
+									},
+									"product": {
+										"type": "boolean"
+									},
+									"wasSent": {
+										"type": "number",
+										"format": "double"
+									},
 									"data": {
 										"type": "string"
 									}

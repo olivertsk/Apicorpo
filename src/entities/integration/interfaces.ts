@@ -92,3 +92,13 @@ export interface OrderProductA2 {
   pisv: number
   subtotal: number
 }
+export interface IRequestBody {
+  fecha?: string
+  wasSent?: number
+  product?: boolean
+  fe?: string
+  usu?: string
+  cla?: string
+  bd?: string
+  time?: string
+}

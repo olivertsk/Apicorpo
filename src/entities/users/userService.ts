@@ -1,6 +1,6 @@
 import { modelPasswordReset, modelRol, modelUser } from '@db/index'
 import { type FindOptions, ValidationErrorItem, ValidationError, Op } from 'sequelize'
-import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance, IUserUpdatenAttributes } from '@users/userModel'
+import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance, IUserUpdatenAttributes, IAuthUserUpdatenAttributes } from '@users/userModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices } from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
 import { IPasswordResetAttributes, IPasswordResetCreationAttributes } from './passwordResetModel'
@@ -165,7 +165,7 @@ class UsersService {
   }
 
   public async update(
-    userCreationParams: IUserUpdatenAttributes,
+    userCreationParams: IUserUpdatenAttributes | IAuthUserUpdatenAttributes,
     id: string
   ): Promise<IUserAttributes | null> {
     try {
@@ -192,6 +192,7 @@ class UsersService {
       }
       return null
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }

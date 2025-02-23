@@ -264,12 +264,19 @@ class ProductsService {
   }
 
   public async bulkProductImages(
-    dataParams: IProductImageCreationAttributes[]
+    dataParams: IProductImageCreationAttributes[],
+    productId?: string
   ): Promise<IProductImageAttributes[]> {
     try {
-      const vResponse: IProductImageAttributes[] = await modelProductImages.bulkCreate(dataParams, {
-        updateOnDuplicate: ['id', 'position', 'file', 'productId'],
-      })
+      if (productId) {
+        await modelProductImages.destroy({
+          where: {
+            productId: productId,
+          },
+          force: true,
+        })
+      }
+      const vResponse: IProductImageAttributes[] = await modelProductImages.bulkCreate(dataParams)
       return vResponse
     } catch (error) {
       throw error
@@ -352,13 +359,66 @@ class ProductsService {
     }
   }
 
-  public async saveMasive(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
+  public async saveMasive2(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
     try {
       const vResponse: IProductAttributes[] = await modelProduct.bulkCreate(dataParams, {
         updateOnDuplicate: ['code', 'name', 'departmentId', 'price', 'stock', 'taxRate'],
       })
       return vResponse
     } catch (error) {
+      throw error
+    }
+  }
+  // Método de servicio
+  public async saveMasive1(dataParams: IProductAttributes[]): Promise<IProductAttributes[] | []> {
+    if (!modelProduct.sequelize) {
+      console.log('no tiene modelProduct.sequelize')
+      return []
+    }
+    const transaction = await modelProduct.sequelize.transaction()
+    try {
+      const upsertResults = await Promise.all(
+        dataParams.map(async (product) => {
+          return await modelProduct.upsert(product, { transaction })
+        })
+      )
+      const vResponse: IProductAttributes[] = upsertResults.map((result) => result[0])
+      if (vResponse) {
+        await transaction.commit()
+        return vResponse
+      }
+      return []
+    } catch (error) {
+      await transaction.rollback()
+      throw error
+    }
+  }
+  public async saveMasive(dataParams: IProductAttributes[]): Promise<IProductAttributes[]> {
+    if (!modelProduct.sequelize) {
+      console.log('no tiene modelProduct.sequelize')
+      return []
+    }
+    const transaction = await modelProduct.sequelize.transaction()
+    try {
+      const results: IProductAttributes[] = await Promise.all(
+        dataParams.map(async (product) => {
+          const existingProduct = await modelProduct.findOne({
+            where: { code: product.code },
+            transaction,
+          })
+
+          if (existingProduct) {
+            await existingProduct.update(product, { transaction })
+            return existingProduct
+          } else {
+            return await modelProduct.create(product, { transaction })
+          }
+        })
+      )
+      await transaction.commit()
+      return results
+    } catch (error) {
+      await transaction.rollback()
       throw error
     }
   }

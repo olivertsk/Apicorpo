@@ -13,7 +13,7 @@ import {
   Delete,
   // Queries
 } from 'tsoa'
-import { IUserAttributes, IUserCreationAttributes, IUserUpdatenAttributes } from '@users/userModel'
+import { IAuthUserUpdatenAttributes, IUserAttributes, IUserCreationAttributes } from '@users/userModel'
 import UsersService from '@users/userService'
 import AppConfig from '@config/AppConfig'
 import * as argon2 from 'argon2'
@@ -213,7 +213,7 @@ export class AuthController extends Controller {
   @Put('/update/{userId}')
   public async update(
     @Request() pRequest: { auth: IUserAttributes },
-    @Body() requestBody: IUserUpdatenAttributes
+    @Body() requestBody: IAuthUserUpdatenAttributes
   ): Promise<{ success: boolean; item: IUserAttributes | null; message?: string }> {
     try {
       const userId = pRequest.auth.id
@@ -221,6 +221,7 @@ export class AuthController extends Controller {
         this.setStatus(404) // set return status 404
         return { success: false, item: null, message: fxI18n.__('item_not_found') }
       }
+      console.log('antes de validar')
       await this.userService.validate(requestBody, userId)
       if ('password' in requestBody) {
         delete requestBody.password
@@ -385,13 +386,13 @@ export class AuthController extends Controller {
         this.setStatus(401)
         return { success: false }
       }
-       const vResponse = await this.userService.softDeleteRecord(pRequestBody?.auth?.id)
-       if (vResponse) {
-         this.setStatus(200)
-         return { success: true }
-       }
-       this.setStatus(400)
-       return { success: false, message: fxI18n.__('item_not_found') }
+      const vResponse = await this.userService.softDeleteRecord(pRequestBody?.auth?.id)
+      if (vResponse) {
+        this.setStatus(200)
+        return { success: true }
+      }
+      this.setStatus(400)
+      return { success: false, message: fxI18n.__('item_not_found') }
     } catch (error) {
       throw error
     }

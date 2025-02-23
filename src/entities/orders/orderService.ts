@@ -212,6 +212,12 @@ class OrdersService {
         month = new Date(param.fe).getMonth() + 1
         year = new Date(param.fe).getFullYear()
       }
+      if (day && day.toLocaleString.length === 1) {
+        day = `0${day}`
+      }
+      if (month && month.toLocaleString.length === 1) {
+        month = `0${month}`
+      }
       let whereCondition: any
       // const whereCondition: any = {
       //   ...(param.fecha && {
@@ -224,16 +230,16 @@ class OrdersService {
       //   ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
       //   ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
       // }
-      console.log('object :>> ', day);
-      console.log('object :>> ', month);
-      console.log('object :>> ', year);
+      console.log('day :>> ', day);
+      console.log('month :>> ', month)
+      console.log('year :>> ', year)
       if ('fe' in param && param?.fe) {
         whereCondition = {
           ...(param.fe && {
             [Op.and]: [
-              sequelize.where(sequelize.fn('MONTH', sequelize.col('orders.createdAt')), month),
-              sequelize.where(sequelize.fn('DAY', sequelize.col('orders.createdAt')), day),
-              sequelize.where(sequelize.fn('YEAR', sequelize.col('orders.createdAt')), year),
+              sequelize.where(sequelize.fn('MONTH', sequelize.col('Orders.createdAt')), month),
+              sequelize.where(sequelize.fn('DAY', sequelize.col('Orders.createdAt')), day),
+              sequelize.where(sequelize.fn('YEAR', sequelize.col('Orders.createdAt')), year),
             ],
           }),
         }
@@ -274,7 +280,7 @@ class OrdersService {
         ],
         order: [['code', 'DESC']],
       })
-      if ('fe' in param && param?.fe) {
+      if (!('fe' in param && param?.fe)) {
         await modelOrder.update(
           { wasSent: param?.product ? EWasSent.sentProductOrder : EWasSent.sentOrder },
           { where: whereCondition }
@@ -282,6 +288,7 @@ class OrdersService {
       }
       return orders
     } catch (error) {
+      console.log('error :>> ', error);
       throw error
     }
   }

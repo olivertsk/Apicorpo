@@ -51,14 +51,14 @@ export class A2IntegrationController extends Controller {
    * @returns {Promise<string>} - Retorna un string CSV.
    * @throws Will throw an error if there is an issue in the process.
    */
-  @Get('/archivophp.php')
+  @Get('/archivophp2.php')
   // @Hidden()
   public async downloadOrder(
     @Queries()
     requestBody: {
       fecha?: string
       wasSent?: number
-      product?: false
+      product?: boolean
       fe?: string
       usu?: string
       cla?: string
@@ -96,8 +96,11 @@ export class A2IntegrationController extends Controller {
           nit: `${item.dataUser.dni},`,
         })
       }
+      // const { parse } = require('json2csv')
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
       csv = csv.replace(/['"]+/g, '')
+      csv = csv.replace(/["]+/g, '')
+      // csv = csv.replace(/\n/g, '\r\n')
       this.setHeader('Content-Type', 'text/plain')
       return csv
     } catch (error) {
@@ -106,7 +109,7 @@ export class A2IntegrationController extends Controller {
   }
   //  https://api.corpoindustri.com/A2/ + 'detalle.php?fe=' + fecha + '&usu=' + usuario + '&cla='
   // + clave + '&bd=' + md + '&time=01';
-  @Get('/detalle.php')
+  @Get('/detalle2.php')
   public async downloadProductOrder(
     @Queries()
     requestBody: {
@@ -219,7 +222,7 @@ export class A2IntegrationController extends Controller {
             name: item.name,
             catalogueCode: item.catalogueCode,
             price: item?.preve1 || item?.preve,
-            existence: existence < 0 ? 0 : existence,
+            stock: existence < 0 ? 0 : existence,
             tax: item.tax,
           }
           delete item.code
@@ -242,27 +245,43 @@ export class A2IntegrationController extends Controller {
   }
 
   @Post('importardata.php')
-  public async outputProduct(@Body() requestBody: { data: string }) {
+  public async outputProduct(
+    @Body()
+    requestBody: {
+      data: string
+      wasSent?: number
+      product?: boolean
+      fe?: string
+      usu?: string
+      cla?: string
+      bd?: string
+      time?: string
+    }
+  ) {
     try {
       const pData = requestBody.data
       const vData = pData.replace(/\\r\\n/g, '')
       const jsonData = await this.convertToJSON(vData)
       let products: any[] = []
       // let categoryIds: { categoryId: string; productCode: null }[] = []
-      for (const item of jsonData.product) {
-        // const catalogueCode = item.catalogueCode
-        // const catalogue = jsonData.find((catalogue: any) => catalogue.code === catalogueCode)
-        const catalogueId = (await this.departmentService.firstOrCreateCode(item.catalogueCode))?.id
+      console.log('jsonData :>> ', jsonData);
+      if (jsonData?.product) {
+        for (const item of jsonData.product) {
+          // const catalogueCode = item.catalogueCode
+          // const catalogue = jsonData.find((catalogue: any) => catalogue.code === catalogueCode)
+          const catalogueId = (await this.departmentService.firstOrCreateCode(item.catalogueCode))
+            ?.id
 
-        const product = {
-          code: item.code,
-          name: item.name,
-          catalogueId: catalogueId,
-          price: item?.preve1 || item?.preve || item.price,
-          existence: item.existence,
-          tax: item.tax,
+          const product = {
+            code: item.code,
+            name: item.name,
+            catalogueId: catalogueId,
+            price: item?.preve1 || item?.preve || item.price,
+            stock: item.stock,
+            tax: item.tax,
+          }
+          products.push(product)
         }
-        products.push(product)
       }
 
       const productsCreated = await this.productService.saveMasive(products)

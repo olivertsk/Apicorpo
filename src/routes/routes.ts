@@ -227,6 +227,26 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"Pick_IRolAttributes.id-or-name_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_IUserAttributes.id_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-email-or-rolId__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"name":{"dataType":"string","required":true},"avatar":{"dataType":"string"},"location":{"dataType":"string"},"lastName":{"dataType":"string"},"dni":{"dataType":"double"},"dniType":{"dataType":"string","required":true},"phoneNumber":{"dataType":"string"},"receiveNotification":{"dataType":"boolean"},"dob":{"dataType":"string"},"status":{"dataType":"boolean"},"tokenPush":{"dataType":"string"},"createdAt":{"dataType":"datetime"},"updatedAt":{"dataType":"datetime"},"deletedAt":{"dataType":"datetime"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_IUserAttributes.password-or-email-or-rolId_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-email-or-rolId__","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IAuthUserUpdatenAttributes": {
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IUserAttributes.id_"},{"ref":"Omit_IUserAttributes.password-or-email-or-rolId_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"dob":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"receiveNotification":{"dataType":"boolean"},"phoneNumber":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"dniType":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"dni":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"},{"dataType":"enum","enums":[null]}]},"lastName":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"avatar":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IProductAttributes": {
         "dataType": "refObject",
         "properties": {
@@ -295,9 +315,9 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string"},"code":{"dataType":"string"},"price":{"dataType":"double"},"priceWithTax":{"dataType":"double"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IProductImageAttributes.id-or-alt-or-isVideo_": {
+    "Pick_IProductImageAttributes.id-or-isVideo_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"alt":{"dataType":"string"},"isVideo":{"dataType":"boolean"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string"},"isVideo":{"dataType":"boolean"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_Pick_IProductImageAttributes.file-or-productId__": {
@@ -307,7 +327,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IProductImageCreationAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IProductImageAttributes.id-or-alt-or-isVideo_"},{"ref":"Partial_Pick_IProductImageAttributes.file-or-productId__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"position":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[0]}]}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IProductImageAttributes.id-or-isVideo_"},{"ref":"Partial_Pick_IProductImageAttributes.file-or-productId__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"alt":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"position":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[0]}]}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IProductCreationAttributes": {
@@ -1541,7 +1561,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_update: Record<string, TsoaRoute.ParameterSchema> = {
                 pRequest: {"in":"request","name":"pRequest","required":true,"dataType":"object"},
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IUserUpdatenAttributes"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IAuthUserUpdatenAttributes"},
         };
         app.put('/auth/update/:userId',
             authenticateMiddleware([{"bearerAuth":["optional"]}]),
@@ -2668,9 +2688,9 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsA2IntegrationController_downloadOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"time":{"dataType":"string"},"bd":{"dataType":"string"},"cla":{"dataType":"string"},"usu":{"dataType":"string"},"fe":{"dataType":"string"},"product":{"dataType":"enum","enums":[false]},"wasSent":{"dataType":"double"},"fecha":{"dataType":"string"}}},
+                requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"time":{"dataType":"string"},"bd":{"dataType":"string"},"cla":{"dataType":"string"},"usu":{"dataType":"string"},"fe":{"dataType":"string"},"product":{"dataType":"boolean"},"wasSent":{"dataType":"double"},"fecha":{"dataType":"string"}}},
         };
-        app.get('/A2/archivophp.php',
+        app.get('/A2/archivophp2.php',
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController.prototype.downloadOrder)),
 
@@ -2700,7 +2720,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsA2IntegrationController_downloadProductOrder: Record<string, TsoaRoute.ParameterSchema> = {
                 requestBody: {"in":"queries","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"time":{"dataType":"string"},"bd":{"dataType":"string"},"cla":{"dataType":"string"},"usu":{"dataType":"string"},"fe":{"dataType":"string"},"product":{"dataType":"boolean"},"wasSent":{"dataType":"double"}}},
         };
-        app.get('/A2/detalle.php',
+        app.get('/A2/detalle2.php',
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController.prototype.downloadProductOrder)),
 
@@ -2728,7 +2748,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsA2IntegrationController_outputProduct: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"dataType":"string","required":true}}},
+                requestBody: {"in":"body","name":"requestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"time":{"dataType":"string"},"bd":{"dataType":"string"},"cla":{"dataType":"string"},"usu":{"dataType":"string"},"fe":{"dataType":"string"},"product":{"dataType":"boolean"},"wasSent":{"dataType":"double"},"data":{"dataType":"string","required":true}}},
         };
         app.post('/A2/importardata.php',
             ...(fetchMiddlewares<RequestHandler>(A2IntegrationController)),
