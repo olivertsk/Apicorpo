@@ -66,6 +66,7 @@ app.get('/file/:folder/:fileName', async (pReq, pRes) => {
 
 app.get('/detalle.php', async (pReq, pRes) => {
   try {
+    console.log('hola');
     const requestBody = {
       wasSent: pReq.query.wasSent ? Number(pReq.query.wasSent) : undefined,
       product: pReq.query.product === 'true' ? true : undefined,
@@ -83,7 +84,7 @@ app.get('/detalle.php', async (pReq, pRes) => {
       product: false,
     })
     if (data.length === 0) {
-      return pRes.status(200).send('')
+      return pRes.status(200).send('idm,id,codart,fecmov,canart,preart,monimp,pisv,subtotal')
     }
     const dataJSON: Item[] = JSON.parse(JSON.stringify(data))
     const resposeOrder: OrderProductA2[] = []
@@ -97,7 +98,7 @@ app.get('/detalle.php', async (pReq, pRes) => {
         const date = item.createdAt.toString().split('T')[0]
         if (item?.product) {
           resposeOrder.push({
-            idm: item.idn,
+            idm: items.code,
             id: item.product.idn,
             codart: item?.product?.code || '',
             fecmov: date,
@@ -112,10 +113,16 @@ app.get('/detalle.php', async (pReq, pRes) => {
         }
       }
     }
-    let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
-    csv = csv.replace(/['"]+/g, '')
-    pRes.setHeader('Content-Type', 'text/plain')
-    return pRes.send(csv)
+    console.log('resposeOrder :>> ', resposeOrder);
+    if (resposeOrder.length) {
+      let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
+      csv = csv.replace(/['"]+/g, '')
+      pRes.setHeader('Content-Type', 'text/plain')
+      return pRes.send(csv)
+    } else {
+      pRes.setHeader('Content-Type', 'text/plain')
+      return pRes.send('idm,id,codart,fecmov,canart,preart,monimp,pisv,subtotal')
+    }
   } catch (error) {
     console.error('Error al procesar la orden:', error)
     return pRes.status(500).send('Internal server error')
@@ -143,7 +150,11 @@ app.get('/archivophp.php', async (req, res) => {
       product: false,
     })
     if (data.length === 0) {
-      return res.status(200).send('')
+      return res
+        .status(200)
+        .send(
+          'codfmv,id,codcli,fecmov,monmov,monnet,impmov,codved,nomcli,telcl1,email,dir1,nrocontrol,forpag,nit'
+        )
     }
     const resposeOrder: OrderA2[] = []
     const dataJSON = JSON.parse(JSON.stringify(data))
@@ -167,11 +178,20 @@ app.get('/archivophp.php', async (req, res) => {
         nit: `${item.dataUser.dni},`,
       })
     }
-    let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
-    csv = csv.replace(/['"]+/g, '')
-    csv = csv.replace(/["]+/g, '')
-    res.setHeader('Content-Type', 'text/plain')
-    return res.send(csv)
+    if (resposeOrder.length) {
+      let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
+      csv = csv.replace(/['"]+/g, '')
+      csv = csv.replace(/["]+/g, '')
+      res.setHeader('Content-Type', 'text/plain')
+      return res.send(csv)
+    } else {
+      res.setHeader('Content-Type', 'text/plain')
+      return res
+        .status(200)
+        .send(
+          'codfmv,id,codcli,fecmov,monmov,monnet,impmov,codved,nomcli,telcl1,email,dir1,nrocontrol,forpag,nit'
+        )
+    }
   } catch (error) {
     console.error('Error al procesar la orden:', error)
     return res.status(500).send('Internal server error')

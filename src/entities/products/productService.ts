@@ -309,7 +309,10 @@ class ProductsService {
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
       const record = await modelProduct.update(
-        { deletedAt: new Date() },
+        { 
+          deletedAt: new Date(),
+          code: `detele-${pId}-${new Date().getTime()}`
+        },
         {
           where: { id: pId },
         }

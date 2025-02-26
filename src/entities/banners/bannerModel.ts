@@ -72,7 +72,8 @@ export const vBannerModelAttributes: SequelizeAttributes<IBannerAttributes> = {
   images: {
     type: DataTypes.STRING,
     field: 'images',
-    allowNull: false,
+    defaultValue: null,
+    allowNull: true,
   },
   name: {
     type: DataTypes.STRING,

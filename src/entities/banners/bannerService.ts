@@ -65,6 +65,7 @@ class BannersService {
 
   public async update(itemCreationParams: IBannerCreationAttributes, id: string): Promise<IBannerAttributes | null> {
     try {
+      console.log('itemCreationParams :>> ', itemCreationParams);
       if (id) {
         const vResponse: IBannerInstance | null = await modelBanner.findOne({
           where: {
@@ -103,11 +104,24 @@ class BannersService {
       const vImagesName: IBannerInstance | null = await modelBanner.findOne({
         where: {
           images: name
+        },
+      })
+      if (vImagesName) {
+        await vImagesName?.update({
+          images: null
+        })
+      } else {
+        const vImagesNameMobile: IBannerInstance | null = await modelBanner.findOne({
+          where: {
+            mobileImage: name
+          },
+        })
+        if (vImagesNameMobile) {
+          await vImagesNameMobile?.update({
+            mobileImage: null
+          })
         }
-      })
-      await vImagesName?.update({
-        images: ''
-      })
+      }
     } catch (error) {
       throw error
     }

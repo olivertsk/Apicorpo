@@ -85,30 +85,34 @@ export class FileController extends Controller {
       console.log('filePath :>> ', filePath);
       console.log('type :>> ', type);
       if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-        this.setStatus(200); // set return success 201
         if (type && fileName.includes('storage')) {
           switch (type) {
             case 'products':
               await this.productService.deleteImagesName(fileName)
-              break;
+              fs.unlinkSync(filePath)
+              break
             case 'departments':
               await this.departmentService.deleteImagesName(fileName)
-              break;
+              fs.unlinkSync(filePath)
+              break
             case 'categories':
               await this.categoryService.deleteImagesName(fileName)
-              break;
+              fs.unlinkSync(filePath)
+              break
             case 'banners':
               await this.bannerService.deleteImagesName(fileName)
-              break;
+              fs.unlinkSync(filePath)
+              break
             case 'maps':
               await this.mapService.deleteImagesName(fileName)
-              break;
-          
+              fs.unlinkSync(filePath)
+              break
+
             default:
-              break;
+              break
           }
         }
+        this.setStatus(200) // set return success 201
         return { success: true }
       } else {
         this.setStatus(400)

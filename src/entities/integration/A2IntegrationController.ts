@@ -265,6 +265,16 @@ export class A2IntegrationController extends Controller {
       let products: any[] = []
       // let categoryIds: { categoryId: string; productCode: null }[] = []
       console.log('jsonData :>> ', jsonData);
+      console.log('jsonData. :>> ', jsonData.catalogue);
+      if (jsonData?.catalogue) {
+        for (const item of jsonData.catalogue) {
+          const catalogue = {
+            code: item.code,
+            name: item.name,
+          }
+          await this.departmentService.firstOrCreate(catalogue)
+        }
+      }
       if (jsonData?.product) {
         for (const item of jsonData.product) {
           // const catalogueCode = item.catalogueCode

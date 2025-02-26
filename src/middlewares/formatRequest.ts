@@ -7,7 +7,11 @@ export const formatRequest = async (req: Request, _res: Response, next: NextFunc
     if (Object.prototype.hasOwnProperty.call(query, key)) {
       const element = query[key]
       if (element === 'null' || element === 'true' || element === 'false') {
-        query[key] = JSON.parse(element)
+        if (query[key] === 'phoneNumber' || query[key] === 'dni' || query[key] === 'dniType') {
+          query[key] = ''
+        } else {
+          query[key] = JSON.parse(element)
+        }
       }
       if (element === 'undefined') {
         query[key] = undefined

@@ -10,15 +10,15 @@ export interface IUserAttributes {
   lastName?: string | null
   email: string
   avatar?: string | null
-  dni?: number | null
-  dniType: string
+  dni?: string | number | null
+  dniType?: string | null
   phoneNumber?: string | null
   dob?: string | null
   password: string
   rolId: IRolAttributes['id'] | null
   status?: boolean
   location?: string | null
-  tokenPush?: string
+  tokenPush?: string | null
   receiveNotification?: boolean
   createdAt?: Date
   updatedAt?: Date
@@ -47,23 +47,12 @@ export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'pa
     rolId?: IRolAttributes['id'] | null
     receiveNotification?: boolean
   }
+
 export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id' | 'rolId'> &
   Omit<
     IUserAttributes,
     | 'password'
-    | 'avatar'
-    | 'location'
-    | 'lastName'
-    | 'dni'
-    | 'dniType'
-    | 'phoneNumber'
-    | 'receiveNotification'
-    | 'dob'
-    | 'name'
-    | 'email'
-  >
-export type IAuthUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
-  Omit<IUserAttributes, 'password' | 'email' | 'rolId'> & {
+  > & {
     avatar?: string | null
     location?: string | null
     lastName?: string | null
@@ -72,8 +61,22 @@ export type IAuthUserUpdatenAttributes = Pick<IUserAttributes, 'id'> &
     phoneNumber?: string | null
     receiveNotification?: boolean
     dob?: string | null
-    name: string
   }
+
+export type IAuthUserUpdatenAttributes = {
+  id?: string
+  avatar?: string | null
+  location?: string | null
+  lastName?: string | null
+  dni?: string | number | null
+  dniType?: string | null
+  phoneNumber?: string | null
+  receiveNotification?: boolean
+  dob?: string | null
+  name: string
+  tokenPush?: string | null
+}
+
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
     IUserAttributes {}

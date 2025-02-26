@@ -164,12 +164,20 @@
 						"nullable": true
 					},
 					"dni": {
-						"type": "number",
-						"format": "double",
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						],
 						"nullable": true
 					},
 					"dniType": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"phoneNumber": {
 						"type": "string",
@@ -194,7 +202,8 @@
 						"nullable": true
 					},
 					"tokenPush": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"receiveNotification": {
 						"type": "boolean"
@@ -215,7 +224,6 @@
 				"required": [
 					"name",
 					"email",
-					"dniType",
 					"password",
 					"rolId"
 				],
@@ -352,19 +360,57 @@
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email__": {
+			"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password__": {
 				"properties": {
 					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
 						"type": "string"
 					},
 					"rolId": {
 						"type": "string"
 					},
+					"lastName": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"dni": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"dniType": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"dob": {
+						"type": "string"
+					},
 					"status": {
 						"type": "boolean"
 					},
+					"location": {
+						"type": "string"
+					},
 					"tokenPush": {
 						"type": "string"
+					},
+					"receiveNotification": {
+						"type": "boolean"
 					},
 					"createdAt": {
 						"type": "string",
@@ -380,13 +426,15 @@
 					}
 				},
 				"required": [
+					"name",
+					"email",
 					"rolId"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
-			"Omit_IUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email_": {
-				"$ref": "#/components/schemas/Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email__",
+			"Omit_IUserAttributes.password_": {
+				"$ref": "#/components/schemas/Pick_IUserAttributes.Exclude_keyofIUserAttributes.password__",
 				"description": "Construct a type with the properties of T except for those in type K."
 			},
 			"IUserUpdatenAttributes": {
@@ -395,7 +443,51 @@
 						"$ref": "#/components/schemas/Pick_IUserAttributes.id-or-rolId_"
 					},
 					{
-						"$ref": "#/components/schemas/Omit_IUserAttributes.password-or-avatar-or-location-or-lastName-or-dni-or-dniType-or-phoneNumber-or-receiveNotification-or-dob-or-name-or-email_"
+						"$ref": "#/components/schemas/Omit_IUserAttributes.password_"
+					},
+					{
+						"properties": {
+							"dob": {
+								"type": "string",
+								"nullable": true
+							},
+							"receiveNotification": {
+								"type": "boolean"
+							},
+							"phoneNumber": {
+								"type": "string",
+								"nullable": true
+							},
+							"dniType": {
+								"type": "string",
+								"nullable": true
+							},
+							"dni": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "number",
+										"format": "double"
+									}
+								],
+								"nullable": true
+							},
+							"lastName": {
+								"type": "string",
+								"nullable": true
+							},
+							"location": {
+								"type": "string",
+								"nullable": true
+							},
+							"avatar": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"type": "object"
 					}
 				]
 			},
@@ -489,137 +581,62 @@
 			"IRolCreationAttributes": {
 				"$ref": "#/components/schemas/Pick_IRolAttributes.id-or-name_"
 			},
-			"Pick_IUserAttributes.id_": {
+			"IAuthUserUpdatenAttributes": {
 				"properties": {
-					"id": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-email-or-rolId__": {
-				"properties": {
-					"id": {
-						"type": "string"
+					"tokenPush": {
+						"type": "string",
+						"nullable": true
 					},
 					"name": {
 						"type": "string"
 					},
-					"avatar": {
-						"type": "string"
-					},
-					"location": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"dni": {
-						"type": "number",
-						"format": "double"
-					},
-					"dniType": {
-						"type": "string"
-					},
-					"phoneNumber": {
-						"type": "string"
+					"dob": {
+						"type": "string",
+						"nullable": true
 					},
 					"receiveNotification": {
 						"type": "boolean"
 					},
-					"dob": {
+					"phoneNumber": {
+						"type": "string",
+						"nullable": true
+					},
+					"dniType": {
+						"type": "string",
+						"nullable": true
+					},
+					"dni": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						],
+						"nullable": true
+					},
+					"lastName": {
+						"type": "string",
+						"nullable": true
+					},
+					"location": {
+						"type": "string",
+						"nullable": true
+					},
+					"avatar": {
+						"type": "string",
+						"nullable": true
+					},
+					"id": {
 						"type": "string"
-					},
-					"status": {
-						"type": "boolean"
-					},
-					"tokenPush": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
 					}
 				},
 				"required": [
-					"name",
-					"dniType"
+					"name"
 				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_IUserAttributes.password-or-email-or-rolId_": {
-				"$ref": "#/components/schemas/Pick_IUserAttributes.Exclude_keyofIUserAttributes.password-or-email-or-rolId__",
-				"description": "Construct a type with the properties of T except for those in type K."
-			},
-			"IAuthUserUpdatenAttributes": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/Pick_IUserAttributes.id_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_IUserAttributes.password-or-email-or-rolId_"
-					},
-					{
-						"properties": {
-							"name": {
-								"type": "string"
-							},
-							"dob": {
-								"type": "string",
-								"nullable": true
-							},
-							"receiveNotification": {
-								"type": "boolean"
-							},
-							"phoneNumber": {
-								"type": "string",
-								"nullable": true
-							},
-							"dniType": {
-								"type": "string",
-								"nullable": true
-							},
-							"dni": {
-								"anyOf": [
-									{
-										"type": "string"
-									},
-									{
-										"type": "number",
-										"format": "double"
-									}
-								],
-								"nullable": true
-							},
-							"lastName": {
-								"type": "string",
-								"nullable": true
-							},
-							"location": {
-								"type": "string",
-								"nullable": true
-							},
-							"avatar": {
-								"type": "string",
-								"nullable": true
-							}
-						},
-						"required": [
-							"name"
-						],
-						"type": "object"
-					}
-				]
+				"type": "object"
 			},
 			"IProductAttributes": {
 				"properties": {
@@ -1494,9 +1511,6 @@
 			},
 			"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__": {
 				"properties": {
-					"location": {
-						"type": "string"
-					},
 					"dni": {
 						"anyOf": [
 							{
@@ -1512,6 +1526,9 @@
 						"type": "string"
 					},
 					"phoneNumber": {
+						"type": "string"
+					},
+					"location": {
 						"type": "string"
 					},
 					"userId": {
@@ -2143,15 +2160,12 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IDepartmentAttributes.id-or-description-or-icon_": {
+			"Pick_IDepartmentAttributes.id-or-description_": {
 				"properties": {
 					"id": {
 						"type": "string"
 					},
 					"description": {
-						"type": "string"
-					},
-					"icon": {
 						"type": "string"
 					}
 				},
@@ -2170,13 +2184,17 @@
 			"IDepartmentCreationAttributes": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/Pick_IDepartmentAttributes.id-or-description-or-icon_"
+						"$ref": "#/components/schemas/Pick_IDepartmentAttributes.id-or-description_"
 					},
 					{
 						"$ref": "#/components/schemas/Partial_Pick_IDepartmentAttributes.name__"
 					},
 					{
 						"properties": {
+							"icon": {
+								"type": "string",
+								"nullable": true
+							},
 							"code": {
 								"type": "string",
 								"nullable": true
