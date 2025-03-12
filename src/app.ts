@@ -103,10 +103,10 @@ app.get('/detalle.php', async (pReq, pRes) => {
             codart: item?.product?.code || '',
             fecmov: date,
             canart: item.quantity,
-            preart: item.sale_price,
+            preart: item.salePrice,
             monimp: item.valueTax,
-            pisv: tax,
-            subtotal: item.subtotal,
+            pisv: item.tax || tax || 0,
+            subtotal: item.subtotal + ',',
           })
         } else {
           console.log('item :>> ', item)
@@ -153,7 +153,7 @@ app.get('/archivophp.php', async (req, res) => {
       return res
         .status(200)
         .send(
-          'codfmv,id,codcli,fecmov,monmov,monnet,impmov,codved,nomcli,telcl1,email,dir1,nrocontrol,forpag,nit'
+          'codfmv,id,codcli,fecmov,monmov,monnet,impmov,codved,nomcli,telcl1,email,dir1,nrocontrol,forpag'
         )
     }
     const resposeOrder: OrderA2[] = []
@@ -174,8 +174,8 @@ app.get('/archivophp.php', async (req, res) => {
         email: item?.dataUser?.email || '',
         dir1: item?.location || '',
         nrocontrol: item?.observation || '1',
-        forpag: 1,
-        nit: `${item.dataUser.dni},`,
+        forpag: `${1},`,
+        // nit: `${item.dataUser.dni},`,
       })
     }
     if (resposeOrder.length) {
@@ -189,7 +189,7 @@ app.get('/archivophp.php', async (req, res) => {
       return res
         .status(200)
         .send(
-          'codfmv,id,codcli,fecmov,monmov,monnet,impmov,codved,nomcli,telcl1,email,dir1,nrocontrol,forpag,nit'
+          'codfmv,id,codcli,fecmov,monmov,monnet,impmov,codved,nomcli,telcl1,email,dir1,nrocontrol,forpag'
         )
     }
   } catch (error) {

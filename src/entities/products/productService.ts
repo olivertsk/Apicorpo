@@ -177,6 +177,16 @@ class ProductsService {
       if (!whereStatement.order) {
         whereStatement.order = [['createdAt', 'DESC']]
       }
+      if ('isClient' in pParam && pParam.isClient) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          status: true,
+          stock: {
+            [Op.gt]: 0,
+            [Op.not]: null,
+          },
+        }
+      }
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllProduct = await fxReponseServices(

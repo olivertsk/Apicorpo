@@ -92,8 +92,7 @@ export class A2IntegrationController extends Controller {
           email: item?.dataUser?.email || '',
           dir1: item?.location || '',
           nrocontrol: item?.observation || '1',
-          forpag: 1,
-          nit: `${item.dataUser.dni},`,
+          forpag: 1 + ',',
         })
       }
       // const { parse } = require('json2csv')
@@ -151,7 +150,7 @@ export class A2IntegrationController extends Controller {
               preart: item.sale_price,
               monimp: item.valueTax,
               pisv: tax,
-              subtotal: item.subtotal,
+              subtotal: item.subtotal + ',',
             })
           } else {
             console.log('item :>> ', item)
@@ -282,13 +281,19 @@ export class A2IntegrationController extends Controller {
           const catalogueId = (await this.departmentService.firstOrCreateCode(item.catalogueCode))
             ?.id
 
-          const product = {
+          const product: any = {
             code: item.code,
             name: item.name,
-            catalogueId: catalogueId,
+            departmentId: catalogueId,
             price: item?.preve1 || item?.preve || item.price,
             stock: item.stock,
-            tax: item.tax,
+            taxRate: item.tax || 0,
+          }
+          if (product.price && product.taxRate) {
+            const price = Number(product.price)
+            const taxRate = Number(product.taxRate)
+            const priceWithTax = price + (price * taxRate) / 100
+            product.priceWithTax = priceWithTax
           }
           products.push(product)
         }
@@ -450,7 +455,7 @@ export class A2IntegrationController extends Controller {
           // !isNaN(result.result?.file) ? (result.result.file = result.result?.file + 1) : 0
           result.result.file = result.result?.file + 1
           imagesData.push({
-            file: `${valid.id}-${fileNameEntry}?a=${dateRam}`,
+            file: `storage/${valid.id}-${fileNameEntry}?a=${dateRam}`,
             productId: valid.id,
             position,
           })

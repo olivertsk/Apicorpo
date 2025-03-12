@@ -78,8 +78,7 @@ export interface OrderA2 {
   email?: string
   dir1: string
   nrocontrol?: any
-  forpag: 1
-  nit?: any
+  forpag: string
 }
 export interface OrderProductA2 {
   idm: number
@@ -90,7 +89,7 @@ export interface OrderProductA2 {
   preart: number
   monimp: number
   pisv: number
-  subtotal: number
+  subtotal: string
 }
 export interface IRequestBody {
   fecha?: string

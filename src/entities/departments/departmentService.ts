@@ -1,4 +1,4 @@
-import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct } from '@db/index'
+import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct, modelProductImages } from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
 import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
@@ -23,9 +23,14 @@ class DepartmentsService {
 
   public async firstOrCreateCode(code: string): Promise<IDepartmentAttributes | null> {
     try {
+      // const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
+      //   where: {
+      //     code: code,
+      //   },
+      // })
       const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
         where: {
-          code: code,
+          [Op.or]: [{ code: code }, { name: code }],
         },
       })
       return vResponse
@@ -81,10 +86,11 @@ class DepartmentsService {
         }
       }
       if (pParam?.product) {
-        whereStatement.include = [
+        const includeProduct: any = [
           {
             model: modelProduct,
             as: 'products',
+            limit: 12,
             include: [
               {
                 model: modelFavoriteProduct,
@@ -93,9 +99,36 @@ class DepartmentsService {
                 where: { userId: pParam?.userId },
                 attributes: ['id'],
               },
+              {
+                model: modelProductImages,
+                as: 'images',
+                required: false,
+              },
+              {
+                model: modelDepartment,
+                as: 'department',
+                required: false,
+              },
+              {
+                model: modelCategory,
+                as: 'category',
+                required: false,
+              },
             ],
-          },
+          }
         ]
+
+        if (pParam?.isClient) {
+          includeProduct[0].where = {
+            status: true,
+            stock: {
+              [Op.gt]: 0, // Mayor que 0
+              [Op.not]: null, // No es null
+            },
+          }
+        }
+
+        whereStatement.include = includeProduct
       }
       if (pParam?.categories) {
         whereStatement.include = [

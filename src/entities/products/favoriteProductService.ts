@@ -1,4 +1,4 @@
-import { modelFavoriteProduct, modelProduct } from '@db/index'
+import { modelDepartment, modelFavoriteProduct, modelProduct, modelProductImages } from '@db/index'
 import { type FindOptions } from 'sequelize'
 import { type IFavoriteProductAttributes, type IFavoriteProductCreationAttributes, type IResponseAllFavoriteProduct, type IFavoriteProductInstance } from '@entities/products/favoriteProductModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
@@ -40,6 +40,18 @@ class FavoriteProductsService {
         {
           model: modelProduct,
           as: 'product',
+          include: [
+            {
+              model: modelProductImages,
+              as: 'images',
+              required: false,
+            },
+            {
+              model: modelDepartment,
+              as: 'department',
+              required: false,
+            },
+          ]
         },
       ]
       const vResponse: IFavoriteProductAttributes[] =

@@ -124,19 +124,17 @@ export class ProductsController extends Controller {
       if (requestBody?.coverImage) {
         requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
       }
-      console.log(
-        'requestBody.priceWithTax :>> ',
-        typeof requestBody.priceWithTax,
-        requestBody.priceWithTax,
-        !requestBody.priceWithTax
-      )
-      if (!requestBody.priceWithTax) {
-        requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
-        console.log('requestBody.priceWithTax 2 :>> ', requestBody.priceWithTax)
-      }
-      console.log('requestBody.taxRate :>> ', requestBody.taxRate, !requestBody.taxRate)
       if (!requestBody.taxRate) {
         requestBody.taxRate = 0
+      } else {
+        if (!requestBody.priceWithTax) {
+          const priceWithTax = requestBody?.promotionalPrice || requestBody.price || 0
+          requestBody.priceWithTax =
+            priceWithTax + (requestBody.taxRate * priceWithTax) / 100
+        }
+      }
+      if (!requestBody.priceWithTax) {
+        requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
       }
       const vItem: IProductAttributes | null = await this.productService.create(requestBody)
       if (imagesData?.length) {
@@ -176,11 +174,16 @@ export class ProductsController extends Controller {
       if (requestBody?.coverImage) {
         requestBody.coverImage = await fxMoveImages(requestBody.coverImage)
       }
-      if (!requestBody.priceWithTax) {
-        requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
-      }
       if (!requestBody.taxRate) {
         requestBody.taxRate = 0
+      } else {
+        if (!requestBody.priceWithTax) {
+          const priceWithTax = requestBody?.promotionalPrice || requestBody.price || 0
+          requestBody.priceWithTax = priceWithTax + (requestBody.taxRate * priceWithTax) / 100
+        }
+      }
+      if (!requestBody.priceWithTax) {
+        requestBody.priceWithTax = requestBody?.promotionalPrice || requestBody.price
       }
       const vItem: IProductAttributes | null = await this.productService.update(
         requestBody,
