@@ -224,42 +224,67 @@ class ProductsService {
           required: false,
         },
       ]
+      let orConditions: any[] = []
+
+      let name = pParam.name
       if (pParam?.name) {
-        whereStatement.where = {
-          ...whereStatement.where,
-          [Op.or]: {
-            name: pParam.name,
-          },
+        if (name.includes('UND')) {
+          name = name.replace('UND', '')
         }
-      }
-      if (pParam?.departmentId) {
-        whereStatement.where = {
-          ...whereStatement.where,
-          [Op.or]: {
-            departmentId: pParam.departmentId,
-          },
+        if (name.includes('GR')) {
+          name = name.replace('GR', '')
         }
+        orConditions.push({ name: { [Op.like]: `%${name}%` } })
       }
+      // if (pParam?.departmentId) {
+      //   orConditions.push({ departmentId: pParam.departmentId })
+      // }
       if (pParam?.categoryId) {
-        whereStatement.where = {
-          ...whereStatement.where,
-          [Op.or]: {
-            categoryId: pParam.categoryId,
-          },
-        }
+        orConditions.push({ categoryId: pParam.categoryId })
       }
       if (pParam?.notProductId) {
-        console.log('pParam?.notProductId :>> ', pParam?.notProductId)
         whereStatement.where = {
           ...whereStatement.where,
           id: { [Op.not]: pParam.notProductId },
         }
       }
+      whereStatement.where = {
+        [Op.or]: orConditions,
+        ...whereStatement.where,
+        status: true,
+        stock: {
+          [Op.gt]: 0,
+          [Op.not]: null,
+        },
+      }
+      whereStatement.limit = 50
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
-      return { data: vResponse }
-    } catch (error) {
+
+      // Ordenar los resultados por la cantidad de letras comunes en los nombres
+      const sortedResponse = vResponse.sort((a, b) => {
+        const commonLettersCountA = this.getCommonLettersCount(name, a.name)
+        const commonLettersCountB = this.getCommonLettersCount(name, b.name)
+        return commonLettersCountB - commonLettersCountA // Orden descendente
+      })
+
+      // Seleccionar los primeros 12 productos después de ordenar
+      const limitedResponse = sortedResponse.slice(0, 12)
+      return { data: limitedResponse }
+      } catch (error) {
       throw error
     }
+  }
+
+  private getCommonLettersCount = (str1: string, str2: string): number => {
+    const set1 = new Set(str1);
+    const set2 = new Set(str2);
+    let commonCount = 0;
+    set1.forEach((char) => {
+      if (set2.has(char)) {
+        commonCount++;
+      }
+    });
+    return commonCount;
   }
 
   public async create(
@@ -319,9 +344,9 @@ class ProductsService {
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
       const record = await modelProduct.update(
-        { 
+        {
           deletedAt: new Date(),
-          code: `detele-${pId}-${new Date().getTime()}`
+          code: `detele-${pId}-${new Date().getTime()}`,
         },
         {
           where: { id: pId },
