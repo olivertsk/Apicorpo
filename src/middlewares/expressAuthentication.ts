@@ -13,7 +13,6 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
     fxI18n.setLocale("es");
   }
   const authHeader = req.headers.authorization;
-  console.log('authHeader :>> ', authHeader);
   if (authHeader) {
     const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader;
     try {
@@ -23,7 +22,6 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
       }
       next()
     } catch (error) {
-      console.log('viene por expressAuth');
       res.sendStatus(403);
     }
   } else {

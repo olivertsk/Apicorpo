@@ -14,6 +14,7 @@ class ProductsService {
     id: string
     userId?: string | null
   }): Promise<IProductAttributes | null> {
+    console.log('pParams.id :>> ', pParams.id);
     try {
       const whereStatement: FindOptions = {}
       whereStatement.where = {
@@ -47,20 +48,20 @@ class ProductsService {
       }
       const vResponse: IProductAttributes | null = await modelProduct.findOne(whereStatement)
       let prodoctReponse: IProductAttributesResponse = JSON.parse(JSON.stringify(vResponse))
-      if (!pParams.auth) {
-        const paramsRelations = {
-          limit: 10,
-          name: prodoctReponse.name,
-          departmentId: prodoctReponse.departmentId,
-          categoryId: prodoctReponse.categoryId,
-          notProductId: prodoctReponse.id,
-        }
-        const relations = await this.relation(paramsRelations)
-        prodoctReponse = {
-          ...prodoctReponse,
-          relations: relations.data,
-        }
+      // if (!pParams.auth) {
+      const paramsRelations = {
+        limit: 10,
+        name: prodoctReponse.name,
+        departmentId: prodoctReponse.departmentId,
+        categoryId: prodoctReponse.categoryId,
+        notProductId: prodoctReponse.id,
       }
+      const relations = await this.relation(paramsRelations)
+      prodoctReponse = {
+        ...prodoctReponse,
+        relations: relations.data,
+      }
+      // }
       return prodoctReponse
     } catch (error) {
       throw error
@@ -81,6 +82,7 @@ class ProductsService {
 
   public async all(pParam: IProductFilter): Promise<IResponseAllProduct> {
     try {
+      pParam.limit = 50
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
@@ -205,6 +207,7 @@ class ProductsService {
   }
 
   public async relation(pParam: any): Promise<IResponseAllProduct> {
+    console.log('relation')
     try {
       let whereStatement: FindOptions = {}
       whereStatement.include = [
@@ -258,6 +261,7 @@ class ProductsService {
         },
       }
       whereStatement.limit = 50
+      whereStatement.logging = true
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
 
       // Ordenar los resultados por la cantidad de letras comunes en los nombres
