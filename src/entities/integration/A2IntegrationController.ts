@@ -77,21 +77,36 @@ export class A2IntegrationController extends Controller {
       const resposeOrder: OrderA2[] = []
       const dataJSON = JSON.parse(JSON.stringify(data))
       for (const item of dataJSON) {
-        const date = item.createdAt.toString().split('T')[0]
+        // Función helper para limpiar strings
+        const cleanString = (str = '') => {
+          if (typeof str !== 'string') return ''
+          return str.replaceAll(',', ' ').replaceAll('`', '').replaceAll('\'', '').replaceAll('~', '').trim()
+        }
+
+        // Procesamiento de datos con valores por defecto y limpieza
+        const nameClient = cleanString(item?.dataUser?.name || item?.nameClient)
+        const phoneNumber = cleanString(item?.dataUser?.phoneNumber || item?.phoneNumber)
+        const location = cleanString(item?.location)
+        const observation = cleanString(item?.observation) || '1'
+        const email = cleanString(item?.dataUser?.email)
+        const date = item?.createdAt?.toString()?.split('T')[0] || ''
+        if (nameClient === 'KEN KEN') {
+          console.log('item :>> ', item)
+        }
         resposeOrder.push({
           codfmv: '03',
           id: item.code,
-          codcli: item?.dataUser?.dni || '',
+          codcli: item.dni || item?.dataUser?.dni || '',
           fecmov: date,
           monmov: item.amountWithoutTax,
           monnet: item.amount,
           impmov: item.valueTax,
           codved: 1,
-          nomcli: item?.dataUser?.name || item?.nameClient || '',
-          telcl1: item.dataUser?.phoneNumber || item.phoneNumber,
-          email: item?.dataUser?.email || '',
-          dir1: item?.location || '',
-          nrocontrol: item?.observation || '1',
+          nomcli: nameClient,
+          telcl1: phoneNumber,
+          email: email,
+          dir1: location,
+          nrocontrol: observation,
           forpag: 1 + ',',
         })
       }

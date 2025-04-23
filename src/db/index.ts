@@ -20,6 +20,11 @@ import { fxPasswordResetFactory } from '@users/passwordResetModel'
 import { fxBulkUploadLogFactory } from '@entities/integration/BulkUploadLog'
 import { fxPaymentMethodFactory } from '@entities/paymentMethods/paymentMethodModel'
 import { fxNotificationFactory } from '@entities/notification/notificationModel'
+import { fxSurveyFactory } from '@entities/surveys/surveyModel'
+import { fxSurveyQuestionFactory } from '@entities/surveyQuestions/surveyQuestionModel'
+import { fxSurveyAnswerOptionFactory } from '@entities/surveyAnswerOptions/surveyAnswerOptionModel'
+import { fxSurveyUserFactory } from '@entities/surveyUsers/surveyUserModel'
+import { fxSurveyResponseFactory } from '@entities/surveyResponses/surveyResponseModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -46,6 +51,11 @@ export const modelPasswordReset = fxPasswordResetFactory(sequelize)
 export const modelBulkUploadLog = fxBulkUploadLogFactory(sequelize)
 export const modelPaymentMethod = fxPaymentMethodFactory(sequelize)
 export const modelNotification = fxNotificationFactory(sequelize)
+export const modelSurvey = fxSurveyFactory(sequelize)
+export const modelSurveyQuestion = fxSurveyQuestionFactory(sequelize)
+export const modelSurveyAnswerOption = fxSurveyAnswerOptionFactory(sequelize)
+export const modelSurveyUser = fxSurveyUserFactory(sequelize)
+export const modelSurveyResponse = fxSurveyResponseFactory(sequelize)
 
 const models = {
   modelUser,
@@ -65,6 +75,11 @@ const models = {
   modelBulkUploadLog,
   modelPaymentMethod,
   modelNotification,
+  modelSurvey,
+  modelSurveyQuestion,
+  modelSurveyAnswerOption,
+  modelSurveyUser,
+  modelSurveyResponse,
 }
 
 export type ModelRegistry = typeof models

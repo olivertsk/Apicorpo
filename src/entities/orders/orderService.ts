@@ -252,6 +252,7 @@ class OrdersService {
       const orders: IOrderAttributes[] = await modelOrder.findAll({
         attributes: [
           'id',
+          'dni',
           'code',
           'userId',
           'phoneNumber',

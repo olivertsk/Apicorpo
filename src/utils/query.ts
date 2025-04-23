@@ -33,7 +33,7 @@ const fxSearchILikeQuery = (
   pAttibutesPermisse: string | string[]
 ) => {
   const vName = pName.trim()
-  const search = pParam?.search || pParam?.name || ''
+  const search = pParam?.search || pParam?.name || pParam?.title || pParam?.text || ''
   if (pAttibutesPermisse.includes(vName)) {
     if (search.includes(',')) {
       const searchs: string[] = search.split(',')
@@ -65,7 +65,7 @@ export const fxSearchILike = (
     (key) =>
       vModelAttributes[key].type.key === 'STRING' || vModelAttributes[key].type.key === 'TEXT'
   )
-  if (pParam?.search || pParam?.name) {
+  if (pParam?.search || pParam?.name || pParam?.title || pParam.text) {
     if (pParam?.typeSearch && pParam.typeSearch.includes(',')) {
       const vTypeSearchs = pParam.typeSearch.split(',')
       for (const typeSearch of vTypeSearchs) {
