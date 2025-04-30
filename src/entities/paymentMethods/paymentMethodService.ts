@@ -36,6 +36,7 @@ class PaymentMethodsService {
         whereStatement.where = {
           ...whereStatement.where,
           type: pParam.type,
+          status: true
         }
       }
       const vResponse: IPaymentMethodAttributes[] = await modelPaymentMethod.findAll(whereStatement)

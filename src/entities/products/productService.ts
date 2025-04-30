@@ -184,7 +184,7 @@ class ProductsService {
           ...whereStatement.where,
           status: true,
           stock: {
-            [Op.gt]: 0,
+            [Op.gt]: 10,
             [Op.not]: null,
           },
         }
@@ -256,7 +256,7 @@ class ProductsService {
         ...whereStatement.where,
         status: true,
         stock: {
-          [Op.gt]: 0,
+          [Op.gt]: 10,
           [Op.not]: null,
         },
       }

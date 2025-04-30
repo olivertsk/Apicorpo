@@ -18,7 +18,7 @@ class SendNotificationService {
   constructor() {
     const vRutaJSON = path.resolve(
       __dirname,
-      '../../duque-portafolio-firebase-adminsdk-v1arh-a9fb6dfa05.json'
+      '../../corpoindustri-5b46c-firebase-adminsdk-fbsvc-11e46a3681.json'
     )
     admin.initializeApp({
       credential: admin.credential.cert(vRutaJSON),

@@ -3,14 +3,14 @@ import * as fs from 'node:fs'
 import * as nodeMailer from 'nodemailer'
 const handlebars = require('handlebars');
 
-const sendEmail = 'admin@amarillasapp.com'
+const sendEmail = 'noreply@corpoindustri.com'
 const transporter = nodeMailer.createTransport({
-  host: 'smtp.hostinger.com',
+  host: 'smtp.dreamhost.com',
   port: 465,
   secure: true,
   auth: {
     user: sendEmail,
-    pass: 'Neuron1.0',
+    pass: 'CorpoMailWeb123!',
   },
 })
 export const fxSendMail = (data: any, email: string, subject: string) => {
@@ -20,7 +20,7 @@ export const fxSendMail = (data: any, email: string, subject: string) => {
   const correoHTML = compiledTemplate(data);
 
   let mail = {
-      from: sendEmail,
+      from: 'Corpoindustri' + '<' + sendEmail + '>',
       to: data.email,
       subject,
       html: correoHTML
@@ -38,10 +38,10 @@ export const fxSendMail = (data: any, email: string, subject: string) => {
 }
 export const sendTemplate = (html: any, emails: string[]) => {
   let mail = {
-      from: 'desarrollo@lahercreative.com',
-      to: emails,
-      subject: "Newsletter",
-      html: html
+    from: 'Corpoindustri' + '<' + sendEmail + '>',
+    to: emails,
+    subject: 'Newsletter',
+    html: html,
   }
   
   transporter.sendMail(mail, (error: any, info: any) => {

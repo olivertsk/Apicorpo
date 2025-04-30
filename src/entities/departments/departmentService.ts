@@ -122,7 +122,7 @@ class DepartmentsService {
           includeProduct[0].where = {
             status: true,
             stock: {
-              [Op.gt]: 0, // Mayor que 0
+              [Op.gt]: 10, // Mayor que 0
               [Op.not]: null, // No es null
             },
           }
