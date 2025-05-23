@@ -1,4 +1,4 @@
-import { DataTypes, type QueryInterface } from 'sequelize';
+import { DataTypes, type QueryInterface } from 'sequelize'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -85,7 +85,7 @@ module.exports = {
         type: DataTypes.INTEGER,
         field: 'stock',
         allowNull: true,
-        defaultValue: 0
+        defaultValue: 0,
       },
       brand: {
         type: DataTypes.STRING,
@@ -97,17 +97,17 @@ module.exports = {
         type: DataTypes.FLOAT,
         field: 'tax_rate',
         allowNull: true,
-        defaultValue: 0
+        defaultValue: 0,
       },
       coverImage: {
         type: DataTypes.STRING,
         field: 'cover_image',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
-    });
+    })
   },
   async down(queryInterface: QueryInterface) {
-    await queryInterface.dropTable('products');
+    await queryInterface.dropTable('products')
   },
-};
+}

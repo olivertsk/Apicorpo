@@ -72,12 +72,11 @@ export const fxMoveImages = async (pName: string): Promise<string> => {
   }
 }
 export const fxDeleteImages = async (pName: string): Promise<boolean> => {
-  const filePath = path.join('uploads', pName);
-   if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
+  const filePath = path.join('uploads', pName)
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath)
     return true
   } else {
     return false
   }
 }
-

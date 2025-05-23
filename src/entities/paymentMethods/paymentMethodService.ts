@@ -1,6 +1,12 @@
 import { modelPaymentMethod } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type IPaymentMethodAttributes, type IPaymentMethodCreationAttributes, type IResponseAllPaymentMethod, type IPaymentMethodInstance, ETypePaymentMethods } from '@entities/paymentMethods/paymentMethodModel'
+import {
+  type IPaymentMethodAttributes,
+  type IPaymentMethodCreationAttributes,
+  type IResponseAllPaymentMethod,
+  type IPaymentMethodInstance,
+  ETypePaymentMethods,
+} from '@entities/paymentMethods/paymentMethodModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class PaymentMethodsService {
@@ -36,7 +42,7 @@ class PaymentMethodsService {
         whereStatement.where = {
           ...whereStatement.where,
           type: pParam.type,
-          status: true
+          status: true,
         }
       }
       const vResponse: IPaymentMethodAttributes[] = await modelPaymentMethod.findAll(whereStatement)
@@ -55,22 +61,28 @@ class PaymentMethodsService {
     }
   }
 
-  public async create(viewCreationParams: IPaymentMethodCreationAttributes): Promise<IPaymentMethodAttributes> {
+  public async create(
+    viewCreationParams: IPaymentMethodCreationAttributes
+  ): Promise<IPaymentMethodAttributes> {
     try {
-      const vResponse: IPaymentMethodAttributes = await modelPaymentMethod.create(viewCreationParams)
+      const vResponse: IPaymentMethodAttributes =
+        await modelPaymentMethod.create(viewCreationParams)
       return vResponse
     } catch (error) {
       throw error
     }
   }
 
-  public async update(itemCreationParams: IPaymentMethodCreationAttributes, id: string): Promise<IPaymentMethodAttributes | null> {
+  public async update(
+    itemCreationParams: IPaymentMethodCreationAttributes,
+    id: string
+  ): Promise<IPaymentMethodAttributes | null> {
     try {
       if (id) {
         const vResponse: IPaymentMethodInstance | null = await modelPaymentMethod.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null

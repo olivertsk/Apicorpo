@@ -1,6 +1,17 @@
-import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct, modelProductImages } from '@db/index'
+import {
+  modelCategory,
+  modelDepartment,
+  modelFavoriteProduct,
+  modelProduct,
+  modelProductImages,
+} from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
-import type { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentInstance } from '@entities/departments/departmentModel'
+import type {
+  IDepartmentAttributes,
+  IDepartmentCreationAttributes,
+  IResponseAllDepartment,
+  IDepartmentInstance,
+} from '@entities/departments/departmentModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class DepartmentsService {
@@ -39,7 +50,10 @@ class DepartmentsService {
     }
   }
 
-  public async firstOrCreate(data: { code: string, name: string }): Promise<IDepartmentAttributes | null> {
+  public async firstOrCreate(data: {
+    code: string
+    name: string
+  }): Promise<IDepartmentAttributes | null> {
     try {
       const vResponse: IDepartmentInstance | null = await modelDepartment.findOne({
         where: {
@@ -115,7 +129,7 @@ class DepartmentsService {
                 required: false,
               },
             ],
-          }
+          },
         ]
 
         if (pParam?.isClient) {

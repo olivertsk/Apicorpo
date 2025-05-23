@@ -10,13 +10,18 @@ import {
   Queries,
   Security,
   Delete,
-  Put
-} from 'tsoa';
-import { ICategoryAttributes, ICategoryCreationAttributes, IResponseAllCategory, ICategoryFilter } from '@entities/categories/categoryModel';
-import CategoryService from '@entities/categories/categoryService';
-import { fxI18n } from '@utils/i18n';
-import { fxMoveImages } from '@utils/helpers';
- 
+  Put,
+} from 'tsoa'
+import {
+  ICategoryAttributes,
+  ICategoryCreationAttributes,
+  IResponseAllCategory,
+  ICategoryFilter,
+} from '@entities/categories/categoryModel'
+import CategoryService from '@entities/categories/categoryService'
+import { fxI18n } from '@utils/i18n'
+import { fxMoveImages } from '@utils/helpers'
+
 @Route('categories')
 @Tags('Category')
 export class CategoriesController extends Controller {

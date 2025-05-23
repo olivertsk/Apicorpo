@@ -6,7 +6,7 @@ import { errorHandler } from './middlewares/errorHandler'
 import { expressAuthentication } from './middlewares/expressAuthentication'
 import cors from 'cors'
 import { formatRequest } from 'middlewares/formatRequest'
-import multer from 'multer';
+import multer from 'multer'
 import { IOrderAttributes } from '@entities/orders/orderModel'
 import orderService from '@entities/orders/orderService'
 import { Item, OrderA2, OrderProductA2 } from './entities/integration/interfaces'
@@ -28,7 +28,7 @@ app.use(
 app.use(
   urlencoded({
     extended: true,
-    limit: '300mb'
+    limit: '300mb',
   })
 )
 app.use(json({ limit: '300mb' }))
@@ -60,13 +60,13 @@ app.get('/file/:folder/:fileName', async (pReq, pRes) => {
     return pRes.download(`uploads/${vFolder}/${vFileName}`)
   } catch (error) {
     console.error('Error al descargar el archivo:', error)
-    pRes.status(500).send('Internal server error') 
+    pRes.status(500).send('Internal server error')
   }
 })
 
 app.get('/detalle.php', async (pReq, pRes) => {
   try {
-    console.log('hola');
+    console.log('hola')
     const requestBody = {
       wasSent: pReq.query.wasSent ? Number(pReq.query.wasSent) : undefined,
       product: pReq.query.product === 'true' ? true : undefined,
@@ -113,7 +113,7 @@ app.get('/detalle.php', async (pReq, pRes) => {
         }
       }
     }
-    console.log('resposeOrder :>> ', resposeOrder);
+    console.log('resposeOrder :>> ', resposeOrder)
     if (resposeOrder.length) {
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
       csv = csv.replace(/['"]+/g, '')
@@ -161,7 +161,12 @@ app.get('/archivophp.php', async (req, res) => {
     for (const item of dataJSON) {
       const cleanString = (str = '') => {
         if (typeof str !== 'string') return ''
-        return str.replaceAll(',', ' ').replaceAll('`', '').replaceAll("'", '').replaceAll('~', '').trim()
+        return str
+          .replaceAll(',', ' ')
+          .replaceAll('`', '')
+          .replaceAll("'", '')
+          .replaceAll('~', '')
+          .trim()
       }
 
       // Procesamiento de datos con valores por defecto y limpieza

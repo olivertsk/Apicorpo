@@ -193,7 +193,7 @@ export const fxReponseServices = async (
       totalPage: Math.ceil(vCount / vLimit),
       total: vCount,
       actualPage: Number(pParam.pag),
-    }
+    },
   }
   return vResponsePaginate
 }

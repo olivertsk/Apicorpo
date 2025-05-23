@@ -71,19 +71,19 @@ export class FileController extends Controller {
       return notFound(404, { reason: 'No file provided', error: error })
     }
   }
-  
-  @Security('bearerAuth', ["admin"])
+
+  @Security('bearerAuth', ['admin'])
   @Delete('delete')
   public async delete(
-    @Body() requestBody: { fileName: string, type?: FileType | null }
-  ): Promise<{ success: boolean, message?: string }> {
+    @Body() requestBody: { fileName: string; type?: FileType | null }
+  ): Promise<{ success: boolean; message?: string }> {
     try {
       const fileName = requestBody.fileName
       const type = requestBody?.type
-      console.log('fileName :>> ', fileName);
-      const filePath = path.join('uploads', fileName);
-      console.log('filePath :>> ', filePath);
-      console.log('type :>> ', type);
+      console.log('fileName :>> ', fileName)
+      const filePath = path.join('uploads', fileName)
+      console.log('filePath :>> ', filePath)
+      console.log('type :>> ', type)
       if (fs.existsSync(filePath)) {
         if (type && fileName.includes('storage')) {
           switch (type) {
@@ -118,11 +118,9 @@ export class FileController extends Controller {
         this.setStatus(400)
         return { success: false, message: fxI18n.__('file_not_found') }
       }
-      
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }
-
 }

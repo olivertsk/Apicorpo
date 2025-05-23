@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express'
 
 export const formatRequest = async (req: Request, _res: Response, next: NextFunction) => {
   const query: any = req.query
@@ -44,4 +44,4 @@ export const formatRequest = async (req: Request, _res: Response, next: NextFunc
   }
   req.body = body
   next()
-};
+}

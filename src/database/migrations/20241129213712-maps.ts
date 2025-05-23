@@ -25,43 +25,43 @@ module.exports = {
       },
       image: {
         type: DataTypes.STRING,
-        field: "image",
-        allowNull: false
+        field: 'image',
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
-        field: "name",
-        allowNull: false
+        field: 'name',
+        allowNull: false,
       },
       description: {
         type: DataTypes.STRING,
-        field: "description",
+        field: 'description',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       address: {
         type: DataTypes.STRING,
-        field: "address",
+        field: 'address',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       phoneNumber: {
         type: DataTypes.STRING,
-        field: "phone_number",
+        field: 'phone_number',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       email: {
         type: DataTypes.STRING,
-        field: "email",
+        field: 'email',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       map: {
         type: DataTypes.STRING,
-        field: "map",
+        field: 'map',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       status: {
         type: DataTypes.BOOLEAN,

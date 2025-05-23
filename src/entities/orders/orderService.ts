@@ -1,6 +1,19 @@
-import sequelize, { modelOrder, modelOrderProducto, modelPaymentMethod, modelProduct, modelUser } from '@db/index'
+import sequelize, {
+  modelOrder,
+  modelOrderProducto,
+  modelPaymentMethod,
+  modelProduct,
+  modelUser,
+} from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
-import { type IOrderAttributes, type IOrderCreationAttributes, type IResponseAllOrder, type IOrderInstance, EStatusOrder, EWasSent } from '@entities/orders/orderModel'
+import {
+  type IOrderAttributes,
+  type IOrderCreationAttributes,
+  type IResponseAllOrder,
+  type IOrderInstance,
+  EStatusOrder,
+  EWasSent,
+} from '@entities/orders/orderModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 import { IOrderProductAttributes, IOrderProductCreationAttributes } from './orderProductModel'
 
@@ -207,7 +220,7 @@ class OrdersService {
       let month
       let year
       if (param?.fe) {
-        console.log('param.fecha :>> ', param.fe);
+        console.log('param.fecha :>> ', param.fe)
         day = new Date(param.fe).getDate()
         month = new Date(param.fe).getMonth() + 1
         year = new Date(param.fe).getFullYear()
@@ -230,7 +243,7 @@ class OrdersService {
       //   ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
       //   ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
       // }
-      console.log('day :>> ', day);
+      console.log('day :>> ', day)
       console.log('month :>> ', month)
       console.log('year :>> ', year)
       if ('fe' in param && param?.fe) {
@@ -289,7 +302,7 @@ class OrdersService {
       }
       return orders
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }

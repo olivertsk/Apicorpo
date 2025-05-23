@@ -41,7 +41,7 @@ class SendNotificationService {
           const userId = usersId[key]
           let receiveNotification: boolean | undefined = true
           const user = await this.user.get(userId)
-          if (user)  {
+          if (user) {
             receiveNotification = 'receiveNotification' in user ? user.receiveNotification : true
           }
           try {

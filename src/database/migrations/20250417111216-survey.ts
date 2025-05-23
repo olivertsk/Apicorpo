@@ -37,7 +37,7 @@ module.exports = {
         type: DataTypes.STRING,
         field: 'type',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
     })
   },

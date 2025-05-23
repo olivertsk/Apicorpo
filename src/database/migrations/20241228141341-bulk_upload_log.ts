@@ -1,5 +1,4 @@
-
-import { DataTypes, type QueryInterface } from 'sequelize';
+import { DataTypes, type QueryInterface } from 'sequelize'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -32,11 +31,10 @@ module.exports = {
         type: DataTypes.STRING,
         field: 'date',
       },
-    });
+    })
   },
 
   async down(queryInterface: QueryInterface) {
-    await queryInterface.dropTable('bulk_upload_logs');
+    await queryInterface.dropTable('bulk_upload_logs')
   },
-};
-    
+}

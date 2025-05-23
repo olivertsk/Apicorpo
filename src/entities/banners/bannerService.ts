@@ -1,6 +1,12 @@
 import { modelBanner } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type IBannerAttributes, type IBannerCreationAttributes, type IResponseAllBanner, type IBannerInstance, EPositionBanner } from '@entities/banners/bannerModel'
+import {
+  type IBannerAttributes,
+  type IBannerCreationAttributes,
+  type IResponseAllBanner,
+  type IBannerInstance,
+  EPositionBanner,
+} from '@entities/banners/bannerModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class BannersService {
@@ -35,7 +41,7 @@ class BannersService {
       if (pParam.position && Object.values(EPositionBanner).includes(pParam.position)) {
         whereStatement.where = {
           ...whereStatement.where,
-          position: pParam.position
+          position: pParam.position,
         }
       }
       const vResponse: IBannerAttributes[] = await modelBanner.findAll(whereStatement)
@@ -63,14 +69,17 @@ class BannersService {
     }
   }
 
-  public async update(itemCreationParams: IBannerCreationAttributes, id: string): Promise<IBannerAttributes | null> {
+  public async update(
+    itemCreationParams: IBannerCreationAttributes,
+    id: string
+  ): Promise<IBannerAttributes | null> {
     try {
-      console.log('itemCreationParams :>> ', itemCreationParams);
+      console.log('itemCreationParams :>> ', itemCreationParams)
       if (id) {
         const vResponse: IBannerInstance | null = await modelBanner.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null
@@ -103,22 +112,22 @@ class BannersService {
     try {
       const vImagesName: IBannerInstance | null = await modelBanner.findOne({
         where: {
-          images: name
+          images: name,
         },
       })
       if (vImagesName) {
         await vImagesName?.update({
-          images: null
+          images: null,
         })
       } else {
         const vImagesNameMobile: IBannerInstance | null = await modelBanner.findOne({
           where: {
-            mobileImage: name
+            mobileImage: name,
           },
         })
         if (vImagesNameMobile) {
           await vImagesNameMobile?.update({
-            mobileImage: null
+            mobileImage: null,
           })
         }
       }

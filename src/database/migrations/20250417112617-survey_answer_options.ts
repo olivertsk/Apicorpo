@@ -1,5 +1,4 @@
-
-import { DataTypes, type QueryInterface } from 'sequelize';
+import { DataTypes, type QueryInterface } from 'sequelize'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -59,4 +58,3 @@ module.exports = {
     await queryInterface.dropTable('survey_answer_options')
   },
 }
-    

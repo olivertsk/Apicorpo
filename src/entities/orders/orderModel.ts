@@ -1,10 +1,12 @@
-
-import { type Sequelize, type Model, DataTypes } from 'sequelize';
-import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes';
-import { v4 as uuidv4 } from 'uuid';
-import { IOrderProductCreationAttributes } from './orderProductModel';
-import { ModelRegistry } from '@db/index';
-import { ETypePaymentMethods, IPaymentMethodInstance } from '@entities/paymentMethods/paymentMethodModel';
+import { type Sequelize, type Model, DataTypes } from 'sequelize'
+import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
+import { v4 as uuidv4 } from 'uuid'
+import { IOrderProductCreationAttributes } from './orderProductModel'
+import { ModelRegistry } from '@db/index'
+import {
+  ETypePaymentMethods,
+  IPaymentMethodInstance,
+} from '@entities/paymentMethods/paymentMethodModel'
 
 export enum EWasSent {
   noSent = 0,
@@ -43,16 +45,16 @@ export enum EStatusOrder {
   Decline = 'decline',
 }
 export interface IResponseAllOrder {
-  total?: number;
-  totalPage?: number;
-  data: IOrderAttributes[];
-  actualPage?: number;
+  total?: number
+  totalPage?: number
+  data: IOrderAttributes[]
+  actualPage?: number
   status?: EStatusOrder | null
 }
 
 export interface IOrderFilter {
-  pag?: number;
-  limit?: number;
+  pag?: number
+  limit?: number
   isClient?: boolean
   rolType?: string
   userId?: string
@@ -234,7 +236,7 @@ export function fxOrdersFactory(sequelize: Sequelize) {
       timestamps: true,
       paranoid: true,
     }
-  );
+  )
 
   vData.associate = function (models: ModelRegistry) {
     const { modelOrder, modelOrderProducto, modelUser, modelPaymentMethod } = models
@@ -261,9 +263,9 @@ export function fxOrdersFactory(sequelize: Sequelize) {
   }
 
   vData.prototype.toJSON = function () {
-    const values = { ...this.get() };
-    delete values.password;
-    return values;
-  };
-  return vData;
+    const values = { ...this.get() }
+    delete values.password
+    return values
+  }
+  return vData
 }

@@ -26,11 +26,10 @@ export interface IViewFilter {
   name?: string | null
 }
 
-export type IViewCreationAttributes = Pick<IViewAttributes, 'id' | 'route' | 'url'> & 
-  Partial<Pick<IViewAttributes, 'name' >>
-  & {
+export type IViewCreationAttributes = Pick<IViewAttributes, 'id' | 'route' | 'url'> &
+  Partial<Pick<IViewAttributes, 'name'>> & {
     icon?: string | null
-  };
+  }
 
 export interface IViewInstance
   extends Model<IViewAttributes, IViewCreationAttributes>,
@@ -62,26 +61,26 @@ export const vViewModelAttributes: SequelizeAttributes<IViewAttributes> = {
     type: DataTypes.STRING,
     field: 'icon',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   name: {
     type: DataTypes.STRING,
     field: 'name',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   route: {
     type: DataTypes.STRING,
     field: 'route',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   url: {
     type: DataTypes.STRING,
     field: 'url',
     defaultValue: null,
-    allowNull: true
-  }
+    allowNull: true,
+  },
 }
 
 export function fxViewFactory(sequelize: Sequelize) {

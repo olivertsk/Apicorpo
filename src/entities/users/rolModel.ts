@@ -53,7 +53,7 @@ export const vRolModelAttributes: SequelizeAttributes<IRolAttributes> = {
   name: {
     type: DataTypes.STRING,
     field: 'name',
-  }
+  },
 }
 
 export function fxRolFactory(sequelize: Sequelize) {

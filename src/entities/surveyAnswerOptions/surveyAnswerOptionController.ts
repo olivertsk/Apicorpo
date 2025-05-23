@@ -10,12 +10,17 @@ import {
   Queries,
   Security,
   Delete,
-  Put
-} from 'tsoa';
-import { ISurveyAnswerOptionAttributes, ISurveyAnswerOptionCreationAttributes, IResponseAllSurveyAnswerOption, ISurveyAnswerOptionFilter } from '@entities/surveyAnswerOptions/surveyAnswerOptionModel';
-import SurveyAnswerOptionService from '@entities/surveyAnswerOptions/surveyAnswerOptionService';
-import { fxI18n } from '@utils/i18n';
- 
+  Put,
+} from 'tsoa'
+import {
+  ISurveyAnswerOptionAttributes,
+  ISurveyAnswerOptionCreationAttributes,
+  IResponseAllSurveyAnswerOption,
+  ISurveyAnswerOptionFilter,
+} from '@entities/surveyAnswerOptions/surveyAnswerOptionModel'
+import SurveyAnswerOptionService from '@entities/surveyAnswerOptions/surveyAnswerOptionService'
+import { fxI18n } from '@utils/i18n'
+
 @Route('surveyAnswerOptions')
 @Tags('SurveyAnswerOption')
 export class SurveyAnswerOptionsController extends Controller {

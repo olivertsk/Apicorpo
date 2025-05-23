@@ -27,26 +27,26 @@ module.exports = {
         type: DataTypes.STRING,
         field: 'icon',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       name: {
         type: DataTypes.STRING,
         field: 'name',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       route: {
         type: DataTypes.STRING,
         field: 'route',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       url: {
         type: DataTypes.STRING,
         field: 'url',
         defaultValue: null,
-        allowNull: true
-      }
+        allowNull: true,
+      },
     })
   },
 

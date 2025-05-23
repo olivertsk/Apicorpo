@@ -1,6 +1,11 @@
 import { modelDepartment, modelFavoriteProduct, modelProduct, modelProductImages } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type IFavoriteProductAttributes, type IFavoriteProductCreationAttributes, type IResponseAllFavoriteProduct, type IFavoriteProductInstance } from '@entities/products/favoriteProductModel'
+import {
+  type IFavoriteProductAttributes,
+  type IFavoriteProductCreationAttributes,
+  type IResponseAllFavoriteProduct,
+  type IFavoriteProductInstance,
+} from '@entities/products/favoriteProductModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class FavoriteProductsService {
@@ -51,7 +56,7 @@ class FavoriteProductsService {
               as: 'department',
               required: false,
             },
-          ]
+          ],
         },
       ]
       const vResponse: IFavoriteProductAttributes[] =

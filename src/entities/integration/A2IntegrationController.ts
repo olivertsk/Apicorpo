@@ -12,16 +12,16 @@ import { Item, OrderA2, OrderProductA2 } from './interfaces'
 import { IOrderAttributes } from '@entities/orders/orderModel'
 
 interface IUploadZipReponseError {
-  status: boolean,
-  file: string,
+  status: boolean
+  file: string
   msg: string
 }
 interface IUploadZipReponse {
   result: {
-    status: boolean,
-    file: number,
+    status: boolean
+    file: number
     msg: string
-  },
+  }
   errors: IUploadZipReponseError[]
 }
 @Tags('A2')
@@ -80,7 +80,12 @@ export class A2IntegrationController extends Controller {
         // Función helper para limpiar strings
         const cleanString = (str = '') => {
           if (typeof str !== 'string') return ''
-          return str.replaceAll(',', ' ').replaceAll('`', '').replaceAll('\'', '').replaceAll('~', '').trim()
+          return str
+            .replaceAll(',', ' ')
+            .replaceAll('`', '')
+            .replaceAll("'", '')
+            .replaceAll('~', '')
+            .trim()
         }
 
         // Procesamiento de datos con valores por defecto y limpieza
@@ -278,8 +283,8 @@ export class A2IntegrationController extends Controller {
       const jsonData = await this.convertToJSON(vData)
       let products: any[] = []
       // let categoryIds: { categoryId: string; productCode: null }[] = []
-      console.log('jsonData :>> ', jsonData);
-      console.log('jsonData. :>> ', jsonData.catalogue);
+      console.log('jsonData :>> ', jsonData)
+      console.log('jsonData. :>> ', jsonData.catalogue)
       if (jsonData?.catalogue) {
         for (const item of jsonData.catalogue) {
           const catalogue = {

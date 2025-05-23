@@ -10,12 +10,17 @@ import {
   Queries,
   Security,
   Delete,
-  Put
-} from 'tsoa';
-import { IViewAttributes, IViewCreationAttributes, IResponseAllView, IViewFilter } from '@entities/views/viewModel';
-import ViewService from '@entities/views/viewService';
-import { fxI18n } from '@utils/i18n';
- 
+  Put,
+} from 'tsoa'
+import {
+  IViewAttributes,
+  IViewCreationAttributes,
+  IResponseAllView,
+  IViewFilter,
+} from '@entities/views/viewModel'
+import ViewService from '@entities/views/viewService'
+import { fxI18n } from '@utils/i18n'
+
 @Route('views')
 @Tags('View')
 export class ViewsController extends Controller {

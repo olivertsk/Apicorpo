@@ -31,7 +31,7 @@ module.exports = {
         type: DataTypes.STRING,
         field: 'last_name',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       email: {
         type: DataTypes.STRING,
@@ -42,31 +42,31 @@ module.exports = {
         type: DataTypes.STRING,
         field: 'avatar',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       dni: {
         type: DataTypes.INTEGER,
         field: 'dni',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       dniType: {
         type: DataTypes.STRING,
         field: 'dni_type',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       phoneNumber: {
         type: DataTypes.STRING,
         field: 'phone_number',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       dob: {
         type: DataTypes.STRING,
         field: 'date_of_birthdate',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       password: {
         type: DataTypes.STRING,

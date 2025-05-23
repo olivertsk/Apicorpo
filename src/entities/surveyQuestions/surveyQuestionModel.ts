@@ -1,11 +1,11 @@
-import { type Sequelize, type Model, DataTypes } from 'sequelize';
-import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes';
-import { v4 as uuidv4 } from 'uuid';
-import { ModelRegistry } from '@db/index';
+import { type Sequelize, type Model, DataTypes } from 'sequelize'
+import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
+import { v4 as uuidv4 } from 'uuid'
+import { ModelRegistry } from '@db/index'
 
 export enum ESurveyQuestionType {
   SELECTION = 'selection',
-  TEXT = 'text'
+  TEXT = 'text',
 }
 
 export interface IResponseAllSurveyQuestion {
@@ -53,7 +53,9 @@ export type ISurveyQuestionUpdateAttributes = Pick<ISurveyQuestionAttributes, 't
   updatedAt?: Date
   deletedAt?: Date | null
 }
-export interface ISurveyQuestionInstance extends Model<ISurveyQuestionAttributes, ISurveyQuestionCreationAttributes>, ISurveyQuestionAttributes {}
+export interface ISurveyQuestionInstance
+  extends Model<ISurveyQuestionAttributes, ISurveyQuestionCreationAttributes>,
+    ISurveyQuestionAttributes {}
 
 // Atributos del modelo de tareas
 export const vSurveyQuestionModelAttributes: SequelizeAttributes<ISurveyQuestionAttributes> = {
@@ -133,10 +135,10 @@ export function fxSurveyQuestionFactory(sequelize: Sequelize) {
   }
 
   vData.prototype.toJSON = function () {
-    const values = { ...this.get() };
-    delete values.password;
-    return values;
-  };
+    const values = { ...this.get() }
+    delete values.password
+    return values
+  }
 
-  return vData;
+  return vData
 }

@@ -10,12 +10,17 @@ import {
   Queries,
   Security,
   Delete,
-  Put
-} from 'tsoa';
-import { IPaymentMethodAttributes, IPaymentMethodCreationAttributes, IResponseAllPaymentMethod, IPaymentMethodFilter } from '@entities/paymentMethods/paymentMethodModel';
-import PaymentMethodService from '@entities/paymentMethods/paymentMethodService';
-import { fxI18n } from '@utils/i18n';
- 
+  Put,
+} from 'tsoa'
+import {
+  IPaymentMethodAttributes,
+  IPaymentMethodCreationAttributes,
+  IResponseAllPaymentMethod,
+  IPaymentMethodFilter,
+} from '@entities/paymentMethods/paymentMethodModel'
+import PaymentMethodService from '@entities/paymentMethods/paymentMethodService'
+import { fxI18n } from '@utils/i18n'
+
 @Route('paymentMethods')
 @Tags('PaymentMethod')
 export class PaymentMethodsController extends Controller {

@@ -10,13 +10,18 @@ import {
   Queries,
   Security,
   Delete,
-  Put
-} from 'tsoa';
-import { IMapAttributes, IMapCreationAttributes, IResponseAllMap, IMapFilter } from '@entities/maps/mapModel';
-import MapService from '@entities/maps/mapService';
-import { fxI18n } from '@utils/i18n';
-import { fxMoveImages } from '@utils/helpers';
- 
+  Put,
+} from 'tsoa'
+import {
+  IMapAttributes,
+  IMapCreationAttributes,
+  IResponseAllMap,
+  IMapFilter,
+} from '@entities/maps/mapModel'
+import MapService from '@entities/maps/mapService'
+import { fxI18n } from '@utils/i18n'
+import { fxMoveImages } from '@utils/helpers'
+
 @Route('maps')
 @Tags('Map')
 export class MapsController extends Controller {

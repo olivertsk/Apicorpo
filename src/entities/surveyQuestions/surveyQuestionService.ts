@@ -1,6 +1,13 @@
 import { modelSurveyQuestion } from '@db/index'
-import { type FindOptions, } from 'sequelize'
-import type { ISurveyQuestionAttributes, ISurveyQuestionCreationAttributes, ISurveyQuestionFilter, IResponseAllSurveyQuestion, ISurveyQuestionUpdateAttributes, ISurveyQuestionInstance } from '@entities/surveyQuestions/surveyQuestionModel'
+import { type FindOptions } from 'sequelize'
+import type {
+  ISurveyQuestionAttributes,
+  ISurveyQuestionCreationAttributes,
+  ISurveyQuestionFilter,
+  IResponseAllSurveyQuestion,
+  ISurveyQuestionUpdateAttributes,
+  ISurveyQuestionInstance,
+} from '@entities/surveyQuestions/surveyQuestionModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
 
 class SurveyQuestionService {
@@ -14,7 +21,7 @@ class SurveyQuestionService {
       const vResponse: ISurveyQuestionAttributes | null = await modelSurveyQuestion.findOne({
         where: {
           id,
-        }
+        },
       })
       return vResponse
     } catch (error) {

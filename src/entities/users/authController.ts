@@ -13,7 +13,11 @@ import {
   Delete,
   // Queries
 } from 'tsoa'
-import { IAuthUserUpdatenAttributes, IUserAttributes, IUserCreationAttributes } from '@users/userModel'
+import {
+  IAuthUserUpdatenAttributes,
+  IUserAttributes,
+  IUserCreationAttributes,
+} from '@users/userModel'
 import UsersService from '@users/userService'
 import AppConfig from '@config/AppConfig'
 import * as argon2 from 'argon2'

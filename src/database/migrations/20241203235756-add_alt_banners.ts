@@ -8,9 +8,9 @@ module.exports = {
       field: 'alt',
       allowNull: true,
       defaultValue: null,
-    });
+    })
   },
   async down(queryInterface: QueryInterface) {
-    return queryInterface.removeColumn('banners', 'alt');
+    return queryInterface.removeColumn('banners', 'alt')
   },
 }

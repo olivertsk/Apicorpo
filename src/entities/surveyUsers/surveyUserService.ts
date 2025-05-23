@@ -21,7 +21,7 @@ class SurveyUserService {
       const vResponse: ISurveyUserAttributes | null = await modelSurveyUser.findOne({
         where: {
           id,
-        }
+        },
       })
       return vResponse
     } catch (error) {
@@ -36,8 +36,7 @@ class SurveyUserService {
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
       whereStatement.where = fxSearchILike(pParam, whereStatement, 'name', modelSurveyUser.name)
 
-      const vResponse: ISurveyUserAttributes[] =
-        await modelSurveyUser.findAll(whereStatement)
+      const vResponse: ISurveyUserAttributes[] = await modelSurveyUser.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllSurveyUser = await fxReponseServices(
           pParam,
@@ -59,9 +58,8 @@ class SurveyUserService {
   ): Promise<ISurveyUserAttributes> {
     try {
       // Crear la pregunta de la encuesta
-      const vResponse: ISurveyUserAttributes = await modelSurveyUser.create(
-        surveyUserCreationParams
-      )
+      const vResponse: ISurveyUserAttributes =
+        await modelSurveyUser.create(surveyUserCreationParams)
 
       return vResponse
     } catch (error) {
@@ -92,11 +90,9 @@ class SurveyUserService {
 
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
-      const record = await modelSurveyUser.destroy(
-        {
-          where: { id: pId },
-        }
-      )
+      const record = await modelSurveyUser.destroy({
+        where: { id: pId },
+      })
       if (!record) {
         return false
       }

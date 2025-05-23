@@ -141,8 +141,14 @@ export function fxSurveyResponseFactory(sequelize: Sequelize) {
     }
   )
   vData.associate = function (models: ModelRegistry) {
-    const { modelSurveyResponse, modelSurveyQuestion, modelSurvey, modelUser, modelSurveyAnswerOption } = models
-    
+    const {
+      modelSurveyResponse,
+      modelSurveyQuestion,
+      modelSurvey,
+      modelUser,
+      modelSurveyAnswerOption,
+    } = models
+
     modelSurveyResponse.belongsTo(modelSurveyQuestion, {
       targetKey: 'id',
       foreignKey: 'questionId',

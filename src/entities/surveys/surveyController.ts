@@ -11,13 +11,18 @@ import {
   Security,
   Delete,
   Put,
-  Request
-} from 'tsoa';
-import { ISurveyAttributes, ISurveyCreationAttributes, IResponseAllSurvey, ISurveyFilter } from '@entities/surveys/surveyModel';
-import SurveyService from '@entities/surveys/surveyService';
-import { fxI18n } from '@utils/i18n';
-import { IUserAttributes } from '@users/userModel';
- 
+  Request,
+} from 'tsoa'
+import {
+  ISurveyAttributes,
+  ISurveyCreationAttributes,
+  IResponseAllSurvey,
+  ISurveyFilter,
+} from '@entities/surveys/surveyModel'
+import SurveyService from '@entities/surveys/surveyService'
+import { fxI18n } from '@utils/i18n'
+import { IUserAttributes } from '@users/userModel'
+
 @Route('surveys')
 @Tags('Survey')
 export class SurveysController extends Controller {
@@ -75,7 +80,8 @@ export class SurveysController extends Controller {
   @Security('bearerAuth', [])
   @Get('/leftSurvey')
   public async leftSurvey(
-    @Queries() pQueryParams: {
+    @Queries()
+    pQueryParams: {
       type: string
       userId?: string
     },
@@ -89,7 +95,7 @@ export class SurveysController extends Controller {
       if (request.auth.id) {
         const parameter = {
           userId: request.auth.id,
-          type: pQueryParams.type
+          type: pQueryParams.type,
         }
         const vResponse: ISurveyAttributes[] | IResponseAllSurvey =
           await this.surveyService.leftSurvey(parameter)
@@ -99,9 +105,8 @@ export class SurveysController extends Controller {
         this.setStatus(500)
         return { data: [] }
       }
-
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       this.setStatus(500)
       return { data: [], message: 'Ocurrió un error' }
     }

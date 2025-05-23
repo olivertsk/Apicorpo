@@ -31,9 +31,9 @@ export async function expressAuthentication(
         if (scopes && scopes.length > 0 && !scopes.includes(null)) {
           const userRoles = rolUser.rol.name || ''
           const hasRole = scopes.some((scope) => {
-            if (scope === "admin") {
+            if (scope === 'admin') {
               return userRoles === 'admin'
-            } else if (scope === "user" || scope === null) {
+            } else if (scope === 'user' || scope === null) {
               return true
             } else if (scope === 'optional' || scope === null) {
               return true
@@ -66,7 +66,7 @@ export async function expressAuthentication(
       }
     } else {
       if (scopes && scopes?.includes('optional')) {
-        console.log('paso por aca');
+        console.log('paso por aca')
         request.auth = null
         return { token: '', auth: null }
       }
@@ -74,7 +74,7 @@ export async function expressAuthentication(
     if (!scopes) {
       return { token: '', auth: null }
     }
-    console.log('no deberia llegar aca');
+    console.log('no deberia llegar aca')
     throw {
       status: 401,
       message: 'Invalid token',
@@ -93,5 +93,5 @@ export async function expressAuthentication(
       stack: '',
     }
   }
-  console.log('no deberia llegar aca');
+  console.log('no deberia llegar aca')
 }

@@ -49,10 +49,7 @@ export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'pa
   }
 
 export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id' | 'rolId'> &
-  Omit<
-    IUserAttributes,
-    | 'password'
-  > & {
+  Omit<IUserAttributes, 'password'> & {
     avatar?: string | null
     location?: string | null
     lastName?: string | null

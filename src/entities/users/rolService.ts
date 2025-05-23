@@ -1,6 +1,11 @@
 import { modelRol } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type IRolAttributes, type IRolCreationAttributes, type IResponseAllRol, type IRolInstance } from '@entities/users/rolModel'
+import {
+  type IRolAttributes,
+  type IRolCreationAttributes,
+  type IResponseAllRol,
+  type IRolInstance,
+} from '@entities/users/rolModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class RolsService {
@@ -57,13 +62,16 @@ class RolsService {
     }
   }
 
-  public async update(itemCreationParams: IRolCreationAttributes, id: string): Promise<IRolAttributes | null> {
+  public async update(
+    itemCreationParams: IRolCreationAttributes,
+    id: string
+  ): Promise<IRolAttributes | null> {
     try {
       if (id) {
         const vResponse: IRolInstance | null = await modelRol.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null
@@ -73,7 +81,7 @@ class RolsService {
       }
       return null
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }

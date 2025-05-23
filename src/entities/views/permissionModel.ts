@@ -27,13 +27,12 @@ export interface IPermissionFilter {
   name?: string | null
 }
 
-export type IPermissionCreationAttributes = Pick<IPermissionAttributes, 'id'> & 
-  Partial<Pick<IPermissionAttributes, 'rolId' | 'viewId' >>
-  & {
+export type IPermissionCreationAttributes = Pick<IPermissionAttributes, 'id'> &
+  Partial<Pick<IPermissionAttributes, 'rolId' | 'viewId'>> & {
     post: boolean | false
     put: boolean | false
     delete: boolean | false
-  };
+  }
 
 export interface IPermissionInstance
   extends Model<IPermissionAttributes, IPermissionCreationAttributes>,
@@ -85,19 +84,19 @@ export const vPermissionModelAttributes: SequelizeAttributes<IPermissionAttribut
     type: DataTypes.BOOLEAN,
     field: 'post',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   put: {
     type: DataTypes.BOOLEAN,
     field: 'put',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
   delete: {
     type: DataTypes.BOOLEAN,
     field: 'delete',
     defaultValue: null,
-    allowNull: true
+    allowNull: true,
   },
 }
 

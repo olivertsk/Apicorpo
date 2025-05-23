@@ -1,6 +1,17 @@
-import { modelSurvey, modelSurveyAnswerOption, modelSurveyQuestion, modelSurveyResponse } from '@db/index'
-import { type FindOptions, } from 'sequelize'
-import type { ISurveyAttributes, ISurveyCreationAttributes, ISurveyFilter, ISurveyInstance, IResponseAllSurvey } from '@entities/surveys/surveyModel'
+import {
+  modelSurvey,
+  modelSurveyAnswerOption,
+  modelSurveyQuestion,
+  modelSurveyResponse,
+} from '@db/index'
+import { type FindOptions } from 'sequelize'
+import type {
+  ISurveyAttributes,
+  ISurveyCreationAttributes,
+  ISurveyFilter,
+  ISurveyInstance,
+  IResponseAllSurvey,
+} from '@entities/surveys/surveyModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
 
 class SurveyService {
@@ -81,7 +92,7 @@ class SurveyService {
     }
   }
 
-  public async leftSurvey(pParam: { type: string, userId: string }): Promise<IResponseAllSurvey> {
+  public async leftSurvey(pParam: { type: string; userId: string }): Promise<IResponseAllSurvey> {
     try {
       const unansweredSurveys = await modelSurvey.findAll({
         where: { type: pParam.type },

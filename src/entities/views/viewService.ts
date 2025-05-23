@@ -1,6 +1,11 @@
 import { modelView } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import type { IViewAttributes, IViewCreationAttributes, IViewInstance, IResponseAllView } from '@entities/views/viewModel'
+import type {
+  IViewAttributes,
+  IViewCreationAttributes,
+  IViewInstance,
+  IResponseAllView,
+} from '@entities/views/viewModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
 
 class ViewService {
@@ -57,13 +62,16 @@ class ViewService {
     }
   }
 
-  public async update(itemCreationParams: IViewCreationAttributes, id: string): Promise<IViewAttributes | null> {
+  public async update(
+    itemCreationParams: IViewCreationAttributes,
+    id: string
+  ): Promise<IViewAttributes | null> {
     try {
       if (id) {
         const vResponse: IViewInstance | null = await modelView.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null

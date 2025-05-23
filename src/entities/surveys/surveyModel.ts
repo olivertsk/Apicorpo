@@ -1,7 +1,7 @@
-import { type Sequelize, type Model, DataTypes } from 'sequelize';
-import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes';
-import { v4 as uuidv4 } from 'uuid';
-import { ModelRegistry } from '@db/index';
+import { type Sequelize, type Model, DataTypes } from 'sequelize'
+import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
+import { v4 as uuidv4 } from 'uuid'
+import { ModelRegistry } from '@db/index'
 
 export interface IResponseAllSurvey {
   total?: number
@@ -39,7 +39,9 @@ export type ISurveyCreationAttributes = Pick<ISurveyAttributes, 'title' | 'descr
   updatedAt?: Date
   deletedAt?: Date | null
 }
-export interface ISurveyInstance extends Model<ISurveyAttributes, ISurveyCreationAttributes>, ISurveyAttributes {}
+export interface ISurveyInstance
+  extends Model<ISurveyAttributes, ISurveyCreationAttributes>,
+    ISurveyAttributes {}
 
 // Atributos del modelo de tareas
 export const vSurveyModelAttributes: SequelizeAttributes<ISurveyAttributes> = {
@@ -95,17 +97,16 @@ export function fxSurveyFactory(sequelize: Sequelize) {
       timestamps: true,
       paranoid: true,
     }
-  );
+  )
 
   vData.associate = function (models: ModelRegistry) {
-    const { 
+    const {
       modelSurvey,
       modelSurveyQuestion,
       // modelSurveyQuestionSurvey,
       modelSurveyResponse,
       // modelSurveyUser
-    } =
-      models
+    } = models
 
     // modelSurvey.belongsToMany(modelSurveyQuestion, {
     //   through: modelSurveyQuestionSurvey,
@@ -133,10 +134,10 @@ export function fxSurveyFactory(sequelize: Sequelize) {
   }
 
   vData.prototype.toJSON = function () {
-    const values = { ...this.get() };
-    delete values.password;
-    return values;
-  };
+    const values = { ...this.get() }
+    delete values.password
+    return values
+  }
 
-  return vData;
+  return vData
 }

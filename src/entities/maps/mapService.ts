@@ -1,6 +1,11 @@
 import { modelMap } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type IMapAttributes, type IMapCreationAttributes, type IResponseAllMap, type IMapInstance } from '@entities/maps/mapModel'
+import {
+  type IMapAttributes,
+  type IMapCreationAttributes,
+  type IResponseAllMap,
+  type IMapInstance,
+} from '@entities/maps/mapModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class MapsService {
@@ -57,13 +62,16 @@ class MapsService {
     }
   }
 
-  public async update(itemCreationParams: IMapCreationAttributes, id: string): Promise<IMapAttributes | null> {
+  public async update(
+    itemCreationParams: IMapCreationAttributes,
+    id: string
+  ): Promise<IMapAttributes | null> {
     try {
       if (id) {
         const vResponse: IMapInstance | null = await modelMap.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null
@@ -96,11 +104,11 @@ class MapsService {
     try {
       const vImagesName: IMapInstance | null = await modelMap.findOne({
         where: {
-          image: name
-        }
+          image: name,
+        },
       })
       await vImagesName?.update({
-        image: ''
+        image: '',
       })
     } catch (error) {
       throw error

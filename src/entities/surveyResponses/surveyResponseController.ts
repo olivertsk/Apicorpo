@@ -11,18 +11,27 @@ import {
   Security,
   Delete,
   Put,
-  Request
-} from 'tsoa';
-import { ISurveyResponseAttributes, ISurveyResponseCreationAttributes, ISurveyResponseFilter, ISurveyResponseCreation } from '@entities/surveyResponses/surveyResponseModel';
-import SurveyResponseService from '@entities/surveyResponses/surveyResponseService';
-import { fxI18n } from '@utils/i18n';
+  Request,
+} from 'tsoa'
+import {
+  ISurveyResponseAttributes,
+  ISurveyResponseCreationAttributes,
+  ISurveyResponseFilter,
+  ISurveyResponseCreation,
+} from '@entities/surveyResponses/surveyResponseModel'
+import SurveyResponseService from '@entities/surveyResponses/surveyResponseService'
+import { fxI18n } from '@utils/i18n'
 // import { IResponseAllSurvey } from '@entities/surveys/surveyModel';
-import SurveyUserService from '@entities/surveyUsers/surveyUserService';
-import { IResponseAllSurveyUser, ISurveyUserAttributes, ISurveyUserUpdateAttributes } from '@entities/surveyUsers/surveyUserModel';
-import { IUserAttributes } from '@users/userModel';
+import SurveyUserService from '@entities/surveyUsers/surveyUserService'
+import {
+  IResponseAllSurveyUser,
+  ISurveyUserAttributes,
+  ISurveyUserUpdateAttributes,
+} from '@entities/surveyUsers/surveyUserModel'
+import { IUserAttributes } from '@users/userModel'
 // import { ITaskAttributes, ITaskCreationAttributes } from '@entities/tasks/taskModel';
 // import TaskService from '@entities/tasks/taskService'
- 
+
 @Route('surveyResponses')
 @Tags('SurveyResponse')
 export class SurveyResponsesController extends Controller {

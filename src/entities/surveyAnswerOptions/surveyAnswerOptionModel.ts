@@ -49,55 +49,56 @@ export interface ISurveyAnswerOptionInstance
     ISurveyAnswerOptionAttributes {}
 
 // Atributos del modelo de tareas
-export const vSurveyAnswerOptionModelAttributes: SequelizeAttributes<ISurveyAnswerOptionAttributes> = {
-  id: {
-    type: DataTypes.UUID,
-    field: 'id',
-    primaryKey: true,
-    defaultValue: () => uuidv4(),
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    field: 'createdAt',
-    allowNull: true,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    field: 'updatedAt',
-    allowNull: true,
-  },
-  deletedAt: {
-    type: DataTypes.DATE,
-    field: 'deletedAt',
-    allowNull: true,
-  },
-  questionId: {
-    type: DataTypes.UUID,
-    field: 'question_id',
-    allowNull: false,
-    references: {
-      model: 'survey_questions',
-      key: 'id',
+export const vSurveyAnswerOptionModelAttributes: SequelizeAttributes<ISurveyAnswerOptionAttributes> =
+  {
+    id: {
+      type: DataTypes.UUID,
+      field: 'id',
+      primaryKey: true,
+      defaultValue: () => uuidv4(),
     },
-  },
-  text: {
-    type: DataTypes.STRING,
-    field: 'text',
-    allowNull: false,
-  },
-  type: {
-    type: DataTypes.STRING,
-    field: 'type',
-    allowNull: true,
-    defaultValue: 'selection',
-  },
-  order: {
-    type: DataTypes.INTEGER,
-    field: 'order',
-    allowNull: true,
-    defaultValue: 0,
-  },
-}
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'createdAt',
+      allowNull: true,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      field: 'updatedAt',
+      allowNull: true,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      field: 'deletedAt',
+      allowNull: true,
+    },
+    questionId: {
+      type: DataTypes.UUID,
+      field: 'question_id',
+      allowNull: false,
+      references: {
+        model: 'survey_questions',
+        key: 'id',
+      },
+    },
+    text: {
+      type: DataTypes.STRING,
+      field: 'text',
+      allowNull: false,
+    },
+    type: {
+      type: DataTypes.STRING,
+      field: 'type',
+      allowNull: true,
+      defaultValue: 'selection',
+    },
+    order: {
+      type: DataTypes.INTEGER,
+      field: 'order',
+      allowNull: true,
+      defaultValue: 0,
+    },
+  }
 
 // Función para crear el modelo de tareas
 export function fxSurveyAnswerOptionFactory(sequelize: Sequelize) {
@@ -124,7 +125,7 @@ export function fxSurveyAnswerOptionFactory(sequelize: Sequelize) {
   //     as: 'question',
   //   })
   // }
-  
+
   vData.prototype.toJSON = function () {
     const values = { ...this.get() }
     delete values.password

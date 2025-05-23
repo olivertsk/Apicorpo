@@ -1,10 +1,20 @@
 import { modelPasswordReset, modelRol, modelUser } from '@db/index'
 import { type FindOptions, ValidationErrorItem, ValidationError, Op } from 'sequelize'
-import type { IUserAttributes, IUserCreationAttributes, IResponseAllUser, IUserInstance, IUserUpdatenAttributes, IAuthUserUpdatenAttributes } from '@users/userModel'
+import type {
+  IUserAttributes,
+  IUserCreationAttributes,
+  IResponseAllUser,
+  IUserInstance,
+  IUserUpdatenAttributes,
+  IAuthUserUpdatenAttributes,
+} from '@users/userModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices } from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
-import { IPasswordResetAttributes, IPasswordResetCreationAttributes } from './passwordResetModel'
-import { IRolAttributes } from './rolModel'
+import type {
+  IPasswordResetAttributes,
+  IPasswordResetCreationAttributes,
+} from './passwordResetModel'
+import type { IRolAttributes } from './rolModel'
 
 class UsersService {
   async validate(data: any, userId: string | null = null) {

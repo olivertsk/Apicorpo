@@ -21,7 +21,7 @@ export enum EPositionBanner {
   HomeSecondary = 'homeSecondary',
   HomeTertiary = 'homeTertiary',
   TikTok = 'TikTok',
-  Instagram = 'Instagram'
+  Instagram = 'Instagram',
 }
 export interface IResponseAllBanner {
   total?: number

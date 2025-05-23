@@ -1,5 +1,5 @@
-import { DataTypes, type QueryInterface } from 'sequelize';
-import { v4 as uuidv4 } from 'uuid';
+import { DataTypes, type QueryInterface } from 'sequelize'
+import { v4 as uuidv4 } from 'uuid'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -57,9 +57,9 @@ module.exports = {
           key: 'id',
         },
       },
-    });
+    })
   },
   async down(queryInterface: QueryInterface) {
-    await queryInterface.dropTable('product_images');
+    await queryInterface.dropTable('product_images')
   },
-};
+}

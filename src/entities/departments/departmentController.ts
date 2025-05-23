@@ -11,14 +11,19 @@ import {
   Security,
   Delete,
   Put,
-  Request
-} from 'tsoa';
-import { IDepartmentAttributes, IDepartmentCreationAttributes, IResponseAllDepartment, IDepartmentFilter } from '@entities/departments/departmentModel';
-import DepartmentService from '@entities/departments/departmentService';
-import { fxI18n } from '@utils/i18n';
-import { IUserAttributes } from '@users/userModel';
-import { fxMoveImages } from '@utils/helpers';
- 
+  Request,
+} from 'tsoa'
+import {
+  IDepartmentAttributes,
+  IDepartmentCreationAttributes,
+  IResponseAllDepartment,
+  IDepartmentFilter,
+} from '@entities/departments/departmentModel'
+import DepartmentService from '@entities/departments/departmentService'
+import { fxI18n } from '@utils/i18n'
+import { IUserAttributes } from '@users/userModel'
+import { fxMoveImages } from '@utils/helpers'
+
 @Route('departments')
 @Tags('Department')
 export class DepartmentsController extends Controller {

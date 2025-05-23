@@ -25,19 +25,19 @@ module.exports = {
       },
       images: {
         type: DataTypes.STRING,
-        field: "images",
-        allowNull: false
+        field: 'images',
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
-        field: "name",
-        allowNull: false
+        field: 'name',
+        allowNull: false,
       },
       description: {
         type: DataTypes.STRING,
-        field: "description",
+        field: 'description',
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       status: {
         type: DataTypes.BOOLEAN,

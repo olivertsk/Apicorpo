@@ -1,9 +1,25 @@
-import { modelSurvey, modelSurveyAnswerOption, modelSurveyQuestion, modelSurveyResponse, modelSurveyUser, modelUser } from '@db/index'
-import { type FindOptions, } from 'sequelize'
-import type { ISurveyResponseAttributes, ISurveyResponseFilter, ISurveyResponseInstance, IResponseAllSurveyResponse, ISurveyResponseCreation } from '@entities/surveyResponses/surveyResponseModel'
+import {
+  modelSurvey,
+  modelSurveyAnswerOption,
+  modelSurveyQuestion,
+  modelSurveyResponse,
+  modelSurveyUser,
+  modelUser,
+} from '@db/index'
+import { type FindOptions } from 'sequelize'
+import type {
+  ISurveyResponseAttributes,
+  ISurveyResponseFilter,
+  ISurveyResponseInstance,
+  IResponseAllSurveyResponse,
+  ISurveyResponseCreation,
+} from '@entities/surveyResponses/surveyResponseModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
 import { IResponseAllSurvey, ISurveyAttributes } from '@entities/surveys/surveyModel'
-import { IResponseAllSurveyUser, ISurveyUserAttributes } from '@entities/surveyUsers/surveyUserModel'
+import {
+  IResponseAllSurveyUser,
+  ISurveyUserAttributes,
+} from '@entities/surveyUsers/surveyUserModel'
 
 class SurveyResponseService {
   async validate(data: any) {
@@ -35,7 +51,7 @@ class SurveyResponseService {
               {
                 model: modelSurveyAnswerOption,
                 as: 'answerOption',
-              }
+              },
             ],
           },
           {

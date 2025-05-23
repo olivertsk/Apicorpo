@@ -66,25 +66,25 @@ export const vDepartmentModelAttributes: SequelizeAttributes<IDepartmentAttribut
   },
   icon: {
     type: DataTypes.STRING,
-    field: "icon",
-    allowNull: true
+    field: 'icon',
+    allowNull: true,
   },
   name: {
     type: DataTypes.STRING,
-    field: "name",
-    allowNull: false
+    field: 'name',
+    allowNull: false,
   },
   code: {
     type: DataTypes.STRING,
-    field: "code",
+    field: 'code',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   description: {
     type: DataTypes.STRING,
-    field: "description",
+    field: 'description',
     allowNull: true,
-    defaultValue: null
+    defaultValue: null,
   },
   status: {
     type: DataTypes.BOOLEAN,

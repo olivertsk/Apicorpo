@@ -1,5 +1,4 @@
-
-import { DataTypes, type QueryInterface } from 'sequelize';
+import { DataTypes, type QueryInterface } from 'sequelize'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -9,11 +8,10 @@ module.exports = {
       field: 'location',
       allowNull: true,
       defaultValue: null,
-    });
+    })
   },
 
   async down(queryInterface: QueryInterface) {
-    return queryInterface.removeColumn('orders', 'location');
+    return queryInterface.removeColumn('orders', 'location')
   },
-};
-    
+}

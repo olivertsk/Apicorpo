@@ -1,8 +1,25 @@
-import { modelCategory, modelDepartment, modelFavoriteProduct, modelProduct, modelProductImages } from '@db/index'
+import {
+  modelCategory,
+  modelDepartment,
+  modelFavoriteProduct,
+  modelProduct,
+  modelProductImages,
+} from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
-import type { IProductAttributes, IProductCreationAttributes, IResponseAllProduct, IProductInstance, IProductAttributesResponse, IProductFilter } from '@entities/products/productModel'
+import type {
+  IProductAttributes,
+  IProductCreationAttributes,
+  IResponseAllProduct,
+  IProductInstance,
+  IProductAttributesResponse,
+  IProductFilter,
+} from '@entities/products/productModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
-import { IProductImageAttributes, IProductImageCreationAttributes, IProductImageInstance } from './productImagesModel'
+import {
+  IProductImageAttributes,
+  IProductImageCreationAttributes,
+  IProductImageInstance,
+} from './productImagesModel'
 
 class ProductsService {
   async validate(data: any) {
@@ -14,7 +31,7 @@ class ProductsService {
     id: string
     userId?: string | null
   }): Promise<IProductAttributes | null> {
-    console.log('pParams.id :>> ', pParams.id);
+    console.log('pParams.id :>> ', pParams.id)
     try {
       const whereStatement: FindOptions = {}
       whereStatement.where = {
@@ -274,21 +291,21 @@ class ProductsService {
       // Seleccionar los primeros 12 productos después de ordenar
       const limitedResponse = sortedResponse.slice(0, 12)
       return { data: limitedResponse }
-      } catch (error) {
+    } catch (error) {
       throw error
     }
   }
 
   private getCommonLettersCount = (str1: string, str2: string): number => {
-    const set1 = new Set(str1);
-    const set2 = new Set(str2);
-    let commonCount = 0;
+    const set1 = new Set(str1)
+    const set2 = new Set(str2)
+    let commonCount = 0
     set1.forEach((char) => {
       if (set2.has(char)) {
-        commonCount++;
+        commonCount++
       }
-    });
-    return commonCount;
+    })
+    return commonCount
   }
 
   public async create(

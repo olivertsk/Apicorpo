@@ -8,9 +8,9 @@ module.exports = {
       field: 'isSalient',
       allowNull: true,
       defaultValue: false,
-    });
+    })
   },
   async down(queryInterface: QueryInterface) {
-    return queryInterface.removeColumn('departments', 'isSalient');
+    return queryInterface.removeColumn('departments', 'isSalient')
   },
 }

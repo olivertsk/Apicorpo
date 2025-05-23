@@ -21,7 +21,7 @@ export enum ETypePaymentMethods {
   Cash = 'cash',
   Bank = 'bank',
   Zelle = 'zelle',
-  PagoMovil = 'pago movil'
+  PagoMovil = 'pago movil',
 }
 
 export interface IResponseAllPaymentMethod {

@@ -11,14 +11,19 @@ import {
   Security,
   Delete,
   Put,
-  Request
-} from 'tsoa';
-import { IProductAttributes, IProductCreationAttributes, IResponseAllProduct, IProductFilter } from '@entities/products/productModel';
-import ProductService from '@entities/products/productService';
-import { fxI18n } from '@utils/i18n';
-import { IProductImageCreationAttributes } from './productImagesModel';
-import { fxDeleteImages, fxMoveImages } from '@utils/helpers';
-import { IUserAttributes } from '@users/userModel';
+  Request,
+} from 'tsoa'
+import {
+  IProductAttributes,
+  IProductCreationAttributes,
+  IResponseAllProduct,
+  IProductFilter,
+} from '@entities/products/productModel'
+import ProductService from '@entities/products/productService'
+import { fxI18n } from '@utils/i18n'
+import { IProductImageCreationAttributes } from './productImagesModel'
+import { fxDeleteImages, fxMoveImages } from '@utils/helpers'
+import { IUserAttributes } from '@users/userModel'
 
 @Route('products')
 @Tags('Product')
@@ -129,8 +134,7 @@ export class ProductsController extends Controller {
       } else {
         if (!requestBody.priceWithTax) {
           const priceWithTax = requestBody?.promotionalPrice || requestBody.price || 0
-          requestBody.priceWithTax =
-            priceWithTax + (requestBody.taxRate * priceWithTax) / 100
+          requestBody.priceWithTax = priceWithTax + (requestBody.taxRate * priceWithTax) / 100
         }
       }
       if (!requestBody.priceWithTax) {

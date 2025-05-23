@@ -1,6 +1,11 @@
 import { modelCategory } from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
-import type { ICategoryAttributes, ICategoryCreationAttributes, IResponseAllCategory, ICategoryInstance } from '@entities/categories/categoryModel'
+import type {
+  ICategoryAttributes,
+  ICategoryCreationAttributes,
+  IResponseAllCategory,
+  ICategoryInstance,
+} from '@entities/categories/categoryModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class CategoriesService {

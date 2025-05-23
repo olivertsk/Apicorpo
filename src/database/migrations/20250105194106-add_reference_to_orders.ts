@@ -1,5 +1,4 @@
-
-import { DataTypes, type QueryInterface } from 'sequelize';
+import { DataTypes, type QueryInterface } from 'sequelize'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -27,8 +26,7 @@ module.exports = {
     return Promise.all([
       queryInterface.removeColumn('orders', 'reference'),
       queryInterface.removeColumn('orders', 'type_payment'),
-      queryInterface.removeColumn('orders', 'payment_method_id')
+      queryInterface.removeColumn('orders', 'payment_method_id'),
     ])
   },
-};
-    
+}

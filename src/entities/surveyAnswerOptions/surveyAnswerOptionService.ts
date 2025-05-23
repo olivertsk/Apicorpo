@@ -1,6 +1,12 @@
 import { modelSurveyAnswerOption } from '@db/index'
-import { Op, type FindOptions, } from 'sequelize'
-import type { ISurveyAnswerOptionAttributes, ISurveyAnswerOptionCreationAttributes, ISurveyAnswerOptionFilter, ISurveyAnswerOptionInstance, IResponseAllSurveyAnswerOption } from '@entities/surveyAnswerOptions/surveyAnswerOptionModel'
+import { Op, type FindOptions } from 'sequelize'
+import type {
+  ISurveyAnswerOptionAttributes,
+  ISurveyAnswerOptionCreationAttributes,
+  ISurveyAnswerOptionFilter,
+  ISurveyAnswerOptionInstance,
+  IResponseAllSurveyAnswerOption,
+} from '@entities/surveyAnswerOptions/surveyAnswerOptionModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
 
 class SurveyAnswerOptionService {
@@ -10,11 +16,13 @@ class SurveyAnswerOptionService {
   }
   public async get(id: string): Promise<ISurveyAnswerOptionAttributes | null> {
     try {
-      const vResponse: ISurveyAnswerOptionAttributes | null = await modelSurveyAnswerOption.findOne({
-        where: {
-          id,
+      const vResponse: ISurveyAnswerOptionAttributes | null = await modelSurveyAnswerOption.findOne(
+        {
+          where: {
+            id,
+          },
         }
-      })
+      )
       return vResponse
     } catch (error) {
       throw error
@@ -43,7 +51,8 @@ class SurveyAnswerOptionService {
       if (pParam.order === 'date') {
         whereStatement.order = [['date', 'DESC']]
       }
-      const vResponse: ISurveyAnswerOptionAttributes[] = await modelSurveyAnswerOption.findAll(whereStatement)
+      const vResponse: ISurveyAnswerOptionAttributes[] =
+        await modelSurveyAnswerOption.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllSurveyAnswerOption = await fxReponseServices(
           pParam,
@@ -59,24 +68,33 @@ class SurveyAnswerOptionService {
     }
   }
 
-  public async create(surveyAnswerCreationParams: ISurveyAnswerOptionCreationAttributes): Promise<ISurveyAnswerOptionAttributes> {
+  public async create(
+    surveyAnswerCreationParams: ISurveyAnswerOptionCreationAttributes
+  ): Promise<ISurveyAnswerOptionAttributes> {
     try {
-      const vResponse: ISurveyAnswerOptionAttributes = await modelSurveyAnswerOption.create(surveyAnswerCreationParams)
+      const vResponse: ISurveyAnswerOptionAttributes = await modelSurveyAnswerOption.create(
+        surveyAnswerCreationParams
+      )
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error);
+      console.log('error :>> ', error)
       throw error
     }
   }
 
-  public async update(surveyAnswerCreationParams: ISurveyAnswerOptionAttributes, id: string): Promise<ISurveyAnswerOptionAttributes | null> {
+  public async update(
+    surveyAnswerCreationParams: ISurveyAnswerOptionAttributes,
+    id: string
+  ): Promise<ISurveyAnswerOptionAttributes | null> {
     try {
       if (id) {
-        const vResponse: ISurveyAnswerOptionInstance | null = await modelSurveyAnswerOption.findOne({
-          where: {
-            id: id
+        const vResponse: ISurveyAnswerOptionInstance | null = await modelSurveyAnswerOption.findOne(
+          {
+            where: {
+              id: id,
+            },
           }
-        })
+        )
         if (vResponse === null) {
           return null
         }

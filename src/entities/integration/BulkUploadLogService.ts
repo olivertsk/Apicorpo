@@ -1,6 +1,11 @@
 import { modelBulkUploadLog } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type IBulkUploadLogAttributes, type IBulkUploadLogCreationAttributes, type IResponseAllBulkUploadLog, type IBulkUploadLogInstance } from '@entities/integration/BulkUploadLog'
+import {
+  type IBulkUploadLogAttributes,
+  type IBulkUploadLogCreationAttributes,
+  type IResponseAllBulkUploadLog,
+  type IBulkUploadLogInstance,
+} from '@entities/integration/BulkUploadLog'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
 class BulkUploadLogsService {
@@ -48,22 +53,28 @@ class BulkUploadLogsService {
     }
   }
 
-  public async create(viewCreationParams: IBulkUploadLogCreationAttributes): Promise<IBulkUploadLogAttributes> {
+  public async create(
+    viewCreationParams: IBulkUploadLogCreationAttributes
+  ): Promise<IBulkUploadLogAttributes> {
     try {
-      const vResponse: IBulkUploadLogAttributes = await modelBulkUploadLog.create(viewCreationParams)
+      const vResponse: IBulkUploadLogAttributes =
+        await modelBulkUploadLog.create(viewCreationParams)
       return vResponse
     } catch (error) {
       throw error
     }
   }
 
-  public async update(itemCreationParams: IBulkUploadLogCreationAttributes, id: string): Promise<IBulkUploadLogAttributes | null> {
+  public async update(
+    itemCreationParams: IBulkUploadLogCreationAttributes,
+    id: string
+  ): Promise<IBulkUploadLogAttributes | null> {
     try {
       if (id) {
         const vResponse: IBulkUploadLogInstance | null = await modelBulkUploadLog.findOne({
           where: {
-            id: id
-          }
+            id: id,
+          },
         })
         if (vResponse === null) {
           return null

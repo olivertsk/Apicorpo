@@ -53,7 +53,7 @@ export const vPasswordResetModelAttributes: SequelizeAttributes<IPasswordResetAt
   email: {
     type: DataTypes.STRING,
     field: 'email',
-  }
+  },
 }
 
 export function fxPasswordResetFactory(sequelize: Sequelize) {

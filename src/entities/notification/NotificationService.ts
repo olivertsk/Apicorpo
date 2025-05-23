@@ -1,6 +1,11 @@
 import { modelNotification } from '@db/index'
 import { type FindOptions } from 'sequelize'
-import { type INotificationAttributes, type INotificationCreationAttributes, type IResponseAllNotification, type INotificationInstance } from '@entities/notification/notificationModel'
+import {
+  type INotificationAttributes,
+  type INotificationCreationAttributes,
+  type IResponseAllNotification,
+  type INotificationInstance,
+} from '@entities/notification/notificationModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 import { Transaction } from 'sequelize'
 
@@ -75,7 +80,7 @@ class NotificationsService {
     userIds: string[]
   ): Promise<boolean> {
     const notifications: INotificationAttributes[] = []
-    console.log('userIds :>> ', userIds);
+    console.log('userIds :>> ', userIds)
     if (modelNotification?.sequelize) {
       const transaction: Transaction = await modelNotification.sequelize.transaction()
       try {
@@ -94,11 +99,11 @@ class NotificationsService {
 
         // Commit the transaction
         await transaction.commit()
-        console.log('finalizo');
+        console.log('finalizo')
         return true
       } catch (error) {
         await transaction.rollback()
-        console.log('error :>> ', error);
+        console.log('error :>> ', error)
         throw error
       }
     }

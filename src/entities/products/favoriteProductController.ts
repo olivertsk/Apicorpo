@@ -11,13 +11,18 @@ import {
   Security,
   Delete,
   Put,
-  Request
-} from 'tsoa';
-import { IFavoriteProductAttributes, IFavoriteProductCreationAttributes, IResponseAllFavoriteProduct, IFavoriteProductFilter } from '@entities/products/favoriteProductModel';
-import FavoriteProductService from '@entities/products/favoriteProductService';
-import { fxI18n } from '@utils/i18n';
-import { IUserAttributes } from '@users/userModel';
- 
+  Request,
+} from 'tsoa'
+import {
+  IFavoriteProductAttributes,
+  IFavoriteProductCreationAttributes,
+  IResponseAllFavoriteProduct,
+  IFavoriteProductFilter,
+} from '@entities/products/favoriteProductModel'
+import FavoriteProductService from '@entities/products/favoriteProductService'
+import { fxI18n } from '@utils/i18n'
+import { IUserAttributes } from '@users/userModel'
+
 @Route('favoriteProducts')
 @Tags('FavoriteProduct')
 export class FavoriteProductsController extends Controller {

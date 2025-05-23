@@ -10,13 +10,18 @@ import {
   Queries,
   Security,
   Delete,
-  Put
-} from 'tsoa';
-import { IBannerAttributes, IBannerCreationAttributes, IResponseAllBanner, IBannerFilter } from '@entities/banners/bannerModel';
-import BannerService from '@entities/banners/bannerService';
-import { fxI18n } from '@utils/i18n';
-import { fxMoveImages } from '@utils/helpers';
- 
+  Put,
+} from 'tsoa'
+import {
+  IBannerAttributes,
+  IBannerCreationAttributes,
+  IResponseAllBanner,
+  IBannerFilter,
+} from '@entities/banners/bannerModel'
+import BannerService from '@entities/banners/bannerService'
+import { fxI18n } from '@utils/i18n'
+import { fxMoveImages } from '@utils/helpers'
+
 @Route('banners')
 @Tags('Banner')
 export class BannersController extends Controller {

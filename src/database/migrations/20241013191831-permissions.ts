@@ -47,19 +47,19 @@ module.exports = {
         type: DataTypes.BOOLEAN,
         field: 'post',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       put: {
         type: DataTypes.BOOLEAN,
         field: 'put',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
       delete: {
         type: DataTypes.BOOLEAN,
         field: 'delete',
         defaultValue: null,
-        allowNull: true
+        allowNull: true,
       },
     })
   },

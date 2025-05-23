@@ -33,15 +33,19 @@ export interface IOrderProductFilter {
   isClient?: boolean
 }
 export type IOrderProductCreationAttributes = Pick<IOrderProductAttributes, 'id'> &
-  Partial<Pick<IOrderProductAttributes, 'productId' |
-    'orderId' |
-    'code' |
-    'salePrice' |
-    'valueTax' |
-    'quantity' |
-    'subtotalTax' |
-    'subtotal'
-    >>
+  Partial<
+    Pick<
+      IOrderProductAttributes,
+      | 'productId'
+      | 'orderId'
+      | 'code'
+      | 'salePrice'
+      | 'valueTax'
+      | 'quantity'
+      | 'subtotalTax'
+      | 'subtotal'
+    >
+  >
 export interface IOrderProductInstance
   extends Model<IOrderProductAttributes, IOrderProductCreationAttributes>,
     IOrderProductAttributes {}
