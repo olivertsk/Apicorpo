@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import AppConfig from '@config/AppConfig'
-import { IUserAttributes } from '@users/userModel'
+import type { IUserAttributes } from '@users/userModel'
 import type { Request } from 'express'
 import jwt from 'jsonwebtoken'
 import userService from '@users/userService'

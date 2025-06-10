@@ -7,6 +7,7 @@ import type {
   IUserInstance,
   IUserUpdatenAttributes,
   IAuthUserUpdatenAttributes,
+  IAuthGoogle,
 } from '@users/userModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices } from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
@@ -61,6 +62,42 @@ class UsersService {
         },
       })
       return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
+  // email: requestBody?.email || `${requestBody.uid.slice(0, 3)}@private.com`,
+  // name: requestBody?.name || '',
+  // uid: requestBody.uid,
+  // avatar: requestBody?.avatar || '',
+  public async loginOrRegisterGoogle({
+    email,
+    name,
+    uid,
+    avatar,
+  }: IAuthGoogle): Promise<IUserAttributes | null> {
+    try {
+      const vResponse: IUserInstance | null = await modelUser.findOne({
+        where: {
+          email,
+        },
+        include: [
+          {
+            model: modelRol,
+            as: 'rol',
+          },
+        ],
+      })
+      if (vResponse) {
+        await vResponse.update({
+          name: name || vResponse?.name || '',
+          uid: uid || vResponse?.uid || '',
+          avatar: avatar || vResponse?.avatar || '',
+        })
+        return vResponse
+      }
+      return null
     } catch (error) {
       throw error
     }

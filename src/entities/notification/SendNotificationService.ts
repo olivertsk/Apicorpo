@@ -86,6 +86,17 @@ class SendNotificationService {
       console.error('Error al enviar la notificación:', error)
     }
   }
+  public async verifyToken(
+    idToken: string
+  ): Promise<{ uid: string; email?: string; avatar?: string; name?: string }> {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(idToken)
+      console.log('decodedToken :>> ', decodedToken)
+      return decodedToken
+    } catch (error) {
+      throw new Error('Invalid token')
+    }
+  }
 }
 
 export default new SendNotificationService()

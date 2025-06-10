@@ -11,11 +11,11 @@ import {
   type IOrderCreationAttributes,
   type IResponseAllOrder,
   type IOrderInstance,
-  EStatusOrder,
+  type EStatusOrder,
   EWasSent,
 } from '@entities/orders/orderModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
-import { IOrderProductAttributes, IOrderProductCreationAttributes } from './orderProductModel'
+import type { IOrderProductAttributes, IOrderProductCreationAttributes } from './orderProductModel'
 
 class OrdersService {
   async validate(data: any) {

@@ -25,6 +25,7 @@ import { fxSurveyQuestionFactory } from '@entities/surveyQuestions/surveyQuestio
 import { fxSurveyAnswerOptionFactory } from '@entities/surveyAnswerOptions/surveyAnswerOptionModel'
 import { fxSurveyUserFactory } from '@entities/surveyUsers/surveyUserModel'
 import { fxSurveyResponseFactory } from '@entities/surveyResponses/surveyResponseModel'
+import { fxSuggestionFactory } from '@entities/suggestions/suggestionModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -56,6 +57,7 @@ export const modelSurveyQuestion = fxSurveyQuestionFactory(sequelize)
 export const modelSurveyAnswerOption = fxSurveyAnswerOptionFactory(sequelize)
 export const modelSurveyUser = fxSurveyUserFactory(sequelize)
 export const modelSurveyResponse = fxSurveyResponseFactory(sequelize)
+export const modelSuggestion = fxSuggestionFactory(sequelize)
 
 const models = {
   modelUser,
@@ -80,6 +82,7 @@ const models = {
   modelSurveyAnswerOption,
   modelSurveyUser,
   modelSurveyResponse,
+  modelSuggestion,
 }
 
 export type ModelRegistry = typeof models

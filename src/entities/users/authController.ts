@@ -13,8 +13,9 @@ import {
   Delete,
   // Queries
 } from 'tsoa'
-import {
+import type {
   IAuthUserUpdatenAttributes,
+  IPasswordRecovery,
   IUserAttributes,
   IUserCreationAttributes,
 } from '@users/userModel'
@@ -25,7 +26,9 @@ import jwt, { type Secret } from 'jsonwebtoken'
 import { fxI18n } from '@utils/i18n'
 import { fxSendMail } from '@utils/sendMail'
 import randomstring from 'randomstring'
-
+import SendNotificationService from '@entities/notification/SendNotificationService'
+import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
+import { fxVerifyRecaptcha } from '@utils/recaptcha'
 interface IPasswordVerified {
   field: string
   message: string
@@ -34,10 +37,12 @@ interface IPasswordVerified {
 @Tags('Auth')
 export class AuthController extends Controller {
   private userService: typeof UsersService
+  private sendNotificationService: typeof SendNotificationService
 
   constructor() {
     super()
     this.userService = UsersService
+    this.sendNotificationService = SendNotificationService
   }
   /**
    * Registra un nuevo usuario.
@@ -50,44 +55,122 @@ export class AuthController extends Controller {
     @Body() requestBody: IUserCreationAttributes
   ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
     try {
-      if (!requestBody.password || requestBody.password !== requestBody.passwordConfirmation) {
-        this.setStatus(401)
-        return {
-          success: false,
-          user: null,
-          message: [
-            {
-              field: fxI18n.__('password'),
-              message: fxI18n.__('incorrect_password'),
-            },
-          ],
+      const recaptchaToken = requestBody.recaptchaToken
+      if (recaptchaToken) {
+        const verifyRecaptcha = await fxVerifyRecaptcha(recaptchaToken)
+        if (!verifyRecaptcha.success) {
+          this.setStatus(400) // HTTP 400
+          return { success: false, user: null, message: 'Recaptcha fallido' }
         }
       }
-      const validatePassword = this.validatePassword(requestBody.password)
-      if (validatePassword) {
-        this.setStatus(401)
-        return { success: false, user: null, message: validatePassword }
-      }
-      delete requestBody.passwordConfirmation
-      await this.userService.validate(requestBody)
-      const vHashedPassword = await argon2.hash(requestBody.password)
-      requestBody.password = vHashedPassword
-      // if (requestBody?.avatar) {
-      //   await this.FileController.moveFile(requestBody?.avatar)
-      // }
-      const vUser: IUserAttributes | null = await this.userService.create(requestBody)
-      if (vUser) {
-        const vUserJson = JSON.parse(JSON.stringify(vUser))
-        delete vUserJson.deleted_at
-        delete vUserJson.created_at
-        delete vUserJson.updated_at
-        delete vUserJson.password
-        const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
-        this.setStatus(201)
-        return { success: true, user: vUser, token: vToken }
+      console.log('requestBody :>> ', requestBody)
+      if ('uid' in requestBody && requestBody?.uid) {
+        const vHashedPassword = await argon2.hash(requestBody.uid)
+        if (requestBody.email) {
+          const existUser = await this.userService.loginOrRegisterGoogle({
+            email: requestBody.email,
+            name: requestBody.name,
+            uid: requestBody.uid,
+            avatar: requestBody.avatar,
+          })
+          if (existUser) {
+            console.log('si existe un usuario')
+            const vUserJson = JSON.parse(JSON.stringify(existUser))
+            console.log('vUserJson.id :>> ', vUserJson.id)
+            delete vUserJson.deleted_at
+            delete vUserJson.created_at
+            delete vUserJson.updated_at
+            delete vUserJson.password
+            const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+            this.setStatus(201)
+            return { success: true, user: existUser, token: vToken }
+          }
+          console.log('no existe usuario')
+        }
+        console.log('no trae email')
+        const vCreateUser: IUserAttributes | null = await this.userService.create({
+          email: requestBody?.email || `${requestBody.uid.slice(0, 3)}@private.com`,
+          name: requestBody?.name || '',
+          uid: requestBody.uid,
+          avatar: requestBody?.avatar || '',
+          password: vHashedPassword,
+        })
+        if (vCreateUser.id) {
+          const vUser = await this.userService.get(vCreateUser.id)
+          if (vUser) {
+            const vUserJson = JSON.parse(JSON.stringify(vUser))
+            delete vUserJson.deleted_at
+            delete vUserJson.created_at
+            delete vUserJson.updated_at
+            delete vUserJson.password
+            const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+            this.setStatus(201)
+            return { success: true, user: vUser, token: vToken }
+          }
+        }
+        return { success: false, user: null, token: '' }
+      } else if ('idToken' in requestBody && requestBody?.idToken) {
+        console.log('requestBody?.idToken :>> ', requestBody?.idToken)
+        const dataUser = (await this.sendNotificationService.verifyToken(
+          requestBody.idToken
+        )) as Partial<DecodedIdToken>
+        console.log('dataUser :>> ', dataUser)
+        const vHashedPassword = await argon2.hash(requestBody.idToken)
+        const vUser: IUserAttributes | null = await this.userService.create({
+          email: dataUser?.email || `${requestBody.idToken.slice(0, 3)}@private.com`,
+          name: dataUser?.name || '',
+          idToken: requestBody.idToken,
+          avatar: dataUser?.avatar || '',
+          password: vHashedPassword,
+        })
+        if (vUser) {
+          const vUserJson = JSON.parse(JSON.stringify(vUser))
+          delete vUserJson.deleted_at
+          delete vUserJson.created_at
+          delete vUserJson.updated_at
+          delete vUserJson.password
+          const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+          this.setStatus(201)
+          return { success: true, user: vUser, token: vToken }
+        }
+      } else {
+        if (!requestBody.password || requestBody.password !== requestBody.passwordConfirmation) {
+          this.setStatus(401)
+          return {
+            success: false,
+            user: null,
+            message: [
+              {
+                field: fxI18n.__('password'),
+                message: fxI18n.__('incorrect_password'),
+              },
+            ],
+          }
+        }
+        const validatePassword = this.validatePassword(requestBody.password)
+        if (validatePassword) {
+          this.setStatus(401)
+          return { success: false, user: null, message: validatePassword }
+        }
+        delete requestBody.passwordConfirmation
+        await this.userService.validate(requestBody)
+        const vHashedPassword = await argon2.hash(requestBody.password)
+        requestBody.password = vHashedPassword
+        const vUser: IUserAttributes | null = await this.userService.create(requestBody)
+        if (vUser) {
+          const vUserJson = JSON.parse(JSON.stringify(vUser))
+          delete vUserJson.deleted_at
+          delete vUserJson.created_at
+          delete vUserJson.updated_at
+          delete vUserJson.password
+          const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+          this.setStatus(201)
+          return { success: true, user: vUser, token: vToken }
+        }
       }
       return { success: true, user: null, message: 'Ocurrio un error' }
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }
@@ -319,12 +402,7 @@ export class AuthController extends Controller {
   @Post('/passwordRecovery')
   @SuccessResponse('201', 'User Found')
   public async passwordRecovery(
-    @Body()
-    pRequestBody: {
-      passwordConfirmation: string
-      password: string
-      code: string
-    }
+    @Body() pRequestBody: IPasswordRecovery
   ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
     try {
       if (!pRequestBody.password || pRequestBody.password !== pRequestBody.passwordConfirmation) {

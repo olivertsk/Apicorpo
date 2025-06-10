@@ -2,7 +2,7 @@ import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
 import type { IRolAttributes } from './rolModel'
-import { ModelRegistry } from '@db/index'
+import type { ModelRegistry } from '@db/index'
 
 export interface IUserAttributes {
   id?: string
@@ -20,6 +20,11 @@ export interface IUserAttributes {
   location?: string | null
   tokenPush?: string | null
   receiveNotification?: boolean
+  gender?: string | null
+  state?: string | null
+  city?: string | null
+  zone?: string | null
+  uid?: string | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
@@ -39,14 +44,59 @@ export interface IUserFilter {
   role?: string | null
   name?: string | null
 }
-export type IUserCreationAttributes = Pick<IUserAttributes, 'id' | 'email' | 'password'> &
-  Partial<Pick<IUserAttributes, 'name'>> & {
-    passwordConfirmation?: string | null
-    avatar?: string | null
-    location?: string | null
-    rolId?: IRolAttributes['id'] | null
-    receiveNotification?: boolean
-  }
+
+// export type IUserCreationParams =
+//   | (Pick<IUser, 'email' | 'avatar' | 'name' | 'password'> &
+//       Partial<Pick<IUser, 'uid' | 'email' | 'name' | 'healthCenter' | 'licenseNumber'>>)
+//   | (Pick<IUser, 'email' | 'uid'> &
+//       Partial<Pick<IUser, 'avatar' | 'name' | 'password' | 'healthCenter' | 'licenseNumber'>>)
+//   | {
+//       name?: string
+//       email?: string
+//       password?: string
+//       avatar?: string
+//       healthCenter?: string
+//       licenseNumber?: string
+//       idToken: string
+//     }
+
+export type IUserCreationAttributes =
+  | (Partial<Pick<IUserAttributes, 'uid'>> & {
+      email?: string
+      avatar?: string
+      name?: string
+      rolId?: string
+      passwordConfirmation?: string | null
+      password?: string | null
+      recaptchaToken?: string
+    })
+  | (Pick<IUserAttributes, 'id' | 'email' | 'password'> &
+      Partial<Pick<IUserAttributes, 'name'>> & {
+        passwordConfirmation?: string | null
+        avatar?: string | null
+        location?: string | null
+        rolId?: IRolAttributes['id'] | null
+        receiveNotification?: boolean
+        dob?: string | null
+        gender?: string | null
+        state?: string | null
+        city?: string | null
+        zone?: string | null
+        idToken?: string | null
+        recaptchaToken?: string | null
+      })
+  | {
+      name?: string
+      email?: string
+      password?: string
+      passwordConfirmation?: string
+      avatar?: string
+      healthCenter?: string
+      licenseNumber?: string
+      idToken: string
+      rolId?: string
+      recaptchaToken?: string
+    }
 
 export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id' | 'rolId'> &
   Omit<IUserAttributes, 'password'> & {
@@ -58,6 +108,10 @@ export type IUserUpdatenAttributes = Pick<IUserAttributes, 'id' | 'rolId'> &
     phoneNumber?: string | null
     receiveNotification?: boolean
     dob?: string | null
+    gender?: string | null
+    state?: string | null
+    city?: string | null
+    zone?: string | null
   }
 
 export type IAuthUserUpdatenAttributes = {
@@ -72,8 +126,23 @@ export type IAuthUserUpdatenAttributes = {
   dob?: string | null
   name: string
   tokenPush?: string | null
+  gender?: string | null
+  state?: string | null
+  city?: string | null
+  zone?: string | null
 }
 
+export interface IPasswordRecovery {
+  passwordConfirmation: string
+  password: string
+  code: string
+}
+export interface IAuthGoogle {
+  email?: string
+  avatar?: string
+  name?: string
+  uid: string
+}
 export interface IUserInstance
   extends Model<IUserAttributes, IUserCreationAttributes>,
     IUserAttributes {}
@@ -190,6 +259,30 @@ export const vUserModelAttributes: SequelizeAttributes<IUserAttributes> = {
   receiveNotification: {
     type: DataTypes.BOOLEAN,
     field: 'receive_notification',
+    defaultValue: true,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    field: 'gender',
+    defaultValue: true,
+    allowNull: true,
+  },
+  state: {
+    type: DataTypes.STRING,
+    field: 'state',
+    defaultValue: true,
+    allowNull: true,
+  },
+  city: {
+    type: DataTypes.STRING,
+    field: 'city',
+    defaultValue: true,
+    allowNull: true,
+  },
+  zone: {
+    type: DataTypes.STRING,
+    field: 'zone',
     defaultValue: true,
     allowNull: true,
   },

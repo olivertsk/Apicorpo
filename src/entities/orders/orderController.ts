@@ -14,16 +14,16 @@ import {
   Request,
 } from 'tsoa'
 import {
-  IOrderAttributes,
-  IOrderCreationAttributes,
-  IResponseAllOrder,
-  IOrderFilter,
+  type IOrderAttributes,
+  type IOrderCreationAttributes,
+  type IResponseAllOrder,
+  type IOrderFilter,
   EStatusOrder,
 } from '@entities/orders/orderModel'
 import OrderService from '@entities/orders/orderService'
 import { fxI18n } from '@utils/i18n'
-import { IUserAttributes } from '@users/userModel'
-import { IOrderProductCreationAttributes } from './orderProductModel'
+import type { IUserAttributes } from '@users/userModel'
+import type { IOrderProductCreationAttributes } from './orderProductModel'
 import SendNotificationService from '@entities/notification/SendNotificationService'
 import UserService from '@users/userService'
 

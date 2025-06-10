@@ -208,6 +208,26 @@
 					"receiveNotification": {
 						"type": "boolean"
 					},
+					"gender": {
+						"type": "string",
+						"nullable": true
+					},
+					"state": {
+						"type": "string",
+						"nullable": true
+					},
+					"city": {
+						"type": "string",
+						"nullable": true
+					},
+					"zone": {
+						"type": "string",
+						"nullable": true
+					},
+					"uid": {
+						"type": "string",
+						"nullable": true
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -283,6 +303,15 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Partial_Pick_IUserAttributes.uid__": {
+				"properties": {
+					"uid": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
 			"Pick_IUserAttributes.id-or-email-or-password_": {
 				"properties": {
 					"id": {
@@ -312,35 +341,140 @@
 				"description": "Make all properties in T optional"
 			},
 			"IUserCreationAttributes": {
-				"allOf": [
+				"anyOf": [
 					{
-						"$ref": "#/components/schemas/Pick_IUserAttributes.id-or-email-or-password_"
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Partial_Pick_IUserAttributes.uid__"
+							},
+							{
+								"properties": {
+									"recaptchaToken": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string",
+										"nullable": true
+									},
+									"passwordConfirmation": {
+										"type": "string",
+										"nullable": true
+									},
+									"rolId": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"avatar": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"type": "object"
+							}
+						]
 					},
 					{
-						"$ref": "#/components/schemas/Partial_Pick_IUserAttributes.name__"
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Pick_IUserAttributes.id-or-email-or-password_"
+							},
+							{
+								"$ref": "#/components/schemas/Partial_Pick_IUserAttributes.name__"
+							},
+							{
+								"properties": {
+									"recaptchaToken": {
+										"type": "string",
+										"nullable": true
+									},
+									"idToken": {
+										"type": "string",
+										"nullable": true
+									},
+									"zone": {
+										"type": "string",
+										"nullable": true
+									},
+									"city": {
+										"type": "string",
+										"nullable": true
+									},
+									"state": {
+										"type": "string",
+										"nullable": true
+									},
+									"gender": {
+										"type": "string",
+										"nullable": true
+									},
+									"dob": {
+										"type": "string",
+										"nullable": true
+									},
+									"receiveNotification": {
+										"type": "boolean"
+									},
+									"rolId": {
+										"type": "string",
+										"nullable": true
+									},
+									"location": {
+										"type": "string",
+										"nullable": true
+									},
+									"avatar": {
+										"type": "string",
+										"nullable": true
+									},
+									"passwordConfirmation": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object"
+							}
+						]
 					},
 					{
 						"properties": {
-							"receiveNotification": {
-								"type": "boolean"
+							"recaptchaToken": {
+								"type": "string"
 							},
 							"rolId": {
-								"type": "string",
-								"nullable": true
+								"type": "string"
 							},
-							"location": {
-								"type": "string",
-								"nullable": true
+							"idToken": {
+								"type": "string"
+							},
+							"licenseNumber": {
+								"type": "string"
+							},
+							"healthCenter": {
+								"type": "string"
 							},
 							"avatar": {
-								"type": "string",
-								"nullable": true
+								"type": "string"
 							},
 							"passwordConfirmation": {
-								"type": "string",
-								"nullable": true
+								"type": "string"
+							},
+							"password": {
+								"type": "string"
+							},
+							"email": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
 							}
 						},
+						"required": [
+							"idToken"
+						],
 						"type": "object"
 					}
 				]
@@ -366,6 +500,9 @@
 						"type": "string"
 					},
 					"name": {
+						"type": "string"
+					},
+					"uid": {
 						"type": "string"
 					},
 					"email": {
@@ -412,6 +549,18 @@
 					"receiveNotification": {
 						"type": "boolean"
 					},
+					"gender": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"zone": {
+						"type": "string"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -447,6 +596,22 @@
 					},
 					{
 						"properties": {
+							"zone": {
+								"type": "string",
+								"nullable": true
+							},
+							"city": {
+								"type": "string",
+								"nullable": true
+							},
+							"state": {
+								"type": "string",
+								"nullable": true
+							},
+							"gender": {
+								"type": "string",
+								"nullable": true
+							},
 							"dob": {
 								"type": "string",
 								"nullable": true
@@ -583,6 +748,22 @@
 			},
 			"IAuthUserUpdatenAttributes": {
 				"properties": {
+					"zone": {
+						"type": "string",
+						"nullable": true
+					},
+					"city": {
+						"type": "string",
+						"nullable": true
+					},
+					"state": {
+						"type": "string",
+						"nullable": true
+					},
+					"gender": {
+						"type": "string",
+						"nullable": true
+					},
 					"tokenPush": {
 						"type": "string",
 						"nullable": true
@@ -637,6 +818,26 @@
 					"name"
 				],
 				"type": "object"
+			},
+			"IPasswordRecovery": {
+				"properties": {
+					"passwordConfirmation": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"passwordConfirmation",
+					"password",
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"ESurveyType": {
 				"enum": [
@@ -1333,6 +1534,238 @@
 										"format": "double"
 									}
 								]
+							},
+							"id": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					}
+				]
+			},
+			"ESuggestionStatus": {
+				"enum": [
+					0,
+					1,
+					2,
+					3
+				],
+				"type": "number"
+			},
+			"ESuggestionPriority": {
+				"enum": [
+					0,
+					1,
+					2,
+					3
+				],
+				"type": "number"
+			},
+			"ISuggestionAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"nullable": true
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"status": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ESuggestionStatus"
+							}
+						],
+						"nullable": true
+					},
+					"priority": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ESuggestionPriority"
+							}
+						],
+						"nullable": true
+					},
+					"userId": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ESuggestionStatus"
+							}
+						],
+						"nullable": true
+					},
+					"assignedTo": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ESuggestionStatus"
+							}
+						],
+						"nullable": true
+					},
+					"response": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ESuggestionStatus"
+							}
+						],
+						"nullable": true
+					},
+					"responseDate": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ESuggestionStatus"
+							}
+						],
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"title",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllSuggestion": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/ISuggestionAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISuggestionFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"order": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_ISuggestionAttributes.title-or-description_": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"description"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"ISuggestionCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_ISuggestionAttributes.title-or-description_"
+					},
+					{
+						"properties": {
+							"responseDate": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ESuggestionStatus"
+									}
+								],
+								"nullable": true
+							},
+							"response": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ESuggestionStatus"
+									}
+								],
+								"nullable": true
+							},
+							"assignedTo": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ESuggestionStatus"
+									}
+								],
+								"nullable": true
+							},
+							"userId": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ESuggestionStatus"
+									}
+								],
+								"nullable": true
+							},
+							"priority": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ESuggestionPriority"
+									}
+								],
+								"nullable": true
+							},
+							"status": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/ESuggestionStatus"
+									}
+								],
+								"nullable": true
+							},
+							"type": {
+								"type": "string",
+								"nullable": true
 							},
 							"id": {
 								"type": "string"
@@ -4933,23 +5366,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"code": {
-										"type": "string"
-									},
-									"password": {
-										"type": "string"
-									},
-									"passwordConfirmation": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"code",
-									"password",
-									"passwordConfirmation"
-								],
-								"type": "object",
+								"$ref": "#/components/schemas/IPasswordRecovery",
 								"description": "- Solicitud HTTP con información de autenticación."
 							}
 						}
@@ -6354,6 +6771,319 @@
 				"summary": "Eliminar una historia por ID.",
 				"tags": [
 					"SurveyAnswerOption"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la historia a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/suggestions/show/{suggestionId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ISuggestionAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Suggestion"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "suggestionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/suggestions/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "- Promesa que resuelve con los datos paginados y un mensaje opcional.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/ISuggestionAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllSuggestion"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Suggestion"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "order",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/suggestions/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ISuggestionAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Suggestion"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISuggestionCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/suggestions/update/{suggestionId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ISuggestionAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Suggestion"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "suggestionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISuggestionAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/suggestions/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "- Resultado de la operacion",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una historia por ID.",
+				"tags": [
+					"Suggestion"
 				],
 				"security": [
 					{
