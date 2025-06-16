@@ -4470,6 +4470,72 @@
 				}
 			}
 		},
+		"/users/updateRol/{userId}": {
+			"put": {
+				"operationId": "UpdateRol",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"rolId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"rolId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/users/updateTokenPush": {
 			"put": {
 				"operationId": "UpdateTokenPush",
@@ -4940,46 +5006,24 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"anyOf": [
-										{
-											"properties": {
-												"token": {
-													"type": "string"
-												},
-												"user": {
-													"$ref": "#/components/schemas/IUserAttributes"
-												},
-												"success": {
-													"type": "boolean"
-												}
-											},
-											"required": [
-												"token",
-												"user",
-												"success"
-											],
-											"type": "object"
+									"properties": {
+										"message": {
+											"type": "string"
 										},
-										{
-											"properties": {
-												"status": {
-													"type": "boolean",
-													"enum": [
-														false
-													],
-													"nullable": false
-												},
-												"message": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"status",
-												"message"
-											],
-											"type": "object"
+										"token": {
+											"type": "string"
+										},
+										"user": {
+											"$ref": "#/components/schemas/IUserAttributes"
+										},
+										"success": {
+											"type": "boolean"
 										}
-									]
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
 								}
 							}
 						}
@@ -4998,6 +5042,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"recaptchaToken": {
+										"type": "string"
+									},
 									"password": {
 										"type": "string"
 									},
@@ -5006,6 +5053,7 @@
 									}
 								},
 								"required": [
+									"recaptchaToken",
 									"password",
 									"email"
 								],
@@ -5027,7 +5075,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"user": {
+										"data": {
 											"allOf": [
 												{
 													"$ref": "#/components/schemas/IUserAttributes"
@@ -5040,7 +5088,7 @@
 										}
 									},
 									"required": [
-										"user",
+										"data",
 										"success"
 									],
 									"type": "object"

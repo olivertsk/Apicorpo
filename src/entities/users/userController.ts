@@ -14,7 +14,7 @@ import {
   Request,
 } from 'tsoa'
 import * as argon2 from 'argon2'
-import {
+import type {
   IUserAttributes,
   IUserCreationAttributes,
   IResponseAllUser,
@@ -110,6 +110,30 @@ export class UsersController extends Controller {
       }
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  @Security('bearerAuth', ['admin'])
+  @SuccessResponse('200', 'Update') // Custom success response
+  @Put('/updateRol/{userId}')
+  public async updateRol(
+    @Path() userId: string,
+    @Body() requestBody: { rolId: string }
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      await this.userService.validate(requestBody, userId)
+      if ('password' in requestBody) {
+        delete requestBody.password
+      }
+      const vItem: boolean = await this.userService.updateRol(requestBody.rolId, userId)
+      if (vItem) {
+        this.setStatus(200) // set return status 200
+        return { success: true }
+      }
+      this.setStatus(404) // set return status 404
+      return { success: false, message: fxI18n.__('item_not_found') }
     } catch (error) {
       throw error
     }

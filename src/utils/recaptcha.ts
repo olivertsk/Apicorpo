@@ -3,7 +3,7 @@ const axios = require('axios')
 
 export const fxVerifyRecaptcha = async (token: string) => {
   // Ejemplo de uso
-  const secretKey = '6LcCwQIrAAAAAIxULOblTxF4B0tU6rmCZkKOMwV3'
+  const secretKey = '6LcDIGMrAAAAAKoo3gKojynWRVal1UUbsSBxSBmQ'
   // verifyRecaptcha(secretKey, token)
   //   .then((data) => console.log('Validación reCAPTCHA:', data))
   //   .catch((err) => console.error(err))
@@ -15,6 +15,7 @@ export const fxVerifyRecaptcha = async (token: string) => {
         response: token,
       },
     })
+    console.log(response.data)
     return response.data // Contiene 'success' y otros datos.
   } catch (error) {
     console.error('Error validando reCAPTCHA:', error)

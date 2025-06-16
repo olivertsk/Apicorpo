@@ -60,6 +60,12 @@ class UsersService {
         where: {
           id,
         },
+        include: [
+          {
+            model: modelRol,
+            as: 'rol',
+          },
+        ],
       })
       return vResponse
     } catch (error) {
@@ -238,6 +244,31 @@ class UsersService {
         return vResponse
       }
       return null
+    } catch (error) {
+      console.log('error :>> ', error)
+      throw error
+    }
+  }
+
+  public async updateRol(rolId: IRolAttributes['id'], id: string): Promise<boolean> {
+    try {
+      if (id) {
+        const vResponse: IUserInstance | null = await modelUser.findOne({
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt', 'status', 'rol'],
+          },
+          where: {
+            id: id,
+          },
+        })
+        if (vResponse === null) {
+          return false
+        }
+        vResponse.rolId = rolId
+        await vResponse.save()
+        return true
+      }
+      return false
     } catch (error) {
       console.log('error :>> ', error)
       throw error

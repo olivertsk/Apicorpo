@@ -7,12 +7,14 @@ import { expressAuthentication } from './middlewares/expressAuthentication'
 import cors from 'cors'
 import { formatRequest } from 'middlewares/formatRequest'
 import multer from 'multer'
-import { IOrderAttributes } from '@entities/orders/orderModel'
+import type { IOrderAttributes } from '@entities/orders/orderModel'
 import orderService from '@entities/orders/orderService'
-import { Item, OrderA2, OrderProductA2 } from './entities/integration/interfaces'
+import type { Item, OrderA2, OrderProductA2 } from './entities/integration/interfaces'
 import { parse as json2csv } from 'json2csv'
+import morgan from 'morgan'
 
 export const app = express()
+app.use(morgan('dev'))
 // const storage = multer.memoryStorage();
 // const upload = multer({ storage });
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))

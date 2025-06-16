@@ -56,6 +56,7 @@ export class AuthController extends Controller {
   ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
     try {
       const recaptchaToken = requestBody.recaptchaToken
+      console.log('recaptchaToken :>> ', recaptchaToken)
       if (recaptchaToken) {
         const verifyRecaptcha = await fxVerifyRecaptcha(recaptchaToken)
         if (!verifyRecaptcha.success) {
@@ -182,11 +183,17 @@ export class AuthController extends Controller {
    */
   @Post('/login')
   public async login(
-    @Body() pRequestBody: { email: string; password: string }
-  ): Promise<
-    { success: boolean; user: IUserAttributes; token: string } | { message: string; status: false }
-  > {
+    @Body() pRequestBody: { email: string; password: string; recaptchaToken: string }
+  ): Promise<{ success: boolean; user?: IUserAttributes; token?: string; message?: string }> {
     try {
+      const recaptchaToken = pRequestBody.recaptchaToken
+      if (recaptchaToken) {
+        const verifyRecaptcha = await fxVerifyRecaptcha(recaptchaToken)
+        if (!verifyRecaptcha.success) {
+          this.setStatus(400) // HTTP 400
+          return { success: false, message: 'Recaptcha fallido' }
+        }
+      }
       const vUser = await this.userService.login(pRequestBody.email)
       if (vUser) {
         const vPasswordIsValid = await argon2.verify(vUser?.password, pRequestBody.password)
@@ -200,7 +207,7 @@ export class AuthController extends Controller {
         }
       }
       this.setStatus(500) // HTTP 500
-      return { success: false, message: 'Usuario incorrecto', status: false }
+      return { success: false, message: 'Usuario incorrecto' }
     } catch (error) {
       this.setStatus(401) // HTTP 401 Unauthorized
       return Promise.reject(error)
@@ -217,21 +224,27 @@ export class AuthController extends Controller {
   @SuccessResponse('201', 'User Found')
   public async me(
     @Request() pRequestBody: { auth: IUserAttributes }
-  ): Promise<{ success: boolean; user: IUserAttributes | null }> {
+  ): Promise<{ success: boolean; data: IUserAttributes | null }> {
     try {
-      if (!pRequestBody?.auth?.id) {
+      const userId = pRequestBody?.auth?.id
+      if (!userId) {
+        console.log('por lo visto no llega nada')
         this.setStatus(401)
-        return { success: false, user: null }
+        return { success: false, data: null }
       }
-      const vUser: IUserAttributes | null = await this.userService.get(pRequestBody.auth.id)
+      console.log('userId :>> ', userId)
+
+      const vUser: IUserAttributes | null = await this.userService.get(userId)
       if (vUser) {
+        console.log('vUser.id :>> ', vUser.id)
         this.setStatus(200) // HTTP 200
-        return { success: true, user: vUser }
+        return { success: true, data: vUser }
       } else {
         this.setStatus(401)
-        return { success: false, user: null }
+        return { success: false, data: null }
       }
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }
@@ -314,7 +327,6 @@ export class AuthController extends Controller {
         delete requestBody.password
       }
       const vItem: IUserAttributes | null = await this.userService.update(requestBody, userId)
-      console.log('vItem :>> ', JSON.stringify(vItem))
       if (vItem) {
         this.setStatus(200) // set return status 200
         return { success: true, item: vItem }
@@ -322,7 +334,6 @@ export class AuthController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
