@@ -1,6 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
+import type { IUserAttributes } from '@users/userModel'
 // import { ModelRegistry } from '@db/index'
 
 export interface IResponseAllSuggestion {
@@ -42,10 +43,10 @@ export interface ISuggestionAttributes {
   description: string
   status?: ESuggestionStatus | null
   priority?: ESuggestionPriority | null
-  userId?: ESuggestionStatus | null
-  assignedTo?: ESuggestionStatus | null
-  response?: ESuggestionStatus | null
-  responseDate?: ESuggestionStatus | null
+  userId?: IUserAttributes['id'] | null
+  assignedTo?: IUserAttributes['id'] | null
+  response?: string | null
+  responseDate?: string | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
@@ -56,10 +57,10 @@ export type ISuggestionCreationAttributes = Pick<ISuggestionAttributes, 'title' 
   type?: string | null
   status?: ESuggestionStatus | null
   priority?: ESuggestionPriority | null
-  userId?: ESuggestionStatus | null
-  assignedTo?: ESuggestionStatus | null
-  response?: ESuggestionStatus | null
-  responseDate?: ESuggestionStatus | null
+  userId?: IUserAttributes['id'] | null
+  assignedTo?: IUserAttributes['id'] | null
+  response?: string | null
+  responseDate?: string | null
 }
 export interface ISuggestionInstance
   extends Model<ISuggestionAttributes, ISuggestionCreationAttributes>,
@@ -145,7 +146,7 @@ export function fxSuggestionFactory(sequelize: Sequelize) {
     {
       tableName: 'suggestions',
       defaultScope: {
-        order: [['order', 'ASC']],
+        order: [['createdAt', 'DESC']],
       },
       freezeTableName: true,
       timestamps: true,

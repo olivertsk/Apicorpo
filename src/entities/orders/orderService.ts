@@ -7,11 +7,11 @@ import sequelize, {
 } from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
 import {
+  EStatusOrder,
   type IOrderAttributes,
   type IOrderCreationAttributes,
   type IResponseAllOrder,
   type IOrderInstance,
-  type EStatusOrder,
   EWasSent,
 } from '@entities/orders/orderModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
@@ -22,10 +22,12 @@ class OrdersService {
     const dataValidate = modelOrder.build(data)
     await dataValidate.validate()
   }
+
   public async get(data: {
     orderId: string
     isClient: boolean
     userId: string | undefined
+    adminId?: string
   }): Promise<IOrderAttributes | null> {
     try {
       const whereCondition: any = {
@@ -35,7 +37,7 @@ class OrdersService {
       if (data.isClient && data.userId) {
         whereCondition.userId = data.userId
       }
-      const vResponse: IOrderAttributes | null = await modelOrder.findOne({
+      const vResponse: IOrderInstance | null = await modelOrder.findOne({
         where: whereCondition,
         include: [
           {
@@ -60,6 +62,11 @@ class OrdersService {
             required: false,
           },
           {
+            model: modelUser,
+            as: 'responsible',
+            required: false,
+          },
+          {
             model: modelPaymentMethod,
             as: 'method',
             attributes: [
@@ -75,6 +82,60 @@ class OrdersService {
           },
         ],
       })
+      if (vResponse) {
+        if ((!vResponse.responsibleId || vResponse.responsibleId === '1') && data.adminId) {
+          vResponse.responsibleId = data.adminId
+          vResponse.viewTime = new Date().toISOString()
+          vResponse.status = EStatusOrder.Process
+          await vResponse.save()
+          await vResponse.save()
+
+          await vResponse.reload({
+            include: [
+              {
+                model: modelOrderProducto,
+                as: 'products',
+                include: [
+                  {
+                    model: modelProduct,
+                    as: 'product',
+                  },
+                ],
+                required: false,
+              },
+              {
+                model: modelUser,
+                as: 'user',
+                required: false,
+              },
+              {
+                model: modelUser,
+                as: 'admin',
+                required: false,
+              },
+              {
+                model: modelUser,
+                as: 'responsible',
+                required: false,
+              },
+              {
+                model: modelPaymentMethod,
+                as: 'method',
+                attributes: [
+                  'type',
+                  'name',
+                  'dni',
+                  'email',
+                  'numberAccount',
+                  'phoneNumber',
+                  'accountType',
+                ],
+                required: false,
+              },
+            ],
+          })
+        }
+      }
       return vResponse
     } catch (error) {
       throw error
@@ -101,6 +162,13 @@ class OrdersService {
         whereStatement.where = {
           userId: pParam.userId,
         }
+      } else {
+        whereStatement.include = [
+          {
+            model: modelUser,
+            as: 'responsible',
+          },
+        ]
       }
       const vResponse: IOrderAttributes[] = await modelOrder.findAll(whereStatement)
       if (Number(pParam?.pag)) {

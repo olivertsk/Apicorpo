@@ -520,10 +520,10 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "status": {"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},
             "priority": {"dataType":"union","subSchemas":[{"ref":"ESuggestionPriority"},{"dataType":"enum","enums":[null]}]},
-            "userId": {"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},
-            "assignedTo": {"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},
-            "response": {"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},
-            "responseDate": {"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},
+            "userId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "assignedTo": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "response": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "responseDate": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "createdAt": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
             "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},
@@ -560,7 +560,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ISuggestionCreationAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_ISuggestionAttributes.title-or-description_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"responseDate":{"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},"response":{"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},"assignedTo":{"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},"userId":{"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},"priority":{"dataType":"union","subSchemas":[{"ref":"ESuggestionPriority"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},"type":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"id":{"dataType":"string"}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_ISuggestionAttributes.title-or-description_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"responseDate":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"response":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"assignedTo":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"userId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"priority":{"dataType":"union","subSchemas":[{"ref":"ESuggestionPriority"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"ESuggestionStatus"},{"dataType":"enum","enums":[null]}]},"type":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"id":{"dataType":"string"}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IProductAttributes": {
@@ -771,7 +771,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EStatusOrder": {
         "dataType": "refEnum",
-        "enums": ["pending","approve","decline"],
+        "enums": ["pending","process","approve","decline"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EWasSent": {
@@ -806,6 +806,8 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
             "deletedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},
+            "responsibleId": {"dataType":"string"},
+            "viewTime": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -861,7 +863,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IOrderCreationAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IOrderAttributes.id_"},{"ref":"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"paymentMethodId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"typePayment":{"dataType":"union","subSchemas":[{"ref":"ETypePaymentMethods"},{"dataType":"enum","enums":[null]}]},"reference":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"EStatusOrder"},{"dataType":"enum","enums":[null]}]},"observation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"products":{"dataType":"array","array":{"dataType":"refAlias","ref":"IOrderProductCreationAttributes"}}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IOrderAttributes.id_"},{"ref":"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"viewTime":{"dataType":"string"},"responsibleId":{"dataType":"string"},"paymentMethodId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"typePayment":{"dataType":"union","subSchemas":[{"ref":"ETypePaymentMethods"},{"dataType":"enum","enums":[null]}]},"reference":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"EStatusOrder"},{"dataType":"enum","enums":[null]}]},"observation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"products":{"dataType":"array","array":{"dataType":"refAlias","ref":"IOrderProductCreationAttributes"}}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "INotificationAttributes": {
@@ -1098,7 +1100,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EPositionBanner": {
         "dataType": "refEnum",
-        "enums": ["homePrincipal","homeSecondary","homeTertiary","TikTok","Instagram"],
+        "enums": ["homePrincipal","homeSecondary","homeTertiary","TikTok","Instagram","Contact"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IBannerAttributes": {
@@ -2813,9 +2815,10 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsSuggestionsController_create: Record<string, TsoaRoute.ParameterSchema> = {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ISuggestionCreationAttributes"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         app.post('/suggestions/create',
-            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            authenticateMiddleware([{"bearerAuth":["optional"]}]),
             ...(fetchMiddlewares<RequestHandler>(SuggestionsController)),
             ...(fetchMiddlewares<RequestHandler>(SuggestionsController.prototype.create)),
 

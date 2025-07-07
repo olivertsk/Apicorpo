@@ -1,9 +1,9 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
-import { IOrderProductCreationAttributes } from './orderProductModel'
-import { ModelRegistry } from '@db/index'
-import {
+import type { IOrderProductCreationAttributes } from './orderProductModel'
+import type { ModelRegistry } from '@db/index'
+import type {
   ETypePaymentMethods,
   IPaymentMethodInstance,
 } from '@entities/paymentMethods/paymentMethodModel'
@@ -12,6 +12,13 @@ export enum EWasSent {
   noSent = 0,
   sentOrder = 1,
   sentProductOrder = 2,
+}
+
+export interface IGetUserParams {
+  orderId: string
+  isClient: boolean
+  userId: string | undefined
+  adminId?: string
 }
 export interface IOrderAttributes {
   id?: string
@@ -38,9 +45,12 @@ export interface IOrderAttributes {
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null
+  responsibleId?: string
+  viewTime?: string
 }
 export enum EStatusOrder {
   Pending = 'pending',
+  Process = 'process',
   Approve = 'approve',
   Decline = 'decline',
 }
@@ -82,6 +92,8 @@ export type IOrderCreationAttributes = Pick<IOrderAttributes, 'id'> &
     reference?: string | null
     typePayment?: ETypePaymentMethods | null
     paymentMethodId?: IPaymentMethodInstance['id'] | null
+    responsibleId?: string
+    viewTime?: string
   }
 
 export interface IOrderInstance
@@ -222,6 +234,18 @@ export const vOrdersModelAttributes: SequelizeAttributes<IOrderAttributes> = {
     unique: true,
     allowNull: false,
   },
+  responsibleId: {
+    type: DataTypes.STRING,
+    field: 'responsible_id',
+    defaultValue: true,
+    allowNull: true,
+  },
+  viewTime: {
+    type: DataTypes.STRING,
+    field: 'view_time',
+    defaultValue: true,
+    allowNull: true,
+  },
 }
 
 export function fxOrdersFactory(sequelize: Sequelize) {
@@ -247,6 +271,10 @@ export function fxOrdersFactory(sequelize: Sequelize) {
     modelOrder.belongsTo(modelUser, {
       foreignKey: 'adminId',
       as: 'admin',
+    })
+    modelOrder.belongsTo(modelUser, {
+      foreignKey: 'responsibleId',
+      as: 'responsible',
     })
     modelOrder.belongsTo(modelUser, {
       foreignKey: 'userId',

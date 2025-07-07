@@ -11,6 +11,7 @@ import {
   Security,
   Delete,
   Put,
+  Request,
 } from 'tsoa'
 import type {
   ISuggestionAttributes,
@@ -20,6 +21,7 @@ import type {
 } from '@entities/suggestions/suggestionModel'
 import SuggestionService from '@entities/suggestions/suggestionService'
 import { fxI18n } from '@utils/i18n'
+import type { IUserAttributes } from '@users/userModel'
 
 @Route('suggestions')
 @Tags('Suggestion')
@@ -70,18 +72,19 @@ export class SuggestionsController extends Controller {
     }
   }
 
-  @Security('bearerAuth', ['admin'])
+  @Security('bearerAuth', ['optional'])
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
   public async create(
-    @Body() requestBody: ISuggestionCreationAttributes
+    @Body() requestBody: ISuggestionCreationAttributes,
+    @Request() request: { auth: IUserAttributes }
   ): Promise<{ success: boolean; item: ISuggestionAttributes | null; message?: string }> {
     try {
-      console.log('requestBody :>> ', requestBody)
       await this.suggestionService.validate(requestBody)
-      console.log('paso validacion')
+      if (request.auth?.id) {
+        requestBody.userId = request.auth.id // Set userId from auth token
+      }
       const vItem: ISuggestionAttributes | null = await this.suggestionService.create(requestBody)
-      console.log('deberia crear')
       this.setStatus(201) // set return status 201
       return { success: true, item: vItem }
     } catch (error) {

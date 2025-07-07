@@ -19,6 +19,7 @@ import {
   type IResponseAllOrder,
   type IOrderFilter,
   EStatusOrder,
+  type IGetUserParams,
 } from '@entities/orders/orderModel'
 import OrderService from '@entities/orders/orderService'
 import { fxI18n } from '@utils/i18n'
@@ -46,21 +47,25 @@ export class OrdersController extends Controller {
     @Request() request: { auth: IUserAttributes }
   ): Promise<{ data: IOrderAttributes | null; message?: string }> {
     try {
+      console.log('request?.auth?.id :>> ', request?.auth?.id)
       if (!request?.auth?.id) {
         this.setStatus(500)
         return { data: null, message: 'Token invalido' }
       }
-      const params: { orderId: string; isClient: boolean; userId: string | undefined } = {
+      const params: IGetUserParams = {
         orderId,
         isClient: true,
         userId: '',
       }
       const user = await this.userService.getRol(request.auth.id)
       const userJSON = JSON.parse(JSON.stringify(user))
+      console.log('userJSON :>> ', userJSON)
       if (userJSON?.rol.name === 'admin') {
         params.isClient = false
+        params.adminId = request.auth.id
       }
       params.userId = userJSON?.id
+      console.log('params :>> ', params)
       const vResponse: IOrderAttributes | null = await this.orderService.get(params)
       this.setStatus(200)
       return { data: vResponse }

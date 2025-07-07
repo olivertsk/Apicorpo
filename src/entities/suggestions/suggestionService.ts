@@ -32,17 +32,14 @@ class SuggestionService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
-      whereStatement.where = fxSearchILike(pParam, whereStatement, 'text', modelSuggestion.name)
+      whereStatement.where = fxSearchILike(pParam, whereStatement, 'title', modelSuggestion.name)
       if (pParam.title) {
         whereStatement.where = {
           ...whereStatement.where,
-          text: {
+          title: {
             [Op.like]: `%${pParam.title}%`,
           },
         }
-      }
-      if (pParam.order === 'date') {
-        whereStatement.order = [['date', 'DESC']]
       }
       const vResponse: ISuggestionAttributes[] = await modelSuggestion.findAll(whereStatement)
       if (Number(pParam?.pag)) {
@@ -56,6 +53,7 @@ class SuggestionService {
       }
       return { data: vResponse }
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }

@@ -1593,35 +1593,19 @@
 						"nullable": true
 					},
 					"userId": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ESuggestionStatus"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"assignedTo": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ESuggestionStatus"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"response": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ESuggestionStatus"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"responseDate": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ESuggestionStatus"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"createdAt": {
@@ -1716,35 +1700,19 @@
 					{
 						"properties": {
 							"responseDate": {
-								"allOf": [
-									{
-										"$ref": "#/components/schemas/ESuggestionStatus"
-									}
-								],
+								"type": "string",
 								"nullable": true
 							},
 							"response": {
-								"allOf": [
-									{
-										"$ref": "#/components/schemas/ESuggestionStatus"
-									}
-								],
+								"type": "string",
 								"nullable": true
 							},
 							"assignedTo": {
-								"allOf": [
-									{
-										"$ref": "#/components/schemas/ESuggestionStatus"
-									}
-								],
+								"type": "string",
 								"nullable": true
 							},
 							"userId": {
-								"allOf": [
-									{
-										"$ref": "#/components/schemas/ESuggestionStatus"
-									}
-								],
+								"type": "string",
 								"nullable": true
 							},
 							"priority": {
@@ -2445,6 +2413,7 @@
 			"EStatusOrder": {
 				"enum": [
 					"pending",
+					"process",
 					"approve",
 					"decline"
 				],
@@ -2561,6 +2530,12 @@
 						"type": "string",
 						"format": "date-time",
 						"nullable": true
+					},
+					"responsibleId": {
+						"type": "string"
+					},
+					"viewTime": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -2757,6 +2732,12 @@
 					},
 					{
 						"properties": {
+							"viewTime": {
+								"type": "string"
+							},
+							"responsibleId": {
+								"type": "string"
+							},
 							"paymentMethodId": {
 								"type": "string",
 								"nullable": true
@@ -3561,7 +3542,8 @@
 					"homeSecondary",
 					"homeTertiary",
 					"TikTok",
-					"Instagram"
+					"Instagram",
+					"Contact"
 				],
 				"type": "string"
 			},
@@ -7019,7 +7001,7 @@
 				"security": [
 					{
 						"bearerAuth": [
-							"admin"
+							"optional"
 						]
 					}
 				],
