@@ -12,6 +12,8 @@ import orderService from '@entities/orders/orderService'
 import type { Item, OrderA2, OrderProductA2 } from './entities/integration/interfaces'
 import { parse as json2csv } from 'json2csv'
 import morgan from 'morgan'
+import { contextMiddleware } from 'middlewares/context.middleware'
+import device from 'express-device'
 
 export const app = express()
 app.use(morgan('dev'))
@@ -36,7 +38,8 @@ app.use(
 app.use(json({ limit: '300mb' }))
 app.use(formatRequest)
 app.use(expressAuthentication)
-
+app.use(device.capture())
+app.use(contextMiddleware)
 // const storage = multer.memoryStorage()
 // const upload = multer({ storage, limits: { fileSize: 300 * 1024 * 1024 } }) // 10MB
 

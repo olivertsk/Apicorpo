@@ -8,8 +8,8 @@ import DepartmentService from '@entities/departments/departmentService'
 import ProductService from '@products/productService'
 // import CategoryService from '@entities/categories/categoryService'
 import BulkUploadLogService from './BulkUploadLogService'
-import { Item, OrderA2, OrderProductA2 } from './interfaces'
-import { IOrderAttributes } from '@entities/orders/orderModel'
+import type { Item, OrderA2, OrderProductA2 } from './interfaces'
+import type { IOrderAttributes } from '@entities/orders/orderModel'
 
 interface IUploadZipReponseError {
   status: boolean
@@ -23,6 +23,16 @@ interface IUploadZipReponse {
     msg: string
   }
   errors: IUploadZipReponseError[]
+}
+interface IDownloadOrder {
+  fecha?: string
+  wasSent?: number
+  product?: boolean
+  fe?: string
+  usu?: string
+  cla?: string
+  bd?: string
+  time?: string
 }
 @Tags('A2')
 @Route('A2')
@@ -53,19 +63,7 @@ export class A2IntegrationController extends Controller {
    */
   @Get('/archivophp2.php')
   // @Hidden()
-  public async downloadOrder(
-    @Queries()
-    requestBody: {
-      fecha?: string
-      wasSent?: number
-      product?: boolean
-      fe?: string
-      usu?: string
-      cla?: string
-      bd?: string
-      time?: string
-    }
-  ) {
+  public async downloadOrder(@Queries() requestBody: IDownloadOrder) {
     try {
       requestBody.wasSent = 0
       requestBody.product = false
@@ -295,12 +293,16 @@ export class A2IntegrationController extends Controller {
         }
       }
       if (jsonData?.product) {
+        let i = 0
         for (const item of jsonData.product) {
           // const catalogueCode = item.catalogueCode
           // const catalogue = jsonData.find((catalogue: any) => catalogue.code === catalogueCode)
           const catalogueId = (await this.departmentService.firstOrCreateCode(item.catalogueCode))
             ?.id
-
+          if (i === 0) {
+            console.log('item :>> ', item)
+            i++
+          }
           const product: any = {
             code: item.code,
             name: item.name,

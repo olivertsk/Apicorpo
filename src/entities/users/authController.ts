@@ -56,7 +56,6 @@ export class AuthController extends Controller {
   ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
     try {
       const recaptchaToken = requestBody.recaptchaToken
-      console.log('recaptchaToken :>> ', recaptchaToken)
       if (recaptchaToken) {
         const verifyRecaptcha = await fxVerifyRecaptcha(recaptchaToken)
         if (!verifyRecaptcha.success) {
@@ -64,7 +63,6 @@ export class AuthController extends Controller {
           return { success: false, user: null, message: 'Recaptcha fallido' }
         }
       }
-      console.log('requestBody :>> ', requestBody)
       if ('uid' in requestBody && requestBody?.uid) {
         const vHashedPassword = await argon2.hash(requestBody.uid)
         if (requestBody.email) {
@@ -86,9 +84,7 @@ export class AuthController extends Controller {
             this.setStatus(201)
             return { success: true, user: existUser, token: vToken }
           }
-          console.log('no existe usuario')
         }
-        console.log('no trae email')
         const vCreateUser: IUserAttributes | null = await this.userService.create({
           email: requestBody?.email || `${requestBody.uid.slice(0, 3)}@private.com`,
           name: requestBody?.name || '',

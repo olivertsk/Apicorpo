@@ -27,6 +27,7 @@ import type { IUserAttributes } from '@users/userModel'
 import type { IOrderProductCreationAttributes } from './orderProductModel'
 import SendNotificationService from '@entities/notification/SendNotificationService'
 import UserService from '@users/userService'
+import { fxMoveImages } from '@utils/helpers'
 
 @Route('orders')
 @Tags('Order')
@@ -144,6 +145,9 @@ export class OrdersController extends Controller {
         requestBody.status = EStatusOrder.Pending
       }
       await this.orderService.validate(requestBody)
+      if (requestBody.paymentVoucher) {
+        requestBody.paymentVoucher = await fxMoveImages(requestBody.paymentVoucher)
+      }
       const vItem: IOrderAttributes | null = await this.orderService.create(requestBody)
       const rol = await this.userService.showRolName('admin')
       if (rol) {

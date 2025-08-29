@@ -12,7 +12,7 @@ import {
   Delete,
   Put,
 } from 'tsoa'
-import {
+import type {
   ICategoryAttributes,
   ICategoryCreationAttributes,
   IResponseAllCategory,

@@ -1,0 +1,28 @@
+import { DataTypes, type QueryInterface } from 'sequelize'
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface: QueryInterface) {
+    return Promise.all([
+      queryInterface.addColumn('conversations', 'responsible_id', {
+        field: 'responsible_id',
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
+      }),
+      queryInterface.addColumn('conversations', 'view_time', {
+        field: 'view_time',
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
+      }),
+    ])
+  },
+
+  async down(queryInterface: QueryInterface) {
+    return Promise.all([
+      queryInterface.removeColumn('conversations', 'responsible_id'),
+      queryInterface.removeColumn('conversations', 'view_time'),
+    ])
+  },
+}

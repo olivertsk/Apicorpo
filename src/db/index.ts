@@ -26,6 +26,10 @@ import { fxSurveyAnswerOptionFactory } from '@entities/surveyAnswerOptions/surve
 import { fxSurveyUserFactory } from '@entities/surveyUsers/surveyUserModel'
 import { fxSurveyResponseFactory } from '@entities/surveyResponses/surveyResponseModel'
 import { fxSuggestionFactory } from '@entities/suggestions/suggestionModel'
+import { fxChatQuestionFactory } from '@entities/chat/chatQuestionModel'
+import { fxChatAnswerFactory } from '@entities/chat/ChatAnswerModel'
+import { fxConversationFactory } from '@entities/conversations/conversationModel'
+import { fxConversationMessageFactory } from '@entities/conversations/conversationMessageModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -58,6 +62,10 @@ export const modelSurveyAnswerOption = fxSurveyAnswerOptionFactory(sequelize)
 export const modelSurveyUser = fxSurveyUserFactory(sequelize)
 export const modelSurveyResponse = fxSurveyResponseFactory(sequelize)
 export const modelSuggestion = fxSuggestionFactory(sequelize)
+export const modelChatQuestion = fxChatQuestionFactory(sequelize)
+export const modelChatAnswer = fxChatAnswerFactory(sequelize)
+export const modelConversation = fxConversationFactory(sequelize)
+export const modelConversationMessage = fxConversationMessageFactory(sequelize)
 
 const models = {
   modelUser,
@@ -83,6 +91,10 @@ const models = {
   modelSurveyUser,
   modelSurveyResponse,
   modelSuggestion,
+  modelChatQuestion,
+  modelChatAnswer,
+  modelConversation,
+  modelConversationMessage,
 }
 
 export type ModelRegistry = typeof models

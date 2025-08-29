@@ -2536,6 +2536,9 @@
 					},
 					"viewTime": {
 						"type": "string"
+					},
+					"paymentVoucher": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -2732,6 +2735,9 @@
 					},
 					{
 						"properties": {
+							"paymentVoucher": {
+								"type": "string"
+							},
 							"viewTime": {
 								"type": "string"
 							},
@@ -3092,6 +3098,37 @@
 					}
 				]
 			},
+			"IDownloadOrder": {
+				"properties": {
+					"fecha": {
+						"type": "string"
+					},
+					"wasSent": {
+						"type": "number",
+						"format": "double"
+					},
+					"product": {
+						"type": "boolean"
+					},
+					"fe": {
+						"type": "string"
+					},
+					"usu": {
+						"type": "string"
+					},
+					"cla": {
+						"type": "string"
+					},
+					"bd": {
+						"type": "string"
+					},
+					"time": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IUploadZipReponseError": {
 				"properties": {
 					"status": {
@@ -3351,6 +3388,479 @@
 						"type": "object"
 					}
 				]
+			},
+			"Record_string.any_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"EConversationStatus": {
+				"enum": [
+					1,
+					2,
+					3,
+					4
+				],
+				"type": "number"
+			},
+			"Pick_IConversationMessageAttributes.id-or-message_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"EMessageSender": {
+				"enum": [
+					"bot",
+					"user",
+					"admin",
+					"operator"
+				],
+				"type": "string"
+			},
+			"EMessageType": {
+				"enum": [
+					"text",
+					"option",
+					"question",
+					"system"
+				],
+				"type": "string"
+			},
+			"IConversationMessageCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IConversationMessageAttributes.id-or-message_"
+					},
+					{
+						"properties": {
+							"selectedOption": {},
+							"chatQuestion": {},
+							"metadata": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Record_string.any_"
+									}
+								],
+								"nullable": true
+							},
+							"messageType": {
+								"$ref": "#/components/schemas/EMessageType"
+							},
+							"index": {
+								"type": "number",
+								"format": "double"
+							},
+							"from": {
+								"$ref": "#/components/schemas/EMessageSender"
+							},
+							"conversationId": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"index",
+							"from"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"IConversationAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string",
+						"nullable": true
+					},
+					"context": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Record_string.any_"
+							}
+						],
+						"nullable": true
+					},
+					"status": {
+						"$ref": "#/components/schemas/EConversationStatus"
+					},
+					"responsibleId": {
+						"type": "string",
+						"nullable": true
+					},
+					"viewTime": {
+						"type": "string",
+						"nullable": true
+					},
+					"messages": {
+						"items": {
+							"$ref": "#/components/schemas/IConversationMessageCreationAttributes"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllConversation": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IConversationAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IConversationFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IConversationAttributes.id-or-context_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"context": {
+						"$ref": "#/components/schemas/Record_string.any_"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"IConversationCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IConversationAttributes.id-or-context_"
+					},
+					{
+						"properties": {
+							"messages": {
+								"items": {
+									"$ref": "#/components/schemas/IConversationMessageCreationAttributes"
+								},
+								"type": "array"
+							},
+							"status": {
+								"$ref": "#/components/schemas/EConversationStatus"
+							},
+							"viewTime": {
+								"type": "string",
+								"nullable": true
+							},
+							"responsibleId": {
+								"type": "string",
+								"nullable": true
+							},
+							"context": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Record_string.any_"
+									}
+								],
+								"nullable": true
+							},
+							"userId": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"required": [
+							"status"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"Partial_Pick_IChatAnswerAttributes.name__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"Partial_Pick_IChatQuestionAttributes.name__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"IChatAnswerCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IChatAnswerAttributes.name__"
+					},
+					{
+						"properties": {
+							"deletedAt": {
+								"type": "number",
+								"enum": [
+									null
+								],
+								"nullable": true
+							},
+							"chatQuestion": {
+								"$ref": "#/components/schemas/IChatQuestionCreationAttributes"
+							},
+							"answerType": {
+								"type": "string",
+								"nullable": true
+							},
+							"autoResponse": {
+								"type": "string"
+							},
+							"chatAnswerId": {
+								"type": "string"
+							},
+							"chatQuestionId": {
+								"type": "string"
+							},
+							"status": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											true
+										]
+									}
+								]
+							},
+							"id": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					}
+				]
+			},
+			"IChatQuestionCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Partial_Pick_IChatQuestionAttributes.name__"
+					},
+					{
+						"properties": {
+							"options": {
+								"items": {
+									"$ref": "#/components/schemas/IChatAnswerCreationAttributes"
+								},
+								"type": "array"
+							},
+							"autoResponse": {
+								"type": "string",
+								"nullable": true
+							},
+							"type": {
+								"type": "string"
+							},
+							"chatAnswerId": {
+								"type": "string",
+								"nullable": true
+							},
+							"chatQuestionId": {
+								"type": "string",
+								"nullable": true
+							},
+							"status": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											true
+										]
+									}
+								]
+							},
+							"id": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"type": "object"
+					}
+				]
+			},
+			"IChatQuestionAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"chatQuestionId": {
+						"type": "string",
+						"nullable": true
+					},
+					"chatAnswerId": {
+						"type": "string",
+						"nullable": true
+					},
+					"type": {
+						"type": "string"
+					},
+					"status": {
+						"type": "boolean"
+					},
+					"autoResponse": {
+						"type": "string"
+					},
+					"options": {
+						"items": {
+							"$ref": "#/components/schemas/IChatAnswerCreationAttributes"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IChatShowClientFilter": {
+				"properties": {
+					"chatQuestionId": {
+						"type": "string",
+						"nullable": true
+					},
+					"chatAnswerId": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllChatQuestion": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IChatQuestionAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IChatQuestionFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"isClient": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			},
 			"ICategoryAttributes": {
 				"properties": {
@@ -9310,7 +9820,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "time",
+						"name": "fecha",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -9318,15 +9828,24 @@
 					},
 					{
 						"in": "query",
-						"name": "bd",
+						"name": "wasSent",
 						"required": false,
 						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					},
 					{
 						"in": "query",
-						"name": "cla",
+						"name": "product",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "fe",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -9342,7 +9861,7 @@
 					},
 					{
 						"in": "query",
-						"name": "fe",
+						"name": "cla",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -9350,24 +9869,15 @@
 					},
 					{
 						"in": "query",
-						"name": "product",
+						"name": "bd",
 						"required": false,
 						"schema": {
-							"type": "boolean"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "wasSent",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "fecha",
+						"name": "time",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -9877,6 +10387,683 @@
 				"summary": "Eliminar una item por ID.",
 				"tags": [
 					"Department"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/conversations/show/{conversationId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IConversationAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Conversation"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "conversationId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/conversations/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "- Promesa que resuleve con los datos",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IConversationAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllConversation"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"Conversation"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/conversations/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"item": {},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"message",
+												"success"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												},
+												"item": {
+													"$ref": "#/components/schemas/IConversationAttributes"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"message",
+												"item",
+												"success"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Conversation"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IConversationCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/conversations/update/{conversationId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IConversationAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Conversation"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "conversationId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IConversationCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/conversations/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "- Promesa que resuelve con la eliminacion",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"Conversation"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/chatQuestions/show": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IChatQuestionAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"ChatQuestion"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/chatQuestions/client": {
+			"get": {
+				"operationId": "Client",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IChatQuestionAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"ChatQuestion"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "chatQuestionId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "chatAnswerId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/chatQuestions/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "- Promesa que resuelve con los datos",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IChatQuestionAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllChatQuestion"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Obtener todos los datos con paginación.",
+				"tags": [
+					"ChatQuestion"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isClient",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/chatQuestions/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"items": {
+											"items": {
+												"$ref": "#/components/schemas/IChatQuestionAttributes"
+											},
+											"type": "array"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"items",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"ChatQuestion"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"chatQuestions": {
+										"items": {
+											"$ref": "#/components/schemas/IChatQuestionCreationAttributes"
+										},
+										"type": "array"
+									}
+								},
+								"required": [
+									"chatQuestions"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/chatQuestions/update/{chatQuestionId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"items": {
+											"items": {
+												"$ref": "#/components/schemas/IChatQuestionAttributes"
+											},
+											"type": "array"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"items",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"ChatQuestion"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"chatQuestions": {
+										"items": {
+											"$ref": "#/components/schemas/IChatQuestionCreationAttributes"
+										},
+										"type": "array"
+									}
+								},
+								"required": [
+									"chatQuestions"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/chatQuestions/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "- Promesa que resuelve con la eliminacion",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"summary": "Eliminar una item por ID.",
+				"tags": [
+					"ChatQuestion"
 				],
 				"security": [
 					{

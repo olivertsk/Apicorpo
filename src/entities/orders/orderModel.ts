@@ -47,6 +47,7 @@ export interface IOrderAttributes {
   deletedAt?: Date | null
   responsibleId?: string
   viewTime?: string
+  paymentVoucher?: string
 }
 export enum EStatusOrder {
   Pending = 'pending',
@@ -94,6 +95,7 @@ export type IOrderCreationAttributes = Pick<IOrderAttributes, 'id'> &
     paymentMethodId?: IPaymentMethodInstance['id'] | null
     responsibleId?: string
     viewTime?: string
+    paymentVoucher?: string
   }
 
 export interface IOrderInstance
@@ -243,6 +245,12 @@ export const vOrdersModelAttributes: SequelizeAttributes<IOrderAttributes> = {
   viewTime: {
     type: DataTypes.STRING,
     field: 'view_time',
+    defaultValue: true,
+    allowNull: true,
+  },
+  paymentVoucher: {
+    type: DataTypes.STRING,
+    field: 'payment_voucher',
     defaultValue: true,
     allowNull: true,
   },

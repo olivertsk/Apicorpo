@@ -15,8 +15,8 @@ import type {
   ISurveyResponseCreation,
 } from '@entities/surveyResponses/surveyResponseModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
-import { IResponseAllSurvey, ISurveyAttributes } from '@entities/surveys/surveyModel'
-import {
+import type { IResponseAllSurvey, ISurveyAttributes } from '@entities/surveys/surveyModel'
+import type {
   IResponseAllSurveyUser,
   ISurveyUserAttributes,
 } from '@entities/surveyUsers/surveyUserModel'
