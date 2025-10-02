@@ -1787,6 +1787,21 @@
 						"format": "double",
 						"nullable": true
 					},
+					"priceBs": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"promotionalPriceBs": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"priceWithTaxBs": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"stock": {
 						"type": "number",
 						"format": "double"
@@ -1921,6 +1936,13 @@
 					},
 					"isClient": {
 						"type": "boolean"
+					},
+					"typePrice": {
+						"type": "string",
+						"enum": [
+							"price",
+							"priceBs"
+						]
 					}
 				},
 				"type": "object",
@@ -2031,6 +2053,21 @@
 					},
 					{
 						"properties": {
+							"priceWithTaxBs": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							},
+							"promotionalPriceBs": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							},
+							"priceBs": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							},
 							"images": {
 								"items": {
 									"$ref": "#/components/schemas/IProductImageCreationAttributes"
@@ -2539,6 +2576,13 @@
 					},
 					"paymentVoucher": {
 						"type": "string"
+					},
+					"paidWith": {
+						"type": "string",
+						"enum": [
+							"USD",
+							"BS"
+						]
 					}
 				},
 				"required": [
@@ -2735,6 +2779,13 @@
 					},
 					{
 						"properties": {
+							"paidWith": {
+								"type": "string",
+								"enum": [
+									"USD",
+									"BS"
+								]
+							},
 							"paymentVoucher": {
 								"type": "string"
 							},
@@ -3126,6 +3177,40 @@
 						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IOutputProduct": {
+				"properties": {
+					"data": {
+						"type": "string"
+					},
+					"wasSent": {
+						"type": "number",
+						"format": "double"
+					},
+					"product": {
+						"type": "boolean"
+					},
+					"fe": {
+						"type": "string"
+					},
+					"usu": {
+						"type": "string"
+					},
+					"cla": {
+						"type": "string"
+					},
+					"bd": {
+						"type": "string"
+					},
+					"time": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -7865,6 +7950,18 @@
 						"schema": {
 							"type": "boolean"
 						}
+					},
+					{
+						"in": "query",
+						"name": "typePrice",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"price",
+								"priceBs"
+							]
+						}
 					}
 				]
 			}
@@ -8035,6 +8132,18 @@
 						"required": false,
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "typePrice",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"price",
+								"priceBs"
+							]
 						}
 					}
 				]
@@ -9989,37 +10098,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"time": {
-										"type": "string"
-									},
-									"bd": {
-										"type": "string"
-									},
-									"cla": {
-										"type": "string"
-									},
-									"usu": {
-										"type": "string"
-									},
-									"fe": {
-										"type": "string"
-									},
-									"product": {
-										"type": "boolean"
-									},
-									"wasSent": {
-										"type": "number",
-										"format": "double"
-									},
-									"data": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"data"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/IOutputProduct"
 							}
 						}
 					}

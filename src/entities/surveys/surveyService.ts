@@ -75,7 +75,7 @@ class SurveyService {
       if (pParam.order === 'date') {
         whereStatement.order = [['date', 'DESC']]
       }
-      whereStatement.logging = true
+      whereStatement.logging = false
       const vResponse: ISurveyAttributes[] = await modelSurvey.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllSurvey = await fxReponseServices(

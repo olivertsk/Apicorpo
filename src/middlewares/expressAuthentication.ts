@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import AppConfig from '../config/AppConfig'
 import { fxI18n } from '@utils/i18n'
@@ -17,6 +17,7 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
     const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader
     try {
       if (token && token !== 'undefined' && token !== 'null') {
+        console.log('token :>> ', token)
         const verifyJWT = await fxVerifyJWT(token)
         req.auth = verifyJWT
       }

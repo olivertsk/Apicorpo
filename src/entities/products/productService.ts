@@ -15,7 +15,7 @@ import type {
   IProductFilter,
 } from '@entities/products/productModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
-import {
+import type {
   IProductImageAttributes,
   IProductImageCreationAttributes,
   IProductImageInstance,
@@ -164,7 +164,7 @@ class ProductsService {
           categoryId: pParam.categoryId,
         }
       }
-      if (pParam?.minPrice) {
+      if (pParam?.minPrice && pParam.typePrice === 'price') {
         whereStatement.where = {
           ...whereStatement.where,
           [Op.and]: {
@@ -175,7 +175,29 @@ class ProductsService {
           },
         }
       }
-      if (pParam?.maxPrice) {
+      if (pParam?.maxPrice && pParam.typePrice === 'price') {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.and]: {
+            [Op.or]: [
+              { priceBs: { [Op.lte]: Number(pParam.maxPrice) } },
+              { promotionalPriceBs: { [Op.lte]: Number(pParam.maxPrice) } },
+            ],
+          },
+        }
+      }
+      if (pParam?.minPrice && pParam.typePrice === 'priceBs') {
+        whereStatement.where = {
+          ...whereStatement.where,
+          [Op.and]: {
+            [Op.or]: [
+              { priceBs: { [Op.gte]: Number(pParam.minPrice) } },
+              { promotionalPriceBs: { [Op.gte]: Number(pParam.minPrice) } },
+            ],
+          },
+        }
+      }
+      if (pParam?.maxPrice && pParam.typePrice === 'priceBs') {
         whereStatement.where = {
           ...whereStatement.where,
           [Op.and]: {
@@ -278,7 +300,7 @@ class ProductsService {
         },
       }
       whereStatement.limit = 50
-      whereStatement.logging = true
+      whereStatement.logging = false
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
 
       // Ordenar los resultados por la cantidad de letras comunes en los nombres

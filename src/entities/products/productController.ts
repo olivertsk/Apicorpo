@@ -13,7 +13,7 @@ import {
   Put,
   Request,
 } from 'tsoa'
-import {
+import type {
   IProductAttributes,
   IProductCreationAttributes,
   IResponseAllProduct,
@@ -21,9 +21,9 @@ import {
 } from '@entities/products/productModel'
 import ProductService from '@entities/products/productService'
 import { fxI18n } from '@utils/i18n'
-import { IProductImageCreationAttributes } from './productImagesModel'
+import type { IProductImageCreationAttributes } from './productImagesModel'
 import { fxDeleteImages, fxMoveImages } from '@utils/helpers'
-import { IUserAttributes } from '@users/userModel'
+import type { IUserAttributes } from '@users/userModel'
 
 @Route('products')
 @Tags('Product')
@@ -135,6 +135,10 @@ export class ProductsController extends Controller {
         if (!requestBody.priceWithTax) {
           const priceWithTax = requestBody?.promotionalPrice || requestBody.price || 0
           requestBody.priceWithTax = priceWithTax + (requestBody.taxRate * priceWithTax) / 100
+        }
+        if (!requestBody.priceWithTaxBs) {
+          const priceWithTaxBs = requestBody?.promotionalPriceBs || requestBody.priceBs || 0
+          requestBody.priceWithTaxBs = priceWithTaxBs + (requestBody.taxRate * priceWithTaxBs) / 100
         }
       }
       if (!requestBody.priceWithTax) {

@@ -1,8 +1,8 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
-import { ModelRegistry } from '@db/index'
-import { IProductImageCreationAttributes } from './productImagesModel'
+import type { ModelRegistry } from '@db/index'
+import type { IProductImageCreationAttributes } from './productImagesModel'
 
 export interface IProductAttributes {
   id?: string
@@ -16,6 +16,9 @@ export interface IProductAttributes {
   price: number
   promotionalPrice?: number | null
   priceWithTax?: number | null
+  priceBs?: number | null
+  promotionalPriceBs?: number | null
+  priceWithTaxBs?: number | null
   stock: number
   brand?: string | null
   taxRate?: number | null
@@ -68,6 +71,7 @@ export interface IProductFilter {
   typeSearch?: string | null
   userId?: string | null
   isClient?: boolean
+  typePrice?: 'price' | 'priceBs'
 }
 export type IProductCreationAttributes = Pick<
   IProductAttributes,
@@ -82,6 +86,9 @@ export type IProductCreationAttributes = Pick<
     longDescription?: string | null
     coverImage?: string | null
     images?: IProductImageCreationAttributes[]
+    priceBs?: number | null
+    promotionalPriceBs?: number | null
+    priceWithTaxBs?: number | null
   }
 export interface IProductInstance
   extends Model<IProductAttributes, IProductCreationAttributes>,
@@ -168,6 +175,23 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
   priceWithTax: {
     type: DataTypes.FLOAT,
     field: 'price_with_tax',
+    allowNull: true,
+    defaultValue: null,
+  },
+  priceBs: {
+    type: DataTypes.FLOAT,
+    field: 'price_bs',
+    allowNull: false,
+  },
+  promotionalPriceBs: {
+    type: DataTypes.FLOAT,
+    field: 'promotional_price_bs',
+    allowNull: true,
+    defaultValue: null,
+  },
+  priceWithTaxBs: {
+    type: DataTypes.FLOAT,
+    field: 'priceWith_tax_bs',
     allowNull: true,
     defaultValue: null,
   },

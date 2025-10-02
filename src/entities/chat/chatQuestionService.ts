@@ -312,7 +312,7 @@ class ChatQuestionsService {
         { deletedAt: new Date() },
         {
           where: { deletedAt: null },
-          logging: true,
+          logging: false,
         }
       )
       if (!record) {

@@ -34,6 +34,17 @@ interface IDownloadOrder {
   bd?: string
   time?: string
 }
+
+interface IOutputProduct {
+  data: string
+  wasSent?: number
+  product?: boolean
+  fe?: string
+  usu?: string
+  cla?: string
+  bd?: string
+  time?: string
+}
 @Tags('A2')
 @Route('A2')
 export class A2IntegrationController extends Controller {
@@ -232,6 +243,7 @@ export class A2IntegrationController extends Controller {
           item[header] = record
         }
         let finalItem = item
+        console.log('finalItem :>> ', finalItem)
         if (currentTable === 'product') {
           const existence = Number(item.existence.replace(',', '.'))
           finalItem = {
@@ -239,14 +251,23 @@ export class A2IntegrationController extends Controller {
             name: item.name,
             catalogueCode: item.catalogueCode,
             price: item?.preve1 || item?.preve,
+            price2: item?.preve2 || null,
             stock: existence < 0 ? 0 : existence,
             tax: item.tax,
           }
+          console.log('finalItem2 :>> ', finalItem)
           delete item.code
           delete item.name
           delete item.catalogueCode
-          item?.preve && delete item.preve
-          item?.preve1 && delete item.preve1
+          if (item?.preve) {
+            delete item.preve
+          }
+          if (item?.preve1) {
+            delete item.preve1
+          }
+          if (item?.preve2) {
+            delete item.preve2
+          }
           delete item.existence
           delete item.tax
         } else if (currentTable === 'catalogue') {
@@ -262,27 +283,14 @@ export class A2IntegrationController extends Controller {
   }
 
   @Post('importardata.php')
-  public async outputProduct(
-    @Body()
-    requestBody: {
-      data: string
-      wasSent?: number
-      product?: boolean
-      fe?: string
-      usu?: string
-      cla?: string
-      bd?: string
-      time?: string
-    }
-  ) {
+  public async outputProduct(@Body() requestBody: IOutputProduct) {
     try {
       const pData = requestBody.data
       const vData = pData.replace(/\\r\\n/g, '')
       const jsonData = await this.convertToJSON(vData)
       let products: any[] = []
       // let categoryIds: { categoryId: string; productCode: null }[] = []
-      console.log('jsonData :>> ', jsonData)
-      console.log('jsonData. :>> ', jsonData.catalogue)
+      console.log('jsonData.product :>> ', jsonData?.product)
       if (jsonData?.catalogue) {
         for (const item of jsonData.catalogue) {
           const catalogue = {
@@ -300,22 +308,25 @@ export class A2IntegrationController extends Controller {
           const catalogueId = (await this.departmentService.firstOrCreateCode(item.catalogueCode))
             ?.id
           if (i === 0) {
-            console.log('item :>> ', item)
             i++
           }
           const product: any = {
             code: item.code,
             name: item.name,
             departmentId: catalogueId,
-            price: item?.preve1 || item?.preve || item.price,
+            priceBs: item.price2 || item?.preve1 || item?.preve,
+            price: item?.price || null,
             stock: item.stock,
             taxRate: item.tax || 0,
           }
           if (product.price && product.taxRate) {
             const price = Number(product.price)
+            const priceBs = product.priceBs ? Number(product.priceBs) : false
             const taxRate = Number(product.taxRate)
             const priceWithTax = price + (price * taxRate) / 100
+            const priceWithTaxBs = priceBs ? priceBs + (priceBs * taxRate) / 100 : null
             product.priceWithTax = priceWithTax
+            product.priceWithTaxBs = priceWithTaxBs
           }
           products.push(product)
         }
