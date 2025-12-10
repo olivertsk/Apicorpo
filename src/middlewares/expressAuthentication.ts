@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import AppConfig from '../config/AppConfig'
 import { fxI18n } from '@utils/i18n'
+import type { IUserAttributes } from '@users/userModel'
 
 export const expressAuthentication = async (req: Request, res: Response, next: NextFunction) => {
   const langHeader = req.headers.lang
@@ -17,8 +18,7 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
     const token = authHeader.includes(' ') ? authHeader.split(' ')[1] : authHeader
     try {
       if (token && token !== 'undefined' && token !== 'null') {
-        console.log('token :>> ', token)
-        const verifyJWT = await fxVerifyJWT(token)
+        const verifyJWT = jwt.verify(token, AppConfig.JWT_SECRET_KEY) as IUserAttributes
         req.auth = verifyJWT
       }
       next()
@@ -29,13 +29,13 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
     next() // No autorizado si no hay encabezado de autorización
   }
 }
-const fxVerifyJWT = async (token: string) => {
-  new Promise((resolve, reject) => {
-    jwt.verify(token, AppConfig.JWT_SECRET_KEY, (err: any, user: any) => {
-      if (err) {
-        reject(err)
-      }
-      resolve(user)
-    })
-  })
-}
+// const fxVerifyJWT = async (token: string) => {
+//   new Promise((resolve, reject) => {
+//     jwt.verify(token, AppConfig.JWT_SECRET_KEY, (err: any, user: any) => {
+//       if (err) {
+//         reject(err)
+//       }
+//       resolve(user)
+//     })
+//   })
+// }

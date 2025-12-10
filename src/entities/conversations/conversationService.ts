@@ -125,6 +125,7 @@ class ConversationsService {
       }
       return { data: vResponse }
     } catch (error) {
+      console.log('error services :>> ', error)
       throw error
     }
   }

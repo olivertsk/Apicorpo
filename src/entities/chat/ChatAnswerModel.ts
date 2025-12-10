@@ -38,7 +38,7 @@ export type IChatAnswerCreationAttributes = Partial<Pick<IChatAnswerAttributes, 
   chatAnswerId?: string
   autoResponse?: string
   answerType?: string | null
-  chatQuestion?: IChatQuestionCreationAttributes
+  chatQuestion?: IChatQuestionCreationAttributes | null
   deletedAt?: null
 }
 export interface IChatAnswerInstance

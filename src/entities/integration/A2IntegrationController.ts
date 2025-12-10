@@ -314,8 +314,8 @@ export class A2IntegrationController extends Controller {
             code: item.code,
             name: item.name,
             departmentId: catalogueId,
-            priceBs: item.price2 || item?.preve1 || item?.preve,
-            price: item?.price || null,
+            price: item.price2,
+            priceBs: item?.price || null,
             stock: item.stock,
             taxRate: item.tax || 0,
           }

@@ -71,7 +71,8 @@ export class ConversationsController extends Controller {
         await this.conversationService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
-    } catch {
+    } catch (error) {
+      console.log('error controller :>> ', error)
       this.setStatus(500)
       return { data: [], message: 'Ocurrió un error' }
     }

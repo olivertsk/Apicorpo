@@ -35,6 +35,7 @@ export interface IChatQuestionFilter {
 export interface IChatShowClientFilter {
   chatQuestionId?: string | null
   chatAnswerId?: string | null
+  type?: string
 }
 
 export type IChatQuestionCreationAttributes = Partial<Pick<IChatQuestionAttributes, 'name'>> & {

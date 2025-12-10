@@ -12,13 +12,13 @@ import {
   Body,
 } from 'tsoa'
 import SendNotificationService from './SendNotificationService'
-import {
+import type {
   INotificationAttributes,
   INotificationFilter,
   IResponseAllNotification,
 } from './notificationModel'
 import NotificationService from './notificationService'
-import { IUserAttributes } from '@users/userModel'
+import type { IUserAttributes } from '@users/userModel'
 import { fxI18n } from '@utils/i18n'
 
 @Route('notifications')
@@ -73,6 +73,7 @@ export class notificationController extends Controller {
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
+      console.log('error :>> ', error)
       this.setStatus(500)
       return { data: null, message: 'Ocurrió un error' }
     }

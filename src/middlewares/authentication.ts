@@ -25,6 +25,7 @@ export async function expressAuthentication(
           rolUser = JSON.parse(JSON.stringify(rolUser))
         }
         if (scopes && scopes?.includes('optional')) {
+          console.log('incluye optional', auth)
           request.auth = auth
           return { token, auth }
         }

@@ -1,11 +1,12 @@
 import { modelBanner } from '@db/index'
-import { type FindOptions } from 'sequelize'
+import { Op, type FindOptions } from 'sequelize'
 import {
   type IBannerAttributes,
   type IBannerCreationAttributes,
   type IResponseAllBanner,
   type IBannerInstance,
   EPositionBanner,
+  type IBannerFilter,
 } from '@entities/banners/bannerModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
 
@@ -14,6 +15,34 @@ class BannersService {
     const dataValidate = modelBanner.build(data)
     await dataValidate.validate()
   }
+
+  public async getPosition(id?: string): Promise<IBannerAttributes | null> {
+    console.log('id :>> ', id)
+    try {
+      let whereStatement: FindOptions = {}
+      whereStatement.where = {
+        [Op.or]: [
+          { position: EPositionBanner.AlwaysPopup },
+          { position: EPositionBanner.PopupOnce },
+        ],
+        status: true,
+      }
+      if (id) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          id: {
+            [Op.not]: id,
+          },
+        }
+      }
+      whereStatement.logging = true
+      const vResponse: IBannerAttributes | null = await modelBanner.findOne(whereStatement)
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
+
   public async get(id: string): Promise<IBannerAttributes | null> {
     try {
       const vResponse: IBannerAttributes | null = await modelBanner.findOne({
@@ -27,7 +56,7 @@ class BannersService {
     }
   }
 
-  public async all(pParam: any): Promise<IResponseAllBanner> {
+  public async all(pParam: IBannerFilter): Promise<IResponseAllBanner> {
     try {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
@@ -42,6 +71,12 @@ class BannersService {
         whereStatement.where = {
           ...whereStatement.where,
           position: pParam.position,
+        }
+      }
+      if (pParam.isClient) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          status: true,
         }
       }
       const vResponse: IBannerAttributes[] = await modelBanner.findAll(whereStatement)
@@ -92,6 +127,7 @@ class BannersService {
       throw error
     }
   }
+
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
       const record = await modelBanner.update(
@@ -108,6 +144,7 @@ class BannersService {
       throw error
     }
   }
+
   async deleteImagesName(name: string): Promise<void> {
     try {
       const vImagesName: IBannerInstance | null = await modelBanner.findOne({

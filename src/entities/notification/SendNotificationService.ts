@@ -91,7 +91,6 @@ class SendNotificationService {
   ): Promise<{ uid: string; email?: string; avatar?: string; name?: string }> {
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken)
-      console.log('decodedToken :>> ', decodedToken)
       return decodedToken
     } catch (error) {
       throw new Error('Invalid token')

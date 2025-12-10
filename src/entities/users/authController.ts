@@ -107,11 +107,9 @@ export class AuthController extends Controller {
         }
         return { success: false, user: null, token: '' }
       } else if ('idToken' in requestBody && requestBody?.idToken) {
-        console.log('requestBody?.idToken :>> ', requestBody?.idToken)
         const dataUser = (await this.sendNotificationService.verifyToken(
           requestBody.idToken
         )) as Partial<DecodedIdToken>
-        console.log('dataUser :>> ', dataUser)
         const vHashedPassword = await argon2.hash(requestBody.idToken)
         const vUser: IUserAttributes | null = await this.userService.create({
           email: dataUser?.email || `${requestBody.idToken.slice(0, 3)}@private.com`,

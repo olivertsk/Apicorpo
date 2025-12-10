@@ -1,5 +1,5 @@
 import { modelNotification } from '@db/index'
-import { type FindOptions } from 'sequelize'
+import { type FindOptions, type Transaction } from 'sequelize'
 import {
   type INotificationAttributes,
   type INotificationCreationAttributes,
@@ -7,7 +7,6 @@ import {
   type INotificationInstance,
 } from '@entities/notification/notificationModel'
 import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
-import { Transaction } from 'sequelize'
 
 class NotificationsService {
   async validate(data: any) {
@@ -60,6 +59,7 @@ class NotificationsService {
       }
       return { data: vResponse }
     } catch (error) {
+      console.log('error service :>> ', error)
       throw error
     }
   }

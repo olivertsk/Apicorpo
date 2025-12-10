@@ -23,6 +23,10 @@ export enum EPositionBanner {
   TikTok = 'TikTok',
   Instagram = 'Instagram',
   Contact = 'Contact',
+  PopupOnce = 'PopupOnce',
+  AlwaysPopup = 'AlwaysPopup',
+  Product = 'Product',
+  Filter = 'Filter',
 }
 export interface IResponseAllBanner {
   total?: number
@@ -37,6 +41,7 @@ export interface IBannerFilter {
   name?: string | null
   position?: EPositionBanner
   isClient?: boolean
+  typeSearch?: string
 }
 export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> &
   Partial<Pick<IBannerAttributes, 'name' | 'images'>> & {

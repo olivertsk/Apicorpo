@@ -88,6 +88,9 @@ class ChatQuestionsService {
   }
 
   public async client(param: IChatShowClientFilter): Promise<any> {
+    // if (param?.type && param?.type === 'text') {
+    //   return null
+    // }
     const question = await modelChatQuestion.findOne({
       where: {
         chatQuestionId: param.chatQuestionId || null,
@@ -172,7 +175,6 @@ class ChatQuestionsService {
     transaction: Transaction
   ): Promise<void> {
     for (const answerData of answersData) {
-      console.log('answerData :>> ', answerData)
       if (!answerData.name) continue
 
       await modelChatAnswer.create(
@@ -205,7 +207,6 @@ class ChatQuestionsService {
         })
 
         if (answer) {
-          console.log('answerData :>> ', answerData)
           // Crear pregunta hija SIN transacción global
           await this.create({
             ...answerData.chatQuestion,
@@ -257,7 +258,6 @@ class ChatQuestionsService {
   //   transaction: any
   // ): Promise<void> {
   //   for (const answerData of answersData) {
-  //     console.log('answerData :>> ', answerData)
   //     if (!answerData.name) continue // Saltar si no hay nombre
 
   //     // 1. Crear la respuesta/opción (ChatAnswer)

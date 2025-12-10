@@ -1171,7 +1171,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IChatAnswerCreationAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Partial_Pick_IChatAnswerAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"deletedAt":{"dataType":"enum","enums":[null]},"chatQuestion":{"ref":"IChatQuestionCreationAttributes"},"answerType":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"autoResponse":{"dataType":"string"},"chatAnswerId":{"dataType":"string"},"chatQuestionId":{"dataType":"string"},"status":{"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[true]}]},"id":{"dataType":"string"}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Partial_Pick_IChatAnswerAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"deletedAt":{"dataType":"enum","enums":[null]},"chatQuestion":{"dataType":"union","subSchemas":[{"ref":"IChatQuestionCreationAttributes"},{"dataType":"enum","enums":[null]}]},"answerType":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"autoResponse":{"dataType":"string"},"chatAnswerId":{"dataType":"string"},"chatQuestionId":{"dataType":"string"},"status":{"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[true]}]},"id":{"dataType":"string"}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IChatQuestionCreationAttributes": {
@@ -1202,6 +1202,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "chatQuestionId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "chatAnswerId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "type": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -1287,7 +1288,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EPositionBanner": {
         "dataType": "refEnum",
-        "enums": ["homePrincipal","homeSecondary","homeTertiary","TikTok","Instagram","Contact"],
+        "enums": ["homePrincipal","homeSecondary","homeTertiary","TikTok","Instagram","Contact","PopupOnce","AlwaysPopup","Product","Filter"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IBannerAttributes": {
@@ -1327,6 +1328,7 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "position": {"ref":"EPositionBanner"},
             "isClient": {"dataType":"boolean"},
+            "typeSearch": {"dataType":"string"},
         },
         "additionalProperties": false,
     },

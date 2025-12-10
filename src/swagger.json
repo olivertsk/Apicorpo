@@ -3748,7 +3748,12 @@
 								"nullable": true
 							},
 							"chatQuestion": {
-								"$ref": "#/components/schemas/IChatQuestionCreationAttributes"
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/IChatQuestionCreationAttributes"
+									}
+								],
+								"nullable": true
 							},
 							"answerType": {
 								"type": "string",
@@ -3894,6 +3899,9 @@
 					"chatAnswerId": {
 						"type": "string",
 						"nullable": true
+					},
+					"type": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -4138,7 +4146,11 @@
 					"homeTertiary",
 					"TikTok",
 					"Instagram",
-					"Contact"
+					"Contact",
+					"PopupOnce",
+					"AlwaysPopup",
+					"Product",
+					"Filter"
 				],
 				"type": "string"
 			},
@@ -4238,6 +4250,9 @@
 					},
 					"isClient": {
 						"type": "boolean"
+					},
+					"typeSearch": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -10897,6 +10912,14 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "type",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -11610,6 +11633,14 @@
 						"required": false,
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "typeSearch",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]

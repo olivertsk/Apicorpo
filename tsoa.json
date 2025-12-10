@@ -29,5 +29,8 @@
       "@db/*": ["./db/*"],
       "@config/*": ["./config/*"]
     }
+  },
+  "validation": {
+    "maxCircularDepth": 2
   }
 }

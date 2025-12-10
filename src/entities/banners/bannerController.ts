@@ -13,10 +13,11 @@ import {
   Put,
 } from 'tsoa'
 import {
-  IBannerAttributes,
-  IBannerCreationAttributes,
-  IResponseAllBanner,
-  IBannerFilter,
+  type IBannerAttributes,
+  type IBannerCreationAttributes,
+  type IResponseAllBanner,
+  type IBannerFilter,
+  EPositionBanner,
 } from '@entities/banners/bannerModel'
 import BannerService from '@entities/banners/bannerService'
 import { fxI18n } from '@utils/i18n'
@@ -76,6 +77,21 @@ export class BannersController extends Controller {
   ): Promise<{ success: boolean; item: IBannerAttributes | null; message?: string }> {
     try {
       await this.bannerService.validate(requestBody)
+      console.log('requestBody :>> ', requestBody)
+      if (
+        requestBody?.position === EPositionBanner.AlwaysPopup ||
+        requestBody?.position === EPositionBanner.PopupOnce
+      ) {
+        const verify = await this.bannerService.getPosition()
+        console.log('verify :>> ', JSON.stringify(verify))
+        if (verify) {
+          return {
+            success: false,
+            item: null,
+            message: 'Ya existe un banner activo para esta posición.',
+          }
+        }
+      }
       if (requestBody.images) {
         requestBody.images = await fxMoveImages(requestBody.images)
       }
@@ -99,6 +115,21 @@ export class BannersController extends Controller {
   ): Promise<{ success: boolean; item: IBannerAttributes | null; message?: string }> {
     try {
       await this.bannerService.validate(requestBody)
+      console.log('requestBody update :>> ', requestBody)
+      if (
+        requestBody?.position === EPositionBanner.AlwaysPopup ||
+        requestBody?.position === EPositionBanner.PopupOnce
+      ) {
+        const verify = await this.bannerService.getPosition(bannerId)
+        console.log('verify :>> ', JSON.stringify(verify))
+        if (verify) {
+          return {
+            success: false,
+            item: null,
+            message: 'Ya existe un banner activo para esta posición.',
+          }
+        }
+      }
       if (requestBody?.images) {
         requestBody.images = await fxMoveImages(requestBody.images)
       }
