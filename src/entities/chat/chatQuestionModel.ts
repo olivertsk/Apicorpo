@@ -30,6 +30,9 @@ export interface IChatQuestionFilter {
   limit?: number
   name?: string | null
   isClient?: boolean
+  sort?: any
+  filters?: any
+  search?: string
 }
 
 export interface IChatShowClientFilter {

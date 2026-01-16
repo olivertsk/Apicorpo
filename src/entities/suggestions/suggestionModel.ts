@@ -16,6 +16,9 @@ export interface ISuggestionFilter {
   limit?: number
   title?: string
   order?: string
+  filters?: any
+  sort?: any
+  search?: string
 }
 
 export enum ESuggestionType {
@@ -145,9 +148,6 @@ export function fxSuggestionFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'suggestions',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
       freezeTableName: true,
       timestamps: true,
       paranoid: true,

@@ -59,7 +59,6 @@ class NotificationsService {
       }
       return { data: vResponse }
     } catch (error) {
-      console.log('error service :>> ', error)
       throw error
     }
   }
@@ -80,7 +79,6 @@ class NotificationsService {
     userIds: string[]
   ): Promise<boolean> {
     const notifications: INotificationAttributes[] = []
-    console.log('userIds :>> ', userIds)
     if (modelNotification?.sequelize) {
       const transaction: Transaction = await modelNotification.sequelize.transaction()
       try {
@@ -103,7 +101,6 @@ class NotificationsService {
         return true
       } catch (error) {
         await transaction.rollback()
-        console.log('error :>> ', error)
         throw error
       }
     }

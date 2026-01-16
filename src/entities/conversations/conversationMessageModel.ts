@@ -114,11 +114,9 @@ export const vConversationMessageModelAttributes: SequelizeAttributes<IConversat
       get() {
         const rawValue = this.getDataValue('metadata')
         const formatValue = rawValue ? JSON.parse(rawValue) : null
-        console.log('formatValue :>> ', formatValue)
         return formatValue
       },
       set(value) {
-        console.log('value :>> ', value)
         this.setDataValue('metadata', value ? JSON.stringify(value) : null)
       },
     },

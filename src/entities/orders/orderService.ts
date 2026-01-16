@@ -14,7 +14,13 @@ import {
   type IOrderInstance,
   EWasSent,
 } from '@entities/orders/orderModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '../../utils/query'
 import type { IOrderProductAttributes, IOrderProductCreationAttributes } from './orderProductModel'
 
 class OrdersService {
@@ -147,6 +153,7 @@ class OrdersService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
       whereStatement.where = fxSearchILike(
         pParam,
         whereStatement,
@@ -163,6 +170,11 @@ class OrdersService {
           userId: pParam.userId,
         }
       } else {
+        if (pParam.userId) {
+          whereStatement.where = {
+            userId: pParam.userId,
+          }
+        }
         whereStatement.include = [
           {
             model: modelUser,
@@ -188,11 +200,9 @@ class OrdersService {
 
   public async create(itemCreationParams: IOrderCreationAttributes): Promise<IOrderAttributes> {
     try {
-      console.log('itemCreationParams :>> ', itemCreationParams)
       const vResponse: IOrderAttributes = await modelOrder.create(itemCreationParams)
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -288,7 +298,6 @@ class OrdersService {
       let month
       let year
       if (param?.fe) {
-        console.log('param.fecha :>> ', param.fe)
         day = new Date(param.fe).getDate()
         month = new Date(param.fe).getMonth() + 1
         year = new Date(param.fe).getFullYear()
@@ -311,9 +320,6 @@ class OrdersService {
       //   ...('wasSent' in param && !param.product ? { wasSent: EWasSent.noSent } : {}),
       //   ...('wasSent' in param && param.product ? { wasSent: EWasSent.sentOrder } : {}),
       // }
-      console.log('day :>> ', day)
-      console.log('month :>> ', month)
-      console.log('year :>> ', year)
       if ('fe' in param && param?.fe) {
         whereCondition = {
           ...(param.fe && {
@@ -370,7 +376,6 @@ class OrdersService {
       }
       return orders
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

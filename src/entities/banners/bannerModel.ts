@@ -42,6 +42,9 @@ export interface IBannerFilter {
   position?: EPositionBanner
   isClient?: boolean
   typeSearch?: string
+  filters?: any
+  sort?: any
+  search?: string
 }
 export type IBannerCreationAttributes = Pick<IBannerAttributes, 'id'> &
   Partial<Pick<IBannerAttributes, 'name' | 'images'>> & {
@@ -126,9 +129,6 @@ export function fxBannerFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'banners',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
       freezeTableName: true,
       timestamps: true,
       paranoid: true,

@@ -9,7 +9,13 @@ import {
   type IConversationFullCreation,
   EConversationStatus,
 } from '@entities/conversations/conversationModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+} from '../../utils/query'
 import { type IConversationMessageCreationAttributes } from './conversationMessageModel'
 
 class ConversationsService {
@@ -93,6 +99,8 @@ class ConversationsService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       if (pParam.userId) {
         whereStatement.where = {
           ...whereStatement.where,
@@ -125,7 +133,6 @@ class ConversationsService {
       }
       return { data: vResponse }
     } catch (error) {
-      console.log('error services :>> ', error)
       throw error
     }
   }
@@ -134,11 +141,9 @@ class ConversationsService {
     itemCreationParams: IConversationCreationAttributes
   ): Promise<IConversationAttributes> {
     try {
-      console.log('viewCreationParams :>> ', itemCreationParams)
       const vResponse: IConversationAttributes = await modelConversation.create(itemCreationParams)
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

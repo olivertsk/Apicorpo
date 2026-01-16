@@ -6,7 +6,14 @@ import {
   type IResponseAllMap,
   type IMapInstance,
 } from '@entities/maps/mapModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '../../utils/query'
 
 class MapsService {
   async validate(data: any) {
@@ -31,6 +38,8 @@ class MapsService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       whereStatement.where = fxSearchILike(
         pParam,
         whereStatement,

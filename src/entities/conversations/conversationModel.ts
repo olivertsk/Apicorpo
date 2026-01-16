@@ -40,6 +40,9 @@ export interface IConversationFilter {
   pag?: number
   limit?: number
   userId?: IUserAttributes['id'] | null
+  filters?: any
+  sort?: any
+  search?: string
 }
 
 export type IConversationCreationAttributes = Pick<IConversationAttributes, 'id' | 'context'> & {

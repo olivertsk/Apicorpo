@@ -12,7 +12,7 @@ import {
   Delete,
   Put,
 } from 'tsoa'
-import {
+import type {
   ISurveyAnswerOptionAttributes,
   ISurveyAnswerOptionCreationAttributes,
   IResponseAllSurveyAnswerOption,
@@ -78,7 +78,6 @@ export class SurveyAnswerOptionsController extends Controller {
     @Body() requestBody: ISurveyAnswerOptionCreationAttributes
   ): Promise<{ success: boolean; item: ISurveyAnswerOptionAttributes | null; message?: string }> {
     try {
-      console.log('requestBody :>> ', requestBody)
       await this.surveyAnswerOptionService.validate(requestBody)
       console.log('paso validacion')
       const vItem: ISurveyAnswerOptionAttributes | null =

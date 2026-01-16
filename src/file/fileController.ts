@@ -80,10 +80,7 @@ export class FileController extends Controller {
     try {
       const fileName = requestBody.fileName
       const type = requestBody?.type
-      console.log('fileName :>> ', fileName)
       const filePath = path.join('uploads', fileName)
-      console.log('filePath :>> ', filePath)
-      console.log('type :>> ', type)
       if (fs.existsSync(filePath)) {
         if (type && fileName.includes('storage')) {
           switch (type) {
@@ -119,7 +116,6 @@ export class FileController extends Controller {
         return { success: false, message: fxI18n.__('file_not_found') }
       }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

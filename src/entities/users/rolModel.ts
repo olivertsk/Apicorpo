@@ -1,14 +1,15 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
-import { ModelRegistry } from '@db/index'
+import type { ModelRegistry } from '@db/index'
+import type { IPermissionCreationAttributes } from '@entities/permissions/permissionModel'
 
 export interface IRolAttributes {
   id?: string
   name: string
-  createdAt?: Date
-  updatedAt?: Date
-  deletedAt?: Date
+  createdAt?: Date | null
+  updatedAt?: Date | null
+  deletedAt?: Date | null
 }
 
 export interface IResponseAllRol {
@@ -24,7 +25,9 @@ export interface IRolFilter {
   name?: string | null
 }
 
-export type IRolCreationAttributes = Pick<IRolAttributes, 'id' | 'name'>
+export type IRolCreationAttributes = Pick<IRolAttributes, 'id' | 'name'> & {
+  permissions?: IPermissionCreationAttributes[]
+}
 
 export interface IRolInstance
   extends Model<IRolAttributes, IRolCreationAttributes>,
@@ -39,12 +42,12 @@ export const vRolModelAttributes: SequelizeAttributes<IRolAttributes> = {
   createdAt: {
     type: DataTypes.DATE,
     field: 'createdAt',
-    allowNull: false,
+    allowNull: true,
   },
   updatedAt: {
     type: DataTypes.DATE,
     field: 'updatedAt',
-    allowNull: false,
+    allowNull: true,
   },
   deletedAt: {
     type: DataTypes.DATE,
@@ -73,12 +76,17 @@ export function fxRolFactory(sequelize: Sequelize) {
     }
   )
   vRol.associate = function (models: ModelRegistry) {
-    const { modelUser, modelRol } = models
+    const { modelUser, modelRol, modelPermission } = models
     modelRol.hasMany(modelUser, {
       foreignKey: 'rolId',
       as: 'users',
     })
+    modelRol.hasMany(modelPermission, {
+      foreignKey: 'rolId',
+      as: 'permissions',
+    })
   }
+
   vRol.prototype.toJSON = function () {
     const values = { ...this.get() }
     delete values.password

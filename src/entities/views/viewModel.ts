@@ -8,6 +8,7 @@ export interface IViewAttributes {
   name: string
   route?: string
   url?: string
+  order?: number | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
@@ -26,10 +27,11 @@ export interface IViewFilter {
   name?: string | null
 }
 
-export type IViewCreationAttributes = Pick<IViewAttributes, 'id' | 'route' | 'url'> &
-  Partial<Pick<IViewAttributes, 'name'>> & {
-    icon?: string | null
-  }
+export type IViewCreationAttributes = Pick<IViewAttributes, 'route' | 'url' | 'name'> & {
+  id?: string
+  icon?: string | null
+  order?: number | null
+}
 
 export interface IViewInstance
   extends Model<IViewAttributes, IViewCreationAttributes>,
@@ -80,6 +82,12 @@ export const vViewModelAttributes: SequelizeAttributes<IViewAttributes> = {
     field: 'url',
     defaultValue: null,
     allowNull: true,
+  },
+  order: {
+    type: DataTypes.INTEGER,
+    field: 'order',
+    allowNull: true,
+    defaultValue: 0,
   },
 }
 

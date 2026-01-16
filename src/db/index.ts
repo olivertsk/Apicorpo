@@ -30,6 +30,7 @@ import { fxChatQuestionFactory } from '@entities/chat/chatQuestionModel'
 import { fxChatAnswerFactory } from '@entities/chat/ChatAnswerModel'
 import { fxConversationFactory } from '@entities/conversations/conversationModel'
 import { fxConversationMessageFactory } from '@entities/conversations/conversationMessageModel'
+import { fxPermissionFactory } from '@entities/permissions/permissionModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -66,12 +67,12 @@ export const modelChatQuestion = fxChatQuestionFactory(sequelize)
 export const modelChatAnswer = fxChatAnswerFactory(sequelize)
 export const modelConversation = fxConversationFactory(sequelize)
 export const modelConversationMessage = fxConversationMessageFactory(sequelize)
+export const modelPermission = fxPermissionFactory(sequelize)
 
 const models = {
   modelUser,
   modelRol,
   modelView,
-  // modelPermission,
   modelCategory,
   modelDepartment,
   modelProduct,
@@ -95,6 +96,7 @@ const models = {
   modelChatAnswer,
   modelConversation,
   modelConversationMessage,
+  modelPermission,
 }
 
 export type ModelRegistry = typeof models

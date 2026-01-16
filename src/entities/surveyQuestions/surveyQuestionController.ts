@@ -12,7 +12,7 @@ import {
   Delete,
   Put,
 } from 'tsoa'
-import {
+import type {
   ISurveyQuestionAttributes,
   ISurveyQuestionCreationAttributes,
   IResponseAllSurveyQuestion,
@@ -79,7 +79,6 @@ export class SurveyQuestionsController extends Controller {
     @Body() requestBody: ISurveyQuestionCreationAttributes
   ): Promise<{ success: boolean; item: ISurveyQuestionAttributes | null; message?: string }> {
     try {
-      console.log('requestBody :>> ', requestBody)
       await this.surveyQuestionService.validate(requestBody)
       console.log('paso validacion')
       const vItem: ISurveyQuestionAttributes | null =
@@ -112,7 +111,6 @@ export class SurveyQuestionsController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

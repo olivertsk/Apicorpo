@@ -13,7 +13,7 @@ import {
   Put,
   Request,
 } from 'tsoa'
-import {
+import type {
   IDepartmentAttributes,
   IDepartmentCreationAttributes,
   IResponseAllDepartment,
@@ -21,7 +21,7 @@ import {
 } from '@entities/departments/departmentModel'
 import DepartmentService from '@entities/departments/departmentService'
 import { fxI18n } from '@utils/i18n'
-import { IUserAttributes } from '@users/userModel'
+import type { IUserAttributes } from '@users/userModel'
 import { fxMoveImages } from '@utils/helpers'
 
 @Route('departments')

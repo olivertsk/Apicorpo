@@ -77,13 +77,11 @@ export class BannersController extends Controller {
   ): Promise<{ success: boolean; item: IBannerAttributes | null; message?: string }> {
     try {
       await this.bannerService.validate(requestBody)
-      console.log('requestBody :>> ', requestBody)
       if (
         requestBody?.position === EPositionBanner.AlwaysPopup ||
         requestBody?.position === EPositionBanner.PopupOnce
       ) {
         const verify = await this.bannerService.getPosition()
-        console.log('verify :>> ', JSON.stringify(verify))
         if (verify) {
           return {
             success: false,
@@ -115,13 +113,11 @@ export class BannersController extends Controller {
   ): Promise<{ success: boolean; item: IBannerAttributes | null; message?: string }> {
     try {
       await this.bannerService.validate(requestBody)
-      console.log('requestBody update :>> ', requestBody)
       if (
         requestBody?.position === EPositionBanner.AlwaysPopup ||
         requestBody?.position === EPositionBanner.PopupOnce
       ) {
         const verify = await this.bannerService.getPosition(bannerId)
-        console.log('verify :>> ', JSON.stringify(verify))
         if (verify) {
           return {
             success: false,

@@ -14,7 +14,14 @@ import type {
   IResponseAllSurveyResponse,
   ISurveyResponseCreation,
 } from '@entities/surveyResponses/surveyResponseModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '@utils/query'
 import type { IResponseAllSurvey, ISurveyAttributes } from '@entities/surveys/surveyModel'
 import type {
   IResponseAllSurveyUser,
@@ -77,6 +84,8 @@ class SurveyResponseService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       whereStatement.where = fxSearchILike(pParam, whereStatement, 'name', modelSurveyResponse.name)
       if (pParam.userId) {
         whereStatement.where = {
@@ -97,7 +106,6 @@ class SurveyResponseService {
       }
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -142,7 +150,6 @@ class SurveyResponseService {
 
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -186,7 +193,6 @@ class SurveyResponseService {
 
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -219,7 +225,6 @@ class SurveyResponseService {
 
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -233,7 +238,6 @@ class SurveyResponseService {
   //     )
   //     return vResponse
   //   } catch (error) {
-  //     console.log('error :>> ', error)
   //     throw error
   //   }
   // }
@@ -245,7 +249,6 @@ class SurveyResponseService {
         await modelSurveyResponse.bulkCreate(creationData)
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

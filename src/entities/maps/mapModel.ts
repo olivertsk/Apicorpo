@@ -30,6 +30,9 @@ export interface IMapFilter {
   limit?: number
   name?: string | null
   isClient?: boolean
+  filters?: any
+  sort?: any
+  search?: string
 }
 export type IMapCreationAttributes = Pick<IMapAttributes, 'id'> &
   Partial<Pick<IMapAttributes, 'name' | 'image' | 'map'>> & {
@@ -132,7 +135,6 @@ export function fxMapFactory(sequelize: Sequelize) {
         attributes: {
           exclude: ['deletedAt'],
         },
-        order: [['createdAt', 'DESC']],
       },
       freezeTableName: true,
       timestamps: true,

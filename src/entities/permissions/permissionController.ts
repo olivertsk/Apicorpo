@@ -13,31 +13,31 @@ import {
   Put,
 } from 'tsoa'
 import type {
-  IViewAttributes,
-  IViewCreationAttributes,
-  IResponseAllView,
-  IViewFilter,
-} from '@entities/views/viewModel'
-import ViewService from '@entities/views/viewService'
+  IPermissionAttributes,
+  IPermissionCreationAttributes,
+  IResponseAllPermission,
+  IPermissionFilter,
+} from '@entities/permissions/permissionModel'
+import PermissionService from '@entities/permissions/permissionService'
 import { fxI18n } from '@utils/i18n'
 
-@Route('views')
-@Tags('View')
-export class ViewsController extends Controller {
-  private viewService: typeof ViewService
+@Route('permissions')
+@Tags('Permission')
+export class PermissionsController extends Controller {
+  private permissionService: typeof PermissionService
 
   constructor() {
     super()
-    this.viewService = ViewService
+    this.permissionService = PermissionService
   }
 
   @Security('bearerAuth', ['admin'])
-  @Get('/show/{viewId}')
+  @Get('/show/{permissionId}')
   public async get(
-    @Path() viewId: string
-  ): Promise<{ data: IViewAttributes | null; message?: string }> {
+    @Path() permissionId: string
+  ): Promise<{ data: IPermissionAttributes | null; message?: string }> {
     try {
-      const vResponse: IViewAttributes | null = await this.viewService.get(viewId)
+      const vResponse: IPermissionAttributes | null = await this.permissionService.get(permissionId)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -47,21 +47,15 @@ export class ViewsController extends Controller {
     }
   }
 
-  /**
-   * @summary Obtener todos los datos con paginación.
-   * @param {number} page - Número de página.
-   * @param {number} count - Cantidad de datos por página.
-   * @returns {Promise<{ data: views: IViewAttributes[] | IResponseAllView, message?: string }>}
-   */
   @Security('bearerAuth', ['admin'])
   @Get('/all')
-  public async all(@Queries() pQueryParams: IViewFilter): Promise<{
-    data: IViewAttributes[] | IResponseAllView
+  public async all(@Queries() pQueryParams: IPermissionFilter): Promise<{
+    data: IPermissionAttributes[] | IResponseAllPermission
     message?: string
   }> {
     try {
-      const vResponse: IViewAttributes[] | IResponseAllView =
-        await this.viewService.all(pQueryParams)
+      const vResponse: IPermissionAttributes[] | IResponseAllPermission =
+        await this.permissionService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
@@ -74,12 +68,12 @@ export class ViewsController extends Controller {
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
   public async create(
-    @Body() requestBody: IViewCreationAttributes
-  ): Promise<{ success: boolean; item: IViewAttributes | null; message?: string }> {
+    @Body() requestBody: IPermissionCreationAttributes
+  ): Promise<{ success: boolean; item: IPermissionAttributes | null; message?: string }> {
     try {
-      await this.viewService.validate(requestBody)
+      await this.permissionService.validate(requestBody)
       console.log('paso validacion')
-      const vItem: IViewAttributes | null = await this.viewService.create(requestBody)
+      const vItem: IPermissionAttributes | null = await this.permissionService.create(requestBody)
       console.log('deberia crear')
       this.setStatus(201) // set return status 201
       return { success: true, item: vItem }
@@ -90,14 +84,17 @@ export class ViewsController extends Controller {
 
   @Security('bearerAuth', ['admin'])
   @SuccessResponse('200', 'Update') // Custom success response
-  @Put('/update/{viewId}')
+  @Put('/update/{permissionId}')
   public async update(
-    @Path() viewId: string,
-    @Body() requestBody: IViewCreationAttributes
-  ): Promise<{ success: boolean; item: IViewAttributes | null; message?: string }> {
+    @Path() permissionId: string,
+    @Body() requestBody: IPermissionCreationAttributes
+  ): Promise<{ success: boolean; item: IPermissionAttributes | null; message?: string }> {
     try {
-      await this.viewService.validate(requestBody)
-      const vItem: IViewAttributes | null = await this.viewService.update(requestBody, viewId)
+      await this.permissionService.validate(requestBody)
+      const vItem: IPermissionAttributes | null = await this.permissionService.update(
+        requestBody,
+        permissionId
+      )
       if (vItem) {
         this.setStatus(200) // set return status 200
         return { success: true, item: vItem }
@@ -108,11 +105,7 @@ export class ViewsController extends Controller {
       throw error
     }
   }
-  /**
-   * @summary Eliminar una historia por ID.
-   * @param {string} key - ID de la historia a eliminar.
-   * @returns {Promise<{ success: boolean; message?: string }>} - Resultado de la operación.
-   */
+
   @Delete('/deleted/{key}')
   @Security('bearerAuth', ['admin'])
   public async softDeleteRecord(
@@ -120,7 +113,7 @@ export class ViewsController extends Controller {
   ): Promise<{ success: boolean; message?: string }> {
     try {
       this.setStatus(200) // set return success 201
-      const vResponse = await this.viewService.softDeleteRecord(key)
+      const vResponse = await this.permissionService.softDeleteRecord(key)
       if (vResponse) {
         this.setStatus(200)
         return { success: true }

@@ -12,7 +12,7 @@ import {
   Put,
   Delete,
 } from 'tsoa'
-import {
+import type {
   IRolAttributes,
   IRolCreationAttributes,
   IResponseAllRol,
@@ -20,15 +20,19 @@ import {
 } from '@users/rolModel'
 import RolsService from '@users/rolService'
 import { fxI18n } from '@utils/i18n'
+import type { IPermissionCreationAttributes } from '@entities/permissions/permissionModel'
+import PermissionService from '@entities/permissions/permissionService'
 
 @Route('rols')
 @Tags('Rol')
 export class RolsController extends Controller {
   private rolService: typeof RolsService
+  private permissionService: typeof PermissionService
 
   constructor() {
     super()
     this.rolService = RolsService
+    this.permissionService = PermissionService
   }
 
   @Security('bearerAuth', ['admin'])
@@ -40,7 +44,7 @@ export class RolsController extends Controller {
       const vResponse: IRolAttributes | null = await this.rolService.get(rolId)
       this.setStatus(200)
       return { data: vResponse }
-    } catch (error) {
+    } catch {
       this.setStatus(500)
       return { data: null, message: 'Ocurrió un error' }
     }
@@ -61,7 +65,7 @@ export class RolsController extends Controller {
       const vResponse: IRolAttributes[] | IResponseAllRol = await this.rolService.all(pQueryParams)
       this.setStatus(200)
       return { data: vResponse }
-    } catch (error) {
+    } catch {
       this.setStatus(500)
       return { data: [], message: fxI18n.__('error') }
     }
@@ -70,12 +74,28 @@ export class RolsController extends Controller {
   @Security('bearerAuth', ['admin'])
   @SuccessResponse('201', 'Created') // Custom success response
   @Post('/create')
-  public async create(@Body() requestBody: IRolCreationAttributes): Promise<IRolAttributes | null> {
+  public async create(
+    @Body() requestBody: IRolCreationAttributes
+  ): Promise<{ success: boolean; item: IRolAttributes | null; message?: string }> {
     try {
-      this.setStatus(201) // set return status 201
+      const permissions = requestBody.permissions
+      if ('permissions' in requestBody) {
+        delete requestBody.permissions
+      }
       await this.rolService.validate(requestBody)
-      const item = await this.rolService.create(requestBody)
-      return item
+      const vItem: IRolAttributes | null = await this.rolService.create(requestBody)
+      if (permissions?.length) {
+        // Crear nuevas relaciones
+        const permissionsCreate: IPermissionCreationAttributes[] = permissions.map(
+          (permission) => ({
+            ...permission,
+            rolId: vItem.id,
+          })
+        )
+        await this.permissionService.bulkCreate(permissionsCreate, vItem.id)
+      }
+      this.setStatus(201) // set return status 201
+      return { success: true, item: vItem }
     } catch (error) {
       throw error
     }
@@ -83,15 +103,29 @@ export class RolsController extends Controller {
 
   @Security('bearerAuth', ['admin'])
   @SuccessResponse('200', 'Update') // Custom success response
-  @Put('/update/{rolId}')
+  @Put('/{rolId}')
   public async update(
     @Path() rolId: string,
     @Body() requestBody: IRolCreationAttributes
   ): Promise<{ success: boolean; item: IRolAttributes | null; message?: string }> {
     try {
+      const permissions = requestBody.permissions
+      if ('permissions' in requestBody) {
+        delete requestBody.permissions
+      }
       await this.rolService.validate(requestBody)
       const vItem: IRolAttributes | null = await this.rolService.update(requestBody, rolId)
       if (vItem) {
+        if (permissions?.length) {
+          // Crear nuevas relaciones
+          const permissionsCreate: IPermissionCreationAttributes[] = permissions.map(
+            (permission) => ({
+              ...permission,
+              rolId: vItem.id,
+            })
+          )
+          await this.permissionService.bulkCreate(permissionsCreate, vItem.id)
+        }
         this.setStatus(200) // set return status 200
         return { success: true, item: vItem }
       }

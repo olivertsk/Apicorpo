@@ -14,7 +14,14 @@ import type {
   IProductAttributesResponse,
   IProductFilter,
 } from '@entities/products/productModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '../../utils/query'
 import type {
   IProductImageAttributes,
   IProductImageCreationAttributes,
@@ -31,7 +38,6 @@ class ProductsService {
     id: string
     userId?: string | null
   }): Promise<IProductAttributes | null> {
-    console.log('pParams.id :>> ', pParams.id)
     try {
       const whereStatement: FindOptions = {}
       whereStatement.where = {
@@ -99,10 +105,12 @@ class ProductsService {
 
   public async all(pParam: IProductFilter): Promise<IResponseAllProduct> {
     try {
-      pParam.limit = 50
+      pParam.limit = pParam?.limit || 50
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       whereStatement.where = fxSearchILike(
         pParam,
         whereStatement,
@@ -240,7 +248,6 @@ class ProductsService {
       }
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -300,7 +307,6 @@ class ProductsService {
         },
       }
       whereStatement.limit = 50
-      whereStatement.logging = false
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
 
       // Ordenar los resultados por la cantidad de letras comunes en los nombres

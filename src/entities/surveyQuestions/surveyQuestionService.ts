@@ -54,7 +54,6 @@ class SurveyQuestionService {
       }
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -70,7 +69,6 @@ class SurveyQuestionService {
 
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -94,7 +92,6 @@ class SurveyQuestionService {
   //     }
   //     return null
   //   } catch (error) {
-  //     console.log('error :>> ', error)
   //     throw error
   //   }
   // }
@@ -115,7 +112,6 @@ class SurveyQuestionService {
       }
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

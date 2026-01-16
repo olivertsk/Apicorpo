@@ -26,14 +26,13 @@ export const fxSendMail = (data: any, email: string, subject: string) => {
     html: correoHTML,
   }
 
-  transporter.sendMail(mail, (error: any, info: any) => {
+  transporter.sendMail(mail, (error: any, _info: any) => {
     if (error) {
       console.error('Error sending email: ', error)
     } //end if
     else {
       console.log('Email sent.')
     } //end else
-    console.log('info :>> ', info)
   })
 }
 export const sendTemplate = (html: any, emails: string[]) => {
@@ -44,13 +43,12 @@ export const sendTemplate = (html: any, emails: string[]) => {
     html: html,
   }
 
-  transporter.sendMail(mail, (error: any, info: any) => {
+  transporter.sendMail(mail, (error: any, _info: any) => {
     if (error) {
       console.error('Error sending email: ', error)
     } //end if
     else {
       console.log('Email sent.')
     } //end else
-    console.log('info :>> ', info)
   })
 }

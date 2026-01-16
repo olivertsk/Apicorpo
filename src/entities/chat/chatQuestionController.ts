@@ -140,7 +140,6 @@ export class ChatQuestionsController extends Controller {
       this.setStatus(201)
       return { success: true, items: createdItems }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

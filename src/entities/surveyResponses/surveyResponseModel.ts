@@ -1,7 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
-import { ModelRegistry } from '@db/index'
+import type { ModelRegistry } from '@db/index'
 
 export interface IResponseAllSurveyResponse {
   total?: number
@@ -16,6 +16,9 @@ export interface ISurveyResponseFilter {
   title?: string
   order?: string
   userId?: string
+  filters?: any
+  sort?: any
+  search?: string
 }
 export interface ISurveyResponseAttributes {
   id?: string
@@ -133,9 +136,6 @@ export function fxSurveyResponseFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'survey_responses',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
       freezeTableName: true,
       timestamps: true,
     }

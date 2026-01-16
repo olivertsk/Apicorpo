@@ -70,6 +70,9 @@ export interface IOrderFilter {
   isClient?: boolean
   rolType?: string
   userId?: string
+  filters?: any
+  sort?: any
+  search?: string
 }
 
 export type IOrderCreationAttributes = Pick<IOrderAttributes, 'id'> &

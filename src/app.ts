@@ -99,7 +99,6 @@ app.get('/detalle.php', async (pReq, pRes) => {
         if (item?.tax) {
           tax = item.tax
         }
-        console.log('item.product :>> ', item.product)
         const date = item.createdAt.toString().split('T')[0]
         if (item?.product) {
           resposeOrder.push({
@@ -113,12 +112,9 @@ app.get('/detalle.php', async (pReq, pRes) => {
             pisv: item.tax || tax || 0,
             subtotal: item.subtotal + ',',
           })
-        } else {
-          console.log('item :>> ', item)
         }
       }
     }
-    console.log('resposeOrder :>> ', resposeOrder)
     if (resposeOrder.length) {
       let csv = json2csv(resposeOrder, { delimiter: ',', eol: '\n' })
       csv = csv.replace(/['"]+/g, '')
@@ -181,9 +177,6 @@ app.get('/archivophp.php', async (req, res) => {
       const observation = cleanString(item?.observation) || '1'
       const email = cleanString(item?.dataUser?.email)
       const date = item?.createdAt?.toString()?.split('T')[0] || ''
-      if (nameClient === 'KEN KEN') {
-        console.log('item :>> ', item)
-      }
       resposeOrder.push({
         codfmv: '03',
         id: item.code,

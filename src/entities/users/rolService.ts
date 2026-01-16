@@ -19,6 +19,13 @@ class RolsService {
         where: {
           id,
         },
+        attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+        include: [
+          {
+            association: 'permissions',
+            required: false,
+          },
+        ],
       })
       return vResponse
     } catch (error) {
@@ -37,6 +44,13 @@ class RolsService {
         pParam?.typeSearch || 'name',
         modelRol.name
       )
+      whereStatement.include = [
+        {
+          association: 'permissions',
+          required: false,
+          attributes: ['id'],
+        },
+      ]
       const vResponse: IRolAttributes[] = await modelRol.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllRol = await fxReponseServices(
@@ -53,9 +67,9 @@ class RolsService {
     }
   }
 
-  public async create(viewCreationParams: IRolCreationAttributes): Promise<IRolAttributes> {
+  public async create(itemCreationParams: IRolCreationAttributes): Promise<IRolAttributes> {
     try {
-      const vResponse: IRolAttributes = await modelRol.create(viewCreationParams)
+      const vResponse: IRolAttributes = await modelRol.create(itemCreationParams)
       return vResponse
     } catch (error) {
       throw error
@@ -81,7 +95,6 @@ class RolsService {
       }
       return null
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

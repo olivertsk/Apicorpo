@@ -1,6 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
+import type { ModelRegistry } from '@db/index'
 
 export interface IPermissionAttributes {
   id?: string
@@ -9,9 +10,17 @@ export interface IPermissionAttributes {
   post: boolean
   put: boolean
   delete: boolean
-  createdAt?: Date
-  updatedAt?: Date
-  deletedAt?: Date
+  createdAt?: Date | null
+  updatedAt?: Date | null
+  deletedAt?: Date | null
+}
+
+export interface Permission {
+  id: string
+  name: string
+  description?: string
+  path: string // Ruta asociada al permiso
+  group: string // Grupo de menú (ej: "Leads", "Contactos", etc.)
 }
 
 export interface IResponseAllPermission {
@@ -24,15 +33,18 @@ export interface IResponseAllPermission {
 export interface IPermissionFilter {
   pag?: number
   limit?: number
-  name?: string | null
+  name?: string
 }
+// export type IGroupCreationAttributes = Pick<IGroupAttributes, 'id' | 'name'> & Partial<Pick<IGroupAttributes, 'status' >>;
 
-export type IPermissionCreationAttributes = Pick<IPermissionAttributes, 'id'> &
-  Partial<Pick<IPermissionAttributes, 'rolId' | 'viewId'>> & {
-    post: boolean | false
-    put: boolean | false
-    delete: boolean | false
-  }
+export type IPermissionCreationAttributes = Pick<
+  IPermissionAttributes,
+  'id' | 'rolId' | 'viewId'
+> & {
+  post?: boolean | false
+  put?: boolean | false
+  delete?: boolean | false
+}
 
 export interface IPermissionInstance
   extends Model<IPermissionAttributes, IPermissionCreationAttributes>,
@@ -107,7 +119,7 @@ export function fxPermissionFactory(sequelize: Sequelize) {
       ...vPermissionModelAttributes,
     },
     {
-      tableName: 'views',
+      tableName: 'permissions',
       defaultScope: {
         order: [['createdAt', 'DESC']],
       },
@@ -117,6 +129,13 @@ export function fxPermissionFactory(sequelize: Sequelize) {
     }
   )
 
+  vPermission.associate = function (models: ModelRegistry) {
+    const { modelPermission, modelView } = models
+    modelPermission.belongsTo(modelView, {
+      foreignKey: 'viewId',
+      as: 'view',
+    })
+  }
   vPermission.prototype.toJSON = function () {
     const values = { ...this.get() }
     delete values.password

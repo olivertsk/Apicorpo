@@ -11,9 +11,7 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ) {
-  console.log('error in :>> ', req.url)
   if (err instanceof ValidateError) {
-    console.log('err?.fields :>> ', err?.fields)
     let validationErrors: any
     if (
       err?.fields?.requestBody?.message.includes(
@@ -24,7 +22,6 @@ export function errorHandler(
         'Could not match the intersection against every type. Issues: ',
         ''
       )
-      console.log('validationErrors 1:>>', validationErrors)
     } else if (
       err?.fields?.requestBody?.message.includes(
         'Could not match intersection against any of the possible combinations: '
@@ -37,7 +34,6 @@ export function errorHandler(
     } else {
       validationErrors = err?.fields
     }
-    console.log('validationErrors :>> ', validationErrors)
     validationErrors =
       validationErrors && typeof validationErrors === 'string' ? JSON.parse(validationErrors) : [{}]
     let keys
@@ -46,18 +42,12 @@ export function errorHandler(
     } else {
       keys = Object.keys(validationErrors)
     }
-    console.log('keys :>> ', keys)
     const errors = []
     for (const key of keys) {
-      console.log('validationErrors :>> ', validationErrors)
-      console.log('key :>> ', key)
       const element = validationErrors[0][key]
       const messages = element.message
-      console.log('messages :>> ', messages)
       const startQuoteIndex = messages.indexOf("'")
       const endQuoteIndex = messages.lastIndexOf("'")
-      console.log('startQuoteIndex !== -1 :>> ', startQuoteIndex !== -1)
-      console.log('endQuoteIndex !== -1 :>> ', endQuoteIndex !== -1)
       if (startQuoteIndex !== -1 && endQuoteIndex !== -1) {
         const field = messages.slice(startQuoteIndex + 1, endQuoteIndex)
         const message = messages.slice(endQuoteIndex + 2) // Agregamos 2 para saltar el espacio y el texto "is required"
@@ -126,7 +116,6 @@ export function errorHandler(
       request: req.body,
       time: new Date().toISOString(),
     }
-    console.log('errorDetails :>> ', errorDetails)
     // if (!err?.status || err?.status !== 401) {
     //   errorService.create(errorDetails)
     // }

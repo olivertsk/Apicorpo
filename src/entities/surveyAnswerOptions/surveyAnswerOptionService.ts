@@ -77,7 +77,6 @@ class SurveyAnswerOptionService {
       )
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

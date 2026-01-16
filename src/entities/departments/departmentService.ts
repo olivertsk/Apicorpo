@@ -12,7 +12,14 @@ import type {
   IResponseAllDepartment,
   IDepartmentInstance,
 } from '@entities/departments/departmentModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '../../utils/query'
 
 class DepartmentsService {
   async validate(data: any) {
@@ -81,6 +88,8 @@ class DepartmentsService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       whereStatement.where = fxSearchILike(
         pParam,
         whereStatement,

@@ -104,9 +104,6 @@ export class A2IntegrationController extends Controller {
         const observation = cleanString(item?.observation) || '1'
         const email = cleanString(item?.dataUser?.email)
         const date = item?.createdAt?.toString()?.split('T')[0] || ''
-        if (nameClient === 'KEN KEN') {
-          console.log('item :>> ', item)
-        }
         resposeOrder.push({
           codfmv: '03',
           id: item.code,
@@ -167,7 +164,6 @@ export class A2IntegrationController extends Controller {
           if (item?.tax) {
             tax = item.tax
           }
-          console.log('item.product :>> ', item.product)
           const date = item.createdAt.toString().split('T')[0]
           if (item?.product) {
             resposeOrder.push({
@@ -181,8 +177,6 @@ export class A2IntegrationController extends Controller {
               pisv: tax,
               subtotal: item.subtotal + ',',
             })
-          } else {
-            console.log('item :>> ', item)
           }
         }
       }
@@ -243,7 +237,6 @@ export class A2IntegrationController extends Controller {
           item[header] = record
         }
         let finalItem = item
-        console.log('finalItem :>> ', finalItem)
         if (currentTable === 'product') {
           const existence = Number(item.existence.replace(',', '.'))
           finalItem = {
@@ -255,7 +248,6 @@ export class A2IntegrationController extends Controller {
             stock: existence < 0 ? 0 : existence,
             tax: item.tax,
           }
-          console.log('finalItem2 :>> ', finalItem)
           delete item.code
           delete item.name
           delete item.catalogueCode
@@ -290,7 +282,6 @@ export class A2IntegrationController extends Controller {
       const jsonData = await this.convertToJSON(vData)
       let products: any[] = []
       // let categoryIds: { categoryId: string; productCode: null }[] = []
-      console.log('jsonData.product :>> ', jsonData?.product)
       if (jsonData?.catalogue) {
         for (const item of jsonData.catalogue) {
           const catalogue = {
@@ -355,7 +346,7 @@ export class A2IntegrationController extends Controller {
   @Post('/upload')
   public async uploadZip(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req: any
+    @Request() _req: any
   ): Promise<{ data: IUploadZipReponse }> {
     try {
       const tempDir = path.join('./uploads', 'masive')
@@ -377,8 +368,6 @@ export class A2IntegrationController extends Controller {
       this.setStatus(200)
       return { data: data }
     } catch (error) {
-      console.log('error :>> ', error)
-      console.log('req :>> ', req)
       throw error
     }
   }

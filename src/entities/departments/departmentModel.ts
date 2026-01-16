@@ -1,7 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
-import { ModelRegistry } from '@db/index'
+import type { ModelRegistry } from '@db/index'
 
 export interface IDepartmentAttributes {
   id?: string
@@ -32,6 +32,9 @@ export interface IDepartmentFilter {
   userId?: string | null
   isClient?: boolean
   categories?: boolean
+  filters?: any
+  sort?: any
+  search?: string
 }
 export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description'> &
   Partial<Pick<IDepartmentAttributes, 'name'>> & {
@@ -108,9 +111,6 @@ export function fxDepartmentFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'departments',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
       freezeTableName: true,
       timestamps: true,
       paranoid: true,

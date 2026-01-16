@@ -8,7 +8,14 @@ import {
   EPositionBanner,
   type IBannerFilter,
 } from '@entities/banners/bannerModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '../../utils/query'
 
 class BannersService {
   async validate(data: any) {
@@ -17,7 +24,6 @@ class BannersService {
   }
 
   public async getPosition(id?: string): Promise<IBannerAttributes | null> {
-    console.log('id :>> ', id)
     try {
       let whereStatement: FindOptions = {}
       whereStatement.where = {
@@ -35,7 +41,6 @@ class BannersService {
           },
         }
       }
-      whereStatement.logging = true
       const vResponse: IBannerAttributes | null = await modelBanner.findOne(whereStatement)
       return vResponse
     } catch (error) {
@@ -61,6 +66,8 @@ class BannersService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       whereStatement.where = fxSearchILike(
         pParam,
         whereStatement,
@@ -109,7 +116,6 @@ class BannersService {
     id: string
   ): Promise<IBannerAttributes | null> {
     try {
-      console.log('itemCreationParams :>> ', itemCreationParams)
       if (id) {
         const vResponse: IBannerInstance | null = await modelBanner.findOne({
           where: {

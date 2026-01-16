@@ -12,7 +12,7 @@ import {
   Delete,
   Put,
 } from 'tsoa'
-import {
+import type {
   IMapAttributes,
   IMapCreationAttributes,
   IResponseAllMap,
@@ -74,6 +74,7 @@ export class MapsController extends Controller {
     @Body() requestBody: IMapCreationAttributes
   ): Promise<{ success: boolean; item: IMapAttributes | null; message?: string }> {
     try {
+      console.log('maps create')
       await this.mapService.validate(requestBody)
       if (requestBody.image) {
         requestBody.image = await fxMoveImages(requestBody.image)
@@ -106,7 +107,6 @@ export class MapsController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

@@ -74,13 +74,15 @@ export class AuthController extends Controller {
           })
           if (existUser) {
             console.log('si existe un usuario')
-            const vUserJson = JSON.parse(JSON.stringify(existUser))
-            console.log('vUserJson.id :>> ', vUserJson.id)
-            delete vUserJson.deleted_at
-            delete vUserJson.created_at
-            delete vUserJson.updated_at
-            delete vUserJson.password
-            const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+            const vUserJSON = {
+              id: existUser.id,
+              name: existUser.name,
+              lastName: existUser.lastName,
+              email: existUser.email,
+              rolId: existUser.rolId,
+              uid: existUser.uid,
+            }
+            const vToken = jwt.sign(vUserJSON, AppConfig.JWT_SECRET_KEY, {})
             this.setStatus(201)
             return { success: true, user: existUser, token: vToken }
           }
@@ -95,12 +97,15 @@ export class AuthController extends Controller {
         if (vCreateUser.id) {
           const vUser = await this.userService.get(vCreateUser.id)
           if (vUser) {
-            const vUserJson = JSON.parse(JSON.stringify(vUser))
-            delete vUserJson.deleted_at
-            delete vUserJson.created_at
-            delete vUserJson.updated_at
-            delete vUserJson.password
-            const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+            const vUserJSON = {
+              id: vUser.id,
+              name: vUser.name,
+              lastName: vUser.lastName,
+              email: vUser.email,
+              rolId: vUser.rolId,
+              uid: vUser.uid,
+            }
+            const vToken = jwt.sign(vUserJSON, AppConfig.JWT_SECRET_KEY, {})
             this.setStatus(201)
             return { success: true, user: vUser, token: vToken }
           }
@@ -119,12 +124,15 @@ export class AuthController extends Controller {
           password: vHashedPassword,
         })
         if (vUser) {
-          const vUserJson = JSON.parse(JSON.stringify(vUser))
-          delete vUserJson.deleted_at
-          delete vUserJson.created_at
-          delete vUserJson.updated_at
-          delete vUserJson.password
-          const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+          const vUserJSON = {
+            id: vUser.id,
+            name: vUser.name,
+            lastName: vUser.lastName,
+            email: vUser.email,
+            rolId: vUser.rolId,
+            uid: vUser.uid,
+          }
+          const vToken = jwt.sign(vUserJSON, AppConfig.JWT_SECRET_KEY, {})
           this.setStatus(201)
           return { success: true, user: vUser, token: vToken }
         }
@@ -153,19 +161,21 @@ export class AuthController extends Controller {
         requestBody.password = vHashedPassword
         const vUser: IUserAttributes | null = await this.userService.create(requestBody)
         if (vUser) {
-          const vUserJson = JSON.parse(JSON.stringify(vUser))
-          delete vUserJson.deleted_at
-          delete vUserJson.created_at
-          delete vUserJson.updated_at
-          delete vUserJson.password
-          const vToken = jwt.sign(vUserJson, AppConfig.JWT_SECRET_KEY, {})
+          const vUserJSON = {
+            id: vUser.id,
+            name: vUser.name,
+            lastName: vUser.lastName,
+            email: vUser.email,
+            rolId: vUser.rolId,
+            uid: vUser.uid,
+          }
+          const vToken = jwt.sign(vUserJSON, AppConfig.JWT_SECRET_KEY, {})
           this.setStatus(201)
           return { success: true, user: vUser, token: vToken }
         }
       }
       return { success: true, user: null, message: 'Ocurrio un error' }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -194,7 +204,14 @@ export class AuthController extends Controller {
         if (vPasswordIsValid) {
           // No devolver la contraseña, incluso si está hasheada
           const vUserResponse: IUserAttributes = vUser
-          const vUserJSON = JSON.parse(JSON.stringify(vUser))
+          const vUserJSON = {
+            id: vUser.id,
+            name: vUser.name,
+            lastName: vUser.lastName,
+            email: vUser.email,
+            rolId: vUser.rolId,
+            uid: vUser.uid,
+          }
           const vToken = jwt.sign(vUserJSON, AppConfig.JWT_SECRET_KEY as Secret)
           this.setStatus(200) // HTTP 200 OK
           return { success: true, user: vUserResponse, token: vToken }
@@ -226,11 +243,9 @@ export class AuthController extends Controller {
         this.setStatus(401)
         return { success: false, data: null }
       }
-      console.log('userId :>> ', userId)
 
       const vUser: IUserAttributes | null = await this.userService.get(userId)
       if (vUser) {
-        console.log('vUser.id :>> ', vUser.id)
         this.setStatus(200) // HTTP 200
         return { success: true, data: vUser }
       } else {
@@ -238,7 +253,6 @@ export class AuthController extends Controller {
         return { success: false, data: null }
       }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -451,7 +465,6 @@ export class AuthController extends Controller {
       this.setStatus(401)
       return { success: false, user: null, message: fxI18n.__('invalid_password') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

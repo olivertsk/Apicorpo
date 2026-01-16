@@ -13,7 +13,7 @@ import {
   Put,
   Request,
 } from 'tsoa'
-import {
+import type {
   ISurveyResponseAttributes,
   ISurveyResponseCreationAttributes,
   ISurveyResponseFilter,
@@ -23,12 +23,12 @@ import SurveyResponseService from '@entities/surveyResponses/surveyResponseServi
 import { fxI18n } from '@utils/i18n'
 // import { IResponseAllSurvey } from '@entities/surveys/surveyModel';
 import SurveyUserService from '@entities/surveyUsers/surveyUserService'
-import {
+import type {
   IResponseAllSurveyUser,
   ISurveyUserAttributes,
   ISurveyUserUpdateAttributes,
 } from '@entities/surveyUsers/surveyUserModel'
-import { IUserAttributes } from '@users/userModel'
+import type { IUserAttributes } from '@users/userModel'
 // import { ITaskAttributes, ITaskCreationAttributes } from '@entities/tasks/taskModel';
 // import TaskService from '@entities/tasks/taskService'
 
@@ -122,7 +122,6 @@ export class SurveyResponsesController extends Controller {
         return { success: false, message: fxI18n.__('item_not_found') }
       }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

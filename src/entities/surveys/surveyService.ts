@@ -12,7 +12,13 @@ import type {
   ISurveyInstance,
   IResponseAllSurvey,
 } from '@entities/surveys/surveyModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
+import {
+  fxMuiFilters,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '@utils/query'
 
 class SurveyService {
   async validate(data: any) {
@@ -72,10 +78,10 @@ class SurveyService {
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
       whereStatement.where = fxSearchILike(pParam, whereStatement, 'title', modelSurvey.name)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
       if (pParam.order === 'date') {
         whereStatement.order = [['date', 'DESC']]
       }
-      whereStatement.logging = false
       const vResponse: ISurveyAttributes[] = await modelSurvey.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllSurvey = await fxReponseServices(
@@ -120,7 +126,6 @@ class SurveyService {
       const vResponse: ISurveyAttributes = await modelSurvey.create(surveyCreationParams)
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

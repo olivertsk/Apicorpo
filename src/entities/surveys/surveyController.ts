@@ -13,7 +13,7 @@ import {
   Put,
   Request,
 } from 'tsoa'
-import {
+import type {
   ISurveyAttributes,
   ISurveyCreationAttributes,
   IResponseAllSurvey,
@@ -21,8 +21,11 @@ import {
 } from '@entities/surveys/surveyModel'
 import SurveyService from '@entities/surveys/surveyService'
 import { fxI18n } from '@utils/i18n'
-import { IUserAttributes } from '@users/userModel'
-
+import type { IUserAttributes } from '@users/userModel'
+interface leftSurveyParams {
+  type: string
+  userId?: string
+}
 @Route('surveys')
 @Tags('Survey')
 export class SurveysController extends Controller {
@@ -80,17 +83,12 @@ export class SurveysController extends Controller {
   @Security('bearerAuth', [])
   @Get('/leftSurvey')
   public async leftSurvey(
-    @Queries()
-    pQueryParams: {
-      type: string
-      userId?: string
-    },
+    @Queries() pQueryParams: leftSurveyParams,
     @Request() request: { auth: IUserAttributes }
   ): Promise<{
     data: ISurveyAttributes[] | IResponseAllSurvey
     message?: string
   }> {
-    console.log('request?.auth :>> ', request?.auth)
     try {
       if (request.auth.id) {
         const parameter = {
@@ -106,7 +104,6 @@ export class SurveysController extends Controller {
         return { data: [] }
       }
     } catch (error) {
-      console.log('error :>> ', error)
       this.setStatus(500)
       return { data: [], message: 'Ocurrió un error' }
     }
@@ -136,8 +133,6 @@ export class SurveysController extends Controller {
     @Body() requestBody: ISurveyAttributes
   ): Promise<{ success: boolean; item: ISurveyAttributes | null; message?: string }> {
     try {
-      console.log('requestBody :>> ', requestBody)
-
       await this.surveyService.validate(requestBody)
       const vItem: ISurveyAttributes | null = await this.surveyService.update(requestBody, surveyId)
       if (vItem) {

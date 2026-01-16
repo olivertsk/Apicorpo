@@ -8,7 +8,6 @@ export const expressAuthentication = async (req: Request, res: Response, next: N
   const langHeader = req.headers.lang
   if (langHeader) {
     const userLang = langHeader.toString() || 'es'
-    console.log('userLang :>> ', userLang)
     fxI18n.setLocale(userLang)
   } else {
     fxI18n.setLocale('es')

@@ -43,6 +43,9 @@ export interface IUserFilter {
   email?: string | null
   role?: string | null
   name?: string | null
+  filters?: any
+  sort?: any
+  search?: string
 }
 
 // export type IUserCreationParams =
@@ -300,7 +303,6 @@ export function fxUserFactory(sequelize: Sequelize) {
         attributes: {
           exclude: ['password'],
         },
-        order: [['createdAt', 'DESC']],
       },
       scopes: {
         withPassword: {

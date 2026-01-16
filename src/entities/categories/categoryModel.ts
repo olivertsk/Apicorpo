@@ -30,6 +30,9 @@ export interface ICategoryFilter {
   isSalient?: boolean | null
   departmentId?: string | null
   isClient?: boolean
+  filters?: any
+  sort?: any
+  search?: string
 }
 export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> &
   Partial<Pick<ICategoryAttributes, 'name'>> & {
@@ -116,9 +119,6 @@ export function fxCategoryFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'categories',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
       freezeTableName: true,
       timestamps: true,
       paranoid: true,

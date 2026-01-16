@@ -72,6 +72,8 @@ export interface IProductFilter {
   userId?: string | null
   isClient?: boolean
   typePrice?: 'price' | 'priceBs'
+  filters?: any
+  sort?: any
 }
 export type IProductCreationAttributes = Pick<
   IProductAttributes,

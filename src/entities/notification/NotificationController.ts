@@ -73,7 +73,6 @@ export class notificationController extends Controller {
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       this.setStatus(500)
       return { data: null, message: 'Ocurrió un error' }
     }
@@ -93,7 +92,6 @@ export class notificationController extends Controller {
   ): Promise<{ success: boolean; item: INotificationAttributes | null; message?: string }> {
     try {
       const userId = pRequest.auth.id
-      console.log('userId :>> ', userId)
       if (!userId) {
         console.log('noi tiene token')
         this.setStatus(404) // set return status 404
@@ -110,7 +108,6 @@ export class notificationController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

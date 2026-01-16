@@ -48,7 +48,6 @@ export class OrdersController extends Controller {
     @Request() request: { auth: IUserAttributes }
   ): Promise<{ data: IOrderAttributes | null; message?: string }> {
     try {
-      console.log('request?.auth?.id :>> ', request?.auth?.id)
       if (!request?.auth?.id) {
         this.setStatus(500)
         return { data: null, message: 'Token invalido' }
@@ -60,13 +59,11 @@ export class OrdersController extends Controller {
       }
       const user = await this.userService.getRol(request.auth.id)
       const userJSON = JSON.parse(JSON.stringify(user))
-      console.log('userJSON :>> ', userJSON)
       if (userJSON?.rol.name === 'admin') {
         params.isClient = false
         params.adminId = request.auth.id
       }
       params.userId = userJSON?.id
-      console.log('params :>> ', params)
       const vResponse: IOrderAttributes | null = await this.orderService.get(params)
       this.setStatus(200)
       return { data: vResponse }
@@ -103,8 +100,9 @@ export class OrdersController extends Controller {
         const userJSON = JSON.parse(JSON.stringify(user))
         if (userJSON?.rol.name === 'admin') {
           pQueryParams.rolType = 'admin'
+        } else {
+          pQueryParams.userId = userJSON?.id
         }
-        pQueryParams.userId = userJSON?.id
       }
       const vResponse: IOrderAttributes[] | IResponseAllOrder =
         await this.orderService.all(pQueryParams)
@@ -243,7 +241,6 @@ export class OrdersController extends Controller {
       this.setStatus(404) // set return status 404
       return { success: false, item: vItem, message: fxI18n.__('item_not_found') }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

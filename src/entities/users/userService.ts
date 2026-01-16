@@ -9,7 +9,13 @@ import type {
   IAuthUserUpdatenAttributes,
   IAuthGoogle,
 } from '@users/userModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices } from '../../utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+} from '../../utils/query'
 import { fxI18n } from '@utils/i18n'
 import type {
   IPasswordResetAttributes,
@@ -64,6 +70,16 @@ class UsersService {
           {
             model: modelRol,
             as: 'rol',
+            include: [
+              {
+                association: 'permissions',
+                include: [
+                  {
+                    association: 'view',
+                  },
+                ],
+              },
+            ],
           },
         ],
       })
@@ -92,6 +108,16 @@ class UsersService {
           {
             model: modelRol,
             as: 'rol',
+            include: [
+              {
+                association: 'permissions',
+                include: [
+                  {
+                    association: 'view',
+                  },
+                ],
+              },
+            ],
           },
         ],
       })
@@ -120,6 +146,16 @@ class UsersService {
             model: modelRol,
             as: 'rol',
             required: false,
+            include: [
+              {
+                association: 'permissions',
+                include: [
+                  {
+                    association: 'view',
+                  },
+                ],
+              },
+            ],
           },
         ],
       })
@@ -154,6 +190,8 @@ class UsersService {
       let whereStatement: FindOptions = {}
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       if (pParam?.name) {
         whereStatement.where = {
           ...whereStatement.where,
@@ -245,7 +283,6 @@ class UsersService {
       }
       return null
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -270,7 +307,6 @@ class UsersService {
       }
       return false
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -354,6 +390,16 @@ class UsersService {
           {
             model: modelRol,
             as: 'rol',
+            include: [
+              {
+                association: 'permissions',
+                include: [
+                  {
+                    association: 'view',
+                  },
+                ],
+              },
+            ],
           },
         ],
       })
@@ -376,7 +422,6 @@ class UsersService {
 
   async softDeleteRecord(pId: string): Promise<boolean> {
     try {
-      console.log('pId :>> ', pId)
       const record = await modelUser.update(
         { deletedAt: new Date() },
         {
@@ -388,7 +433,6 @@ class UsersService {
       }
       return true
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

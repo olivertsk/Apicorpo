@@ -37,6 +37,9 @@ export interface IPaymentMethodFilter {
   name?: string | null
   type?: ETypePaymentMethods
   isClient?: boolean
+  filters?: any
+  sort?: any
+  search?: string
 }
 export type IPaymentMethodCreationAttributes = Pick<IPaymentMethodAttributes, 'id'> &
   Partial<Pick<IPaymentMethodAttributes, 'name'>> & {
@@ -126,9 +129,6 @@ export function fxPaymentMethodFactory(sequelize: Sequelize) {
     },
     {
       tableName: 'payment_methods',
-      defaultScope: {
-        order: [['createdAt', 'DESC']],
-      },
       freezeTableName: true,
       timestamps: true,
       paranoid: true,

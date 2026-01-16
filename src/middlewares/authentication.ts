@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import AppConfig from '@config/AppConfig'
 import type { IUserAttributes } from '@users/userModel'
@@ -25,25 +26,48 @@ export async function expressAuthentication(
           rolUser = JSON.parse(JSON.stringify(rolUser))
         }
         if (scopes && scopes?.includes('optional')) {
-          console.log('incluye optional', auth)
+          request.auth = auth
+          return { token, auth }
+        }
+        if (rolUser?.rol?.name === 'admin') {
           request.auth = auth
           return { token, auth }
         }
         if (scopes && scopes.length > 0 && !scopes.includes(null)) {
-          const userRoles = rolUser.rol.name || ''
-          const hasRole = scopes.some((scope) => {
-            if (scope === 'admin') {
-              return userRoles === 'admin'
-            } else if (scope === 'user' || scope === null) {
-              return true
-            } else if (scope === 'optional' || scope === null) {
-              return true
+          const requestedPath = request.path // Ej: "/api/users"
+          const hasPermission = rolUser?.rol?.permissions?.some((permission: any) => {
+            // 1. Dividir la URL del permiso en segmentos (ej: "/prospects/users/groups" → ["prospects", "users", "groups"])
+            const permissionSegments = permission.view.url.split('/').filter(Boolean) // Elimina strings vacíos
+
+            // 2. Extraer el primer segmento de la ruta solicitada (ej: "/prospects/all" → "prospects")
+            const requestedSegment = requestedPath.split('/')[1] // [ "", "prospects", "all" ] → "prospects"
+
+            // 3. Verificar si el segmento de la ruta está en los permitidos
+            const pathMatches = permissionSegments.includes(requestedSegment)
+            let methodAllowed = false
+            switch (request.method) {
+              case 'GET':
+                methodAllowed = true
+                break
+              case 'POST':
+                methodAllowed = permission.post
+                break
+              case 'PUT':
+                methodAllowed = permission.put
+                break
+              case 'DELETE':
+                methodAllowed = permission.delete
+                break
+              default:
+                methodAllowed = false
             }
-            return false
+
+            return pathMatches && methodAllowed
           })
-          if (!hasRole) {
+          if (!hasPermission) {
+            console.log('detecta hasPermission en false y lanza 419')
             throw {
-              status: 403,
+              status: 419,
               message: 'Forbidden',
               token: null,
               user: null,
@@ -54,7 +78,10 @@ export async function expressAuthentication(
         }
         request.auth = auth
         return { token, auth }
-      } catch (err) {
+      } catch (error: any) {
+        if ('status' in error && error?.status === 419) {
+          throw error
+        }
         throw {
           status: 401,
           message: 'Invalid token',

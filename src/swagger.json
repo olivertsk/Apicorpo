@@ -37,6 +37,11 @@
 					"url": {
 						"type": "string"
 					},
+					"order": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -101,43 +106,42 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IViewAttributes.id-or-route-or-url_": {
+			"Pick_IViewAttributes.route-or-url-or-name_": {
 				"properties": {
-					"id": {
-						"type": "string"
-					},
 					"route": {
 						"type": "string"
 					},
 					"url": {
 						"type": "string"
-					}
-				},
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Partial_Pick_IViewAttributes.name__": {
-				"properties": {
+					},
 					"name": {
 						"type": "string"
 					}
 				},
+				"required": [
+					"name"
+				],
 				"type": "object",
-				"description": "Make all properties in T optional"
+				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"IViewCreationAttributes": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/Pick_IViewAttributes.id-or-route-or-url_"
-					},
-					{
-						"$ref": "#/components/schemas/Partial_Pick_IViewAttributes.name__"
+						"$ref": "#/components/schemas/Pick_IViewAttributes.route-or-url-or-name_"
 					},
 					{
 						"properties": {
+							"order": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							},
 							"icon": {
 								"type": "string",
 								"nullable": true
+							},
+							"id": {
+								"type": "string"
 							}
 						},
 						"type": "object"
@@ -298,6 +302,11 @@
 					"name": {
 						"type": "string",
 						"nullable": true
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -496,13 +505,13 @@
 			},
 			"Pick_IUserAttributes.Exclude_keyofIUserAttributes.password__": {
 				"properties": {
-					"id": {
-						"type": "string"
-					},
 					"name": {
 						"type": "string"
 					},
 					"uid": {
+						"type": "string"
+					},
+					"id": {
 						"type": "string"
 					},
 					"email": {
@@ -666,15 +675,18 @@
 					},
 					"createdAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"nullable": true
 					},
 					"updatedAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"nullable": true
 					},
 					"deletedAt": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -730,10 +742,10 @@
 			},
 			"Pick_IRolAttributes.id-or-name_": {
 				"properties": {
-					"id": {
+					"name": {
 						"type": "string"
 					},
-					"name": {
+					"id": {
 						"type": "string"
 					}
 				},
@@ -743,8 +755,89 @@
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
+			"Pick_IPermissionAttributes.id-or-rolId-or-viewId_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"rolId": {
+						"type": "string"
+					},
+					"viewId": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"IPermissionCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IPermissionAttributes.id-or-rolId-or-viewId_"
+					},
+					{
+						"properties": {
+							"delete": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											false
+										]
+									}
+								]
+							},
+							"put": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											false
+										]
+									}
+								]
+							},
+							"post": {
+								"anyOf": [
+									{
+										"type": "boolean"
+									},
+									{
+										"type": "boolean",
+										"enum": [
+											false
+										]
+									}
+								]
+							}
+						},
+						"type": "object"
+					}
+				]
+			},
 			"IRolCreationAttributes": {
-				"$ref": "#/components/schemas/Pick_IRolAttributes.id-or-name_"
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IRolAttributes.id-or-name_"
+					},
+					{
+						"properties": {
+							"permissions": {
+								"items": {
+									"$ref": "#/components/schemas/IPermissionCreationAttributes"
+								},
+								"type": "array"
+							}
+						},
+						"type": "object"
+					}
+				]
 			},
 			"IAuthUserUpdatenAttributes": {
 				"properties": {
@@ -928,8 +1021,28 @@
 					},
 					"order": {
 						"type": "string"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"leftSurveyParams": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"type"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1064,6 +1177,11 @@
 						"type": "string"
 					},
 					"userId": {
+						"type": "string"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
 						"type": "string"
 					}
 				},
@@ -1671,6 +1789,11 @@
 					},
 					"order": {
 						"type": "string"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -1943,7 +2066,9 @@
 							"price",
 							"priceBs"
 						]
-					}
+					},
+					"filters": {},
+					"sort": {}
 				},
 				"type": "object",
 				"additionalProperties": false
@@ -2236,6 +2361,94 @@
 					}
 				]
 			},
+			"IPermissionAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"rolId": {
+						"type": "string"
+					},
+					"viewId": {
+						"type": "string"
+					},
+					"post": {
+						"type": "boolean"
+					},
+					"put": {
+						"type": "boolean"
+					},
+					"delete": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"post",
+					"put",
+					"delete"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllPermission": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IPermissionAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPermissionFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ETypePaymentMethods": {
 				"enum": [
 					"cash",
@@ -2356,6 +2569,11 @@
 					},
 					"isClient": {
 						"type": "boolean"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -2653,6 +2871,11 @@
 						"type": "string"
 					},
 					"userId": {
+						"type": "string"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
 						"type": "string"
 					}
 				},
@@ -3055,6 +3278,11 @@
 					},
 					"isClient": {
 						"type": "boolean"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -3395,6 +3623,11 @@
 					},
 					"categories": {
 						"type": "boolean"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -3654,6 +3887,11 @@
 					"userId": {
 						"type": "string",
 						"nullable": true
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -3950,6 +4188,11 @@
 					},
 					"isClient": {
 						"type": "boolean"
+					},
+					"sort": {},
+					"filters": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -4067,6 +4310,11 @@
 					},
 					"isClient": {
 						"type": "boolean"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
 					}
 				},
 				"type": "object",
@@ -4252,6 +4500,11 @@
 						"type": "boolean"
 					},
 					"typeSearch": {
+						"type": "string"
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
 						"type": "string"
 					}
 				},
@@ -4948,6 +5201,30 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -5384,12 +5661,27 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/IRolAttributes"
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IRolAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
 										}
+									},
+									"required": [
+										"item",
+										"success"
 									],
-									"nullable": true
+									"type": "object"
 								}
 							}
 						}
@@ -5418,7 +5710,7 @@
 				}
 			}
 		},
-		"/rols/update/{rolId}": {
+		"/rols/{rolId}": {
 			"put": {
 				"operationId": "Update",
 				"responses": {
@@ -6180,6 +6472,30 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -6232,16 +6548,16 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "userId",
-						"required": false,
+						"name": "type",
+						"required": true,
 						"schema": {
 							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "type",
-						"required": true,
+						"name": "userId",
+						"required": false,
 						"schema": {
 							"type": "string"
 						}
@@ -6562,6 +6878,30 @@
 					{
 						"in": "query",
 						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7566,6 +7906,30 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -7977,6 +8341,22 @@
 								"priceBs"
 							]
 						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -8159,6 +8539,22 @@
 								"price",
 								"priceBs"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]
@@ -8710,6 +9106,308 @@
 				]
 			}
 		},
+		"/permissions/show/{permissionId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IPermissionAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Permission"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "permissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/permissions/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IPermissionAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllPermission"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Permission"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/permissions/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IPermissionAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Permission"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IPermissionCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/permissions/update/{permissionId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Update",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IPermissionAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Permission"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "permissionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IPermissionCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/permissions/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Permission"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/paymentMethods/show/{paymentMethodId}": {
 			"get": {
 				"operationId": "Get",
@@ -8839,6 +9537,30 @@
 						"required": false,
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]
@@ -9157,6 +9879,30 @@
 					{
 						"in": "query",
 						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -9741,6 +10487,30 @@
 						"required": false,
 						"schema": {
 							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]
@@ -10329,6 +11099,30 @@
 						"schema": {
 							"type": "boolean"
 						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -10624,6 +11418,30 @@
 					{
 						"in": "query",
 						"name": "userId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -10999,6 +11817,30 @@
 						"schema": {
 							"type": "boolean"
 						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -11325,6 +12167,30 @@
 						"schema": {
 							"type": "boolean"
 						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -11638,6 +12504,30 @@
 					{
 						"in": "query",
 						"name": "typeSearch",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
 						"required": false,
 						"schema": {
 							"type": "string"

@@ -7,7 +7,14 @@ import type {
   ISuggestionInstance,
   IResponseAllSuggestion,
 } from '@entities/suggestions/suggestionModel'
-import { fxOrderNameId, fxPaginate, fxReponseServices, fxSearchILike } from '@utils/query'
+import {
+  fxMuiFilters,
+  fxMuiSort,
+  fxOrderNameId,
+  fxPaginate,
+  fxReponseServices,
+  fxSearchILike,
+} from '@utils/query'
 
 class SuggestionService {
   async validate(data: any) {
@@ -33,6 +40,8 @@ class SuggestionService {
       whereStatement = fxPaginate(pParam, whereStatement)
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
       whereStatement.where = fxSearchILike(pParam, whereStatement, 'title', modelSuggestion.name)
+      whereStatement = fxMuiFilters(pParam, whereStatement)
+      whereStatement = fxMuiSort(pParam, whereStatement)
       if (pParam.title) {
         whereStatement.where = {
           ...whereStatement.where,
@@ -53,7 +62,6 @@ class SuggestionService {
       }
       return { data: vResponse }
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }
@@ -67,7 +75,6 @@ class SuggestionService {
       )
       return vResponse
     } catch (error) {
-      console.log('error :>> ', error)
       throw error
     }
   }

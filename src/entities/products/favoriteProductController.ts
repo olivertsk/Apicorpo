@@ -13,7 +13,7 @@ import {
   Put,
   Request,
 } from 'tsoa'
-import {
+import type {
   IFavoriteProductAttributes,
   IFavoriteProductCreationAttributes,
   IResponseAllFavoriteProduct,
@@ -21,7 +21,7 @@ import {
 } from '@entities/products/favoriteProductModel'
 import FavoriteProductService from '@entities/products/favoriteProductService'
 import { fxI18n } from '@utils/i18n'
-import { IUserAttributes } from '@users/userModel'
+import type { IUserAttributes } from '@users/userModel'
 
 @Route('favoriteProducts')
 @Tags('FavoriteProduct')
@@ -81,7 +81,6 @@ export class FavoriteProductsController extends Controller {
         },
       }
     } catch (error) {
-      console.log('error :>> ', error)
       this.setStatus(500)
       return { data: [], message: 'Ocurrió un error' }
     }
