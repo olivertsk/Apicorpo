@@ -59,7 +59,7 @@ export class OrdersController extends Controller {
       }
       const user = await this.userService.getRol(request.auth.id)
       const userJSON = JSON.parse(JSON.stringify(user))
-      if (userJSON?.rol.name === 'admin') {
+      if (userJSON?.rol.name !== 'client') {
         params.isClient = false
         params.adminId = request.auth.id
       }
@@ -98,7 +98,7 @@ export class OrdersController extends Controller {
       } else {
         const user = await this.userService.getRol(request.auth.id)
         const userJSON = JSON.parse(JSON.stringify(user))
-        if (userJSON?.rol.name === 'admin') {
+        if (userJSON?.rol.name !== 'client') {
           pQueryParams.rolType = 'admin'
         } else {
           pQueryParams.userId = userJSON?.id
