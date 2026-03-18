@@ -34,13 +34,17 @@ import { PaymentMethodsController } from './../entities/paymentMethods/paymentMe
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OrdersController } from './../entities/orders/orderController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { notificationController } from './../entities/notification/notificationController';
+import { notificationController } from './../entities/notification/NotificationController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MapsController } from './../entities/maps/mapController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { A2IntegrationController } from './../entities/integration/A2IntegrationController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DepartmentsController } from './../entities/departments/departmentController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ExchangeController } from './../entities/currencies/exchangeController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { CurrenciesController } from './../entities/currencies/currencyController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ConversationsController } from './../entities/conversations/conversationController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -889,6 +893,7 @@ const models: TsoaRoute.Models = {
             "viewTime": {"dataType":"string"},
             "paymentVoucher": {"dataType":"string"},
             "paidWith": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["USD"]},{"dataType":"enum","enums":["BS"]}]},
+            "exchangeRate": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[1]}]},
         },
         "additionalProperties": false,
     },
@@ -947,7 +952,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IOrderCreationAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IOrderAttributes.id_"},{"ref":"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"paidWith":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["USD"]},{"dataType":"enum","enums":["BS"]}]},"paymentVoucher":{"dataType":"string"},"viewTime":{"dataType":"string"},"responsibleId":{"dataType":"string"},"paymentMethodId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"typePayment":{"dataType":"union","subSchemas":[{"ref":"ETypePaymentMethods"},{"dataType":"enum","enums":[null]}]},"reference":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"EStatusOrder"},{"dataType":"enum","enums":[null]}]},"observation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"products":{"dataType":"array","array":{"dataType":"refAlias","ref":"IOrderProductCreationAttributes"}}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IOrderAttributes.id_"},{"ref":"Partial_Pick_IOrderAttributes.userId-or-dniType-or-dni-or-date-or-amount-or-amountWithoutTax-or-valueTax-or-location-or-nameClient-or-phoneNumber__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"exchangeRate":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[1]}]},"paidWith":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["USD"]},{"dataType":"enum","enums":["BS"]}]},"paymentVoucher":{"dataType":"string"},"viewTime":{"dataType":"string"},"responsibleId":{"dataType":"string"},"paymentMethodId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"typePayment":{"dataType":"union","subSchemas":[{"ref":"ETypePaymentMethods"},{"dataType":"enum","enums":[null]}]},"reference":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"dataType":"union","subSchemas":[{"ref":"EStatusOrder"},{"dataType":"enum","enums":[null]}]},"observation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"products":{"dataType":"array","array":{"dataType":"refAlias","ref":"IOrderProductCreationAttributes"}}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "INotificationAttributes": {
@@ -1159,6 +1164,45 @@ const models: TsoaRoute.Models = {
     "IDepartmentCreationAttributes": {
         "dataType": "refAlias",
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IDepartmentAttributes.id-or-description_"},{"ref":"Partial_Pick_IDepartmentAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"icon":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"code":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"isSalient":{"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[false]}],"required":true},"status":{"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[true]}],"required":true}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ICurrencyAttributes": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string"},
+            "name": {"dataType":"string","required":true},
+            "code": {"dataType":"string","required":true},
+            "symbol": {"dataType":"string"},
+            "exchangeRate": {"dataType":"double","required":true},
+            "autoUpdate": {"dataType":"boolean","required":true},
+            "createdAt": {"dataType":"datetime"},
+            "updatedAt": {"dataType":"datetime"},
+            "deletedAt": {"dataType":"datetime"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ICurrencyFilter": {
+        "dataType": "refObject",
+        "properties": {
+            "pag": {"dataType":"double"},
+            "limit": {"dataType":"double"},
+            "name": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "filters": {"dataType":"any"},
+            "sort": {"dataType":"any"},
+            "search": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_ICurrencyAttributes.name-or-code-or-exchangeRate-or-autoUpdate-or-symbol_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string"},"name":{"dataType":"string","required":true},"code":{"dataType":"string","required":true},"exchangeRate":{"dataType":"double","required":true},"autoUpdate":{"dataType":"boolean","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ICurrencyCreationAttributes": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_ICurrencyAttributes.name-or-code-or-exchangeRate-or-autoUpdate-or-symbol_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Record_string.any_": {
@@ -2098,7 +2142,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_login: Record<string, TsoaRoute.ParameterSchema> = {
-                pRequestBody: {"in":"body","name":"pRequestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"string","required":true},"password":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}}},
+                pRequestBody: {"in":"body","name":"pRequestBody","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"string"},"password":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}}},
         };
         app.post('/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
@@ -4586,6 +4630,219 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 validatedArgs = templateService.getValidatedArgs({ args: argsDepartmentsController_softDeleteRecord, request, response });
 
                 const controller = new DepartmentsController();
+
+              await templateService.apiHandler({
+                methodName: 'softDeleteRecord',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsExchangeController_getBcvRate: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/exchange/bcv',
+            ...(fetchMiddlewares<RequestHandler>(ExchangeController)),
+            ...(fetchMiddlewares<RequestHandler>(ExchangeController.prototype.getBcvRate)),
+
+            async function ExchangeController_getBcvRate(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsExchangeController_getBcvRate, request, response });
+
+                const controller = new ExchangeController();
+
+              await templateService.apiHandler({
+                methodName: 'getBcvRate',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCurrenciesController_get: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/currencies/show/:id',
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController)),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController.prototype.get)),
+
+            async function CurrenciesController_get(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCurrenciesController_get, request, response });
+
+                const controller = new CurrenciesController();
+
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCurrenciesController_getOfCode: Record<string, TsoaRoute.ParameterSchema> = {
+                code: {"in":"path","name":"code","required":true,"dataType":"string"},
+        };
+        app.get('/currencies/show-code/:code',
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController)),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController.prototype.getOfCode)),
+
+            async function CurrenciesController_getOfCode(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCurrenciesController_getOfCode, request, response });
+
+                const controller = new CurrenciesController();
+
+              await templateService.apiHandler({
+                methodName: 'getOfCode',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCurrenciesController_all: Record<string, TsoaRoute.ParameterSchema> = {
+                pQueryParams: {"in":"queries","name":"pQueryParams","required":true,"ref":"ICurrencyFilter"},
+        };
+        app.get('/currencies/all',
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController)),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController.prototype.all)),
+
+            async function CurrenciesController_all(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCurrenciesController_all, request, response });
+
+                const controller = new CurrenciesController();
+
+              await templateService.apiHandler({
+                methodName: 'all',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCurrenciesController_create: Record<string, TsoaRoute.ParameterSchema> = {
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ICurrencyCreationAttributes"},
+        };
+        app.post('/currencies/create',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController)),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController.prototype.create)),
+
+            async function CurrenciesController_create(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCurrenciesController_create, request, response });
+
+                const controller = new CurrenciesController();
+
+              await templateService.apiHandler({
+                methodName: 'create',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCurrenciesController_update: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ICurrencyCreationAttributes"},
+        };
+        app.put('/currencies/update/:id',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController)),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController.prototype.update)),
+
+            async function CurrenciesController_update(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCurrenciesController_update, request, response });
+
+                const controller = new CurrenciesController();
+
+              await templateService.apiHandler({
+                methodName: 'update',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCurrenciesController_softDeleteRecord: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/currencies/deleted/:id',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController)),
+            ...(fetchMiddlewares<RequestHandler>(CurrenciesController.prototype.softDeleteRecord)),
+
+            async function CurrenciesController_softDeleteRecord(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCurrenciesController_softDeleteRecord, request, response });
+
+                const controller = new CurrenciesController();
 
               await templateService.apiHandler({
                 methodName: 'softDeleteRecord',

@@ -14,6 +14,7 @@ import { parse as json2csv } from 'json2csv'
 import morgan from 'morgan'
 import { contextMiddleware } from 'middlewares/context.middleware'
 import device from 'express-device'
+import { initCurrencyScheduler } from './scheduler/currencyScheduler'
 
 export const app = express()
 app.use(morgan('dev'))
@@ -56,7 +57,7 @@ RegisterRoutes(app, {
 //   console.log('estoy pasando por app');
 //   next();
 // })
-
+initCurrencyScheduler()
 app.get('/file/:folder/:fileName', async (pReq, pRes) => {
   try {
     const vFileName = pReq.params.fileName
@@ -213,4 +214,5 @@ app.get('/archivophp.php', async (req, res) => {
     return res.status(500).send('Internal server error')
   }
 })
+
 app.use(errorHandler)

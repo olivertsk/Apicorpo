@@ -61,6 +61,7 @@ export class UsersController extends Controller {
     message?: string
   }> {
     try {
+      console.log('pQueryParams :>> ', pQueryParams)
       const vResponse: IUserAttributes[] | IResponseAllUser =
         await this.userService.all(pQueryParams)
       this.setStatus(200)

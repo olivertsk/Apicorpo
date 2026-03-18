@@ -200,6 +200,7 @@ class OrdersService {
 
   public async create(itemCreationParams: IOrderCreationAttributes): Promise<IOrderAttributes> {
     try {
+      console.log('itemCreationParams :>> ', itemCreationParams)
       const vResponse: IOrderAttributes = await modelOrder.create(itemCreationParams)
       return vResponse
     } catch (error) {

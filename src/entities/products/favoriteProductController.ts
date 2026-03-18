@@ -81,6 +81,7 @@ export class FavoriteProductsController extends Controller {
         },
       }
     } catch (error) {
+      console.log('error favorite all :>> ', error)
       this.setStatus(500)
       return { data: [], message: 'Ocurrió un error' }
     }

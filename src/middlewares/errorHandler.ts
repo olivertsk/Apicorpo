@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Request, Response, NextFunction } from 'express'
 import { fxI18n } from '@utils/i18n'
 // import errorService from '../services/errorService'
@@ -12,6 +11,7 @@ export function errorHandler(
   _next: NextFunction
 ) {
   if (err instanceof ValidateError) {
+    console.log('err tsoa :>> ', err)
     let validationErrors: any
     if (
       err?.fields?.requestBody?.message.includes(
@@ -73,6 +73,7 @@ export function errorHandler(
       message: errors,
     })
   } else if (err instanceof ValidationError) {
+    console.log('err sequelize :>> ', err)
     const errors: any[] = []
     for (const itemError of err.errors) {
       if (itemError?.path && itemError?.validatorKey) {

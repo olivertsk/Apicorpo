@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin'
 import path from 'path'
-import NotificationService from './notificationService'
+import NotificationService from './NotificationService'
 import UserService from '@users/userService'
 
 interface NotificationData {
@@ -15,6 +15,7 @@ class SendNotificationService {
   private messaging: admin.messaging.Messaging
   private notificationService: typeof NotificationService
   private user: typeof UserService
+
   constructor() {
     const vRutaJSON = path.resolve(
       __dirname,
@@ -92,7 +93,7 @@ class SendNotificationService {
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken)
       return decodedToken
-    } catch (error) {
+    } catch {
       throw new Error('Invalid token')
     }
   }

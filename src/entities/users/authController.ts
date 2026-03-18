@@ -187,9 +187,10 @@ export class AuthController extends Controller {
    */
   @Post('/login')
   public async login(
-    @Body() pRequestBody: { email: string; password: string; recaptchaToken: string }
+    @Body() pRequestBody: { email: string; password: string; recaptchaToken?: string }
   ): Promise<{ success: boolean; user?: IUserAttributes; token?: string; message?: string }> {
     try {
+      console.log('inicia')
       const recaptchaToken = pRequestBody.recaptchaToken
       if (recaptchaToken) {
         const verifyRecaptcha = await fxVerifyRecaptcha(recaptchaToken)
@@ -220,6 +221,7 @@ export class AuthController extends Controller {
       this.setStatus(500) // HTTP 500
       return { success: false, message: 'Usuario incorrecto' }
     } catch (error) {
+      console.log('error :>> ', error)
       this.setStatus(401) // HTTP 401 Unauthorized
       return Promise.reject(error)
     }

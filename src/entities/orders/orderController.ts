@@ -122,6 +122,7 @@ export class OrdersController extends Controller {
     @Request() pQueryParams: { auth: IUserAttributes }
   ): Promise<{ success: boolean; item: IOrderAttributes | null; message?: string }> {
     try {
+      console.log('requestBody :>> ', requestBody)
       if (pQueryParams?.auth?.id) {
         requestBody.userId = pQueryParams.auth.id
       } else {

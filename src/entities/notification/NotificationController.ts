@@ -17,7 +17,7 @@ import type {
   INotificationFilter,
   IResponseAllNotification,
 } from './notificationModel'
-import NotificationService from './notificationService'
+import NotificationService from './NotificationService'
 import type { IUserAttributes } from '@users/userModel'
 import { fxI18n } from '@utils/i18n'
 

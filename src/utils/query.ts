@@ -230,9 +230,11 @@ const formatValue = (value: any, field: string): any => {
 }
 export const fxMuiFilters = (pParam: any, pWhereStatement: FindOptions): FindOptions => {
   if (!pParam?.filters) {
+    console.log('no tiene filtros')
     return pWhereStatement
   }
   let filters = pParam.filters
+  console.log('filters :>> ', filters)
   if (!Array.isArray(pParam.filters) && typeof pParam.filters === 'string') {
     filters = JSON.parse(pParam.filters)
   }
@@ -402,6 +404,8 @@ export const fxMuiFilters = (pParam: any, pWhereStatement: FindOptions): FindOpt
   })
 
   if (filterConditions.length > 0) {
+    console.log('filterConditions.length :>> ', filterConditions.length)
+    console.log('filterConditions :>> ', filterConditions)
     pWhereStatement.where = {
       ...pWhereStatement.where,
       [Op.and]: [

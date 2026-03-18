@@ -192,18 +192,19 @@ class UsersService {
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
       whereStatement = fxMuiFilters(pParam, whereStatement)
       whereStatement = fxMuiSort(pParam, whereStatement)
-      if (pParam?.name) {
+      const name = pParam.name || pParam?.search || null
+      if (name) {
         whereStatement.where = {
           ...whereStatement.where,
           [Op.or]: {
             dni: {
-              [Op.like]: `%${pParam.name}%`,
+              [Op.like]: `%${name}%`,
             },
             email: {
-              [Op.like]: `%${pParam.name}%`,
+              [Op.like]: `%${name}%`,
             },
             name: {
-              [Op.like]: `%${pParam.name}%`,
+              [Op.like]: `%${name}%`,
             },
           },
         }
@@ -220,6 +221,7 @@ class UsersService {
           rolId: pParam.role,
         }
       }
+      whereStatement.logging = true
       const vResponse: IUserAttributes[] = await modelUser.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllUser = await fxReponseServices(

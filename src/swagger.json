@@ -2801,6 +2801,20 @@
 							"USD",
 							"BS"
 						]
+					},
+					"exchangeRate": {
+						"anyOf": [
+							{
+								"type": "number",
+								"format": "double"
+							},
+							{
+								"type": "number",
+								"enum": [
+									1
+								]
+							}
+						]
 					}
 				},
 				"required": [
@@ -3002,6 +3016,20 @@
 					},
 					{
 						"properties": {
+							"exchangeRate": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "number",
+										"enum": [
+											1
+										]
+									}
+								]
+							},
 							"paidWith": {
 								"type": "string",
 								"enum": [
@@ -3706,6 +3734,103 @@
 						"type": "object"
 					}
 				]
+			},
+			"ICurrencyAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"symbol": {
+						"type": "string"
+					},
+					"exchangeRate": {
+						"type": "number",
+						"format": "double"
+					},
+					"autoUpdate": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"code",
+					"exchangeRate",
+					"autoUpdate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ICurrencyFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"filters": {},
+					"sort": {},
+					"search": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_ICurrencyAttributes.name-or-code-or-exchangeRate-or-autoUpdate-or-symbol_": {
+				"properties": {
+					"symbol": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"exchangeRate": {
+						"type": "number",
+						"format": "double"
+					},
+					"autoUpdate": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"name",
+					"code",
+					"exchangeRate",
+					"autoUpdate"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"ICurrencyCreationAttributes": {
+				"$ref": "#/components/schemas/Pick_ICurrencyAttributes.name-or-code-or-exchangeRate-or-autoUpdate-or-symbol_"
 			},
 			"Record_string.any_": {
 				"properties": {},
@@ -5937,7 +6062,6 @@
 									}
 								},
 								"required": [
-									"recaptchaToken",
 									"password",
 									"email"
 								],
@@ -11288,6 +11412,360 @@
 						"description": "- ID de la item a eliminar.",
 						"in": "path",
 						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/exchange/bcv": {
+			"get": {
+				"operationId": "GetBcvRate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Exchange"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/currencies/show/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ICurrencyAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Currency"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/currencies/show-code/{code}": {
+			"get": {
+				"operationId": "GetOfCode",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ICurrencyAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Currency"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "code",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/currencies/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Currency"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/currencies/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ICurrencyAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Currency"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICurrencyCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/currencies/update/{id}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ICurrencyAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Currency"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICurrencyCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/currencies/deleted/{id}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Currency"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
