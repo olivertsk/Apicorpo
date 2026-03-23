@@ -25,5 +25,7 @@
 	"email_send": "Correo enviado",
 	"Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.dni\":{\"message\":\"invalid_string_value\",\"value\":null}},{\"requestBody.dni\":{\"message\":\"invalid_float_number\",\"value\":null}}]": "Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.dni\":{\"message\":\"invalid_string_value\",\"value\":null}},{\"requestBody.dni\":{\"message\":\"invalid_float_number\",\"value\":null}}]",
 	"invalid_boolean_value": "invalid_boolean_value",
-	"is_required\"}}]": "is_required\"}}]"
+	"is_required\"}}]": "is_required\"}}]",
+	"Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.currency\":{\"message\":\"invalid_string_value\",\"value\":[\"BS\",\"USD\"]}},{\"requestBody.currency\":{\"message\":\"should_be_one_of_the_following;_[null]\",\"value\":[\"BS\",\"USD\"]}}]": "Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.currency\":{\"message\":\"invalid_string_value\",\"value\":[\"BS\",\"USD\"]}},{\"requestBody.currency\":{\"message\":\"should_be_one_of_the_following;_[null]\",\"value\":[\"BS\",\"USD\"]}}]",
+	"Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.currency\":{\"message\":\"invalid_string_value\",\"value\":[\"BS\"]}},{\"requestBody.currency\":{\"message\":\"should_be_one_of_the_following;_[null]\",\"value\":[\"BS\"]}}]": "Could_not_match_the_union_against_any_of_the_items._Issues:_[{\"requestBody.currency\":{\"message\":\"invalid_string_value\",\"value\":[\"BS\"]}},{\"requestBody.currency\":{\"message\":\"should_be_one_of_the_following;_[null]\",\"value\":[\"BS\"]}}]"
 }

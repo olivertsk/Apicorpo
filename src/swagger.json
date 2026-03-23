@@ -2489,6 +2489,10 @@
 						"type": "string",
 						"nullable": true
 					},
+					"currency": {
+						"type": "string",
+						"nullable": true
+					},
 					"status": {
 						"anyOf": [
 							{
@@ -2613,6 +2617,10 @@
 					},
 					{
 						"properties": {
+							"currency": {
+								"type": "string",
+								"nullable": true
+							},
 							"phoneNumber": {
 								"type": "string",
 								"nullable": true

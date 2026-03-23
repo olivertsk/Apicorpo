@@ -11,6 +11,7 @@ export interface IPaymentMethodAttributes {
   numberAccount?: string | null
   phoneNumber?: string | null
   accountType?: string | null
+  currency?: string | null
   status: boolean | true
   createdAt?: Date
   updatedAt?: Date
@@ -50,6 +51,7 @@ export type IPaymentMethodCreationAttributes = Pick<IPaymentMethodAttributes, 'i
     status: boolean | true
     type: ETypePaymentMethods | ETypePaymentMethods.Cash
     phoneNumber?: string | null
+    currency?: string | null
   }
 export interface IPaymentMethodInstance
   extends Model<IPaymentMethodAttributes, IPaymentMethodCreationAttributes>,
@@ -117,6 +119,12 @@ export const vPaymentMethodModelAttributes: SequelizeAttributes<IPaymentMethodAt
     type: DataTypes.BOOLEAN,
     field: 'status',
     defaultValue: true,
+    allowNull: true,
+  },
+  currency: {
+    type: DataTypes.STRING,
+    field: 'currency',
+    defaultValue: null,
     allowNull: true,
   },
 }
