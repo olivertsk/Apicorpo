@@ -33,6 +33,11 @@ export interface ICategoryFilter {
   filters?: any
   sort?: any
   search?: string
+  productName?: string | null
+  minPrice?: number | null
+  maxPrice?: number | null
+  categoriesIds?: string | null
+  typePrice?: 'price' | 'priceBs'
 }
 export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> &
   Partial<Pick<ICategoryAttributes, 'name'>> & {

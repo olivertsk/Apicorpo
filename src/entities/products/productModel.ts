@@ -24,6 +24,7 @@ export interface IProductAttributes {
   taxRate?: number | null
   coverImage?: string | null
   idn?: number
+  views?: number | null
   createdAt?: Date | null
   updatedAt?: Date | null
   deletedAt?: Date | null
@@ -46,6 +47,7 @@ export interface IProductAttributesResponse {
   coverImage?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
+  views?: number | null
   relations?: IProductAttributes[]
 }
 
@@ -91,6 +93,7 @@ export type IProductCreationAttributes = Pick<
     priceBs?: number | null
     promotionalPriceBs?: number | null
     priceWithTaxBs?: number | null
+    views?: number | null
   }
 export interface IProductInstance
   extends Model<IProductAttributes, IProductCreationAttributes>,
@@ -227,6 +230,12 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     unique: true,
     allowNull: false,
   },
+  views: {
+    type: DataTypes.INTEGER,
+    field: 'views',
+    allowNull: true,
+    defaultValue: 0,
+  },
 }
 
 export function fxProductFactory(sequelize: Sequelize) {
@@ -252,6 +261,8 @@ export function fxProductFactory(sequelize: Sequelize) {
       modelDepartment,
       modelCategory,
       modelFavoriteProduct,
+      modelPost,
+      modelPostProduct,
     } = models
     modelProduct.hasMany(modelProductImages, {
       foreignKey: 'productId',
@@ -268,6 +279,12 @@ export function fxProductFactory(sequelize: Sequelize) {
     modelProduct.hasOne(modelFavoriteProduct, {
       foreignKey: 'productId',
       as: 'favorite',
+    })
+    modelProduct.belongsToMany(modelPost, {
+      through: modelPostProduct,
+      foreignKey: 'productId',
+      otherKey: 'postId',
+      as: 'posts', // Permite ver en qué recetas sale un producto
     })
   }
   vData.prototype.toJSON = function () {

@@ -1,4 +1,4 @@
-import {
+import sequelize, {
   modelCategory,
   modelDepartment,
   modelFavoriteProduct,
@@ -35,13 +35,45 @@ class ProductsService {
   }
   public async get(pParams: {
     auth: boolean
-    id: string
+    id?: string
+    name?: string
     userId?: string | null
   }): Promise<IProductAttributes | null> {
     try {
       const whereStatement: FindOptions = {}
-      whereStatement.where = {
-        id: pParams.id,
+      if (pParams?.name) {
+        whereStatement.where = {
+          name: pParams.name,
+        }
+      } else {
+        whereStatement.where = {
+          id: pParams.id,
+        }
+      }
+      whereStatement.attributes = {
+        include: [
+          [
+            sequelize.literal(
+              // eslint-disable-next-line quotes
+              `(SELECT ROUND(AVG(rating), 1) FROM product_reviews WHERE product_id = Product.id AND is_approved = true)`
+            ),
+            'avgRating',
+          ],
+          [
+            sequelize.literal(
+              // eslint-disable-next-line quotes
+              `(SELECT COUNT(*) FROM product_reviews WHERE product_id = Product.id AND is_approved = true)`
+            ),
+            'totalReviews',
+          ],
+          [
+            sequelize.literal(
+              // eslint-disable-next-line quotes
+              `(SELECT COUNT(*) FROM product_comments WHERE product_id = Product.id AND is_approved = true)`
+            ),
+            'totalComments',
+          ],
+        ],
       }
       whereStatement.include = [
         {
@@ -79,6 +111,11 @@ class ProductsService {
         categoryId: prodoctReponse.categoryId,
         notProductId: prodoctReponse.id,
       }
+      if (vResponse?.id) {
+        modelProduct
+          .increment('views', { by: 1, where: { id: vResponse.id } })
+          .catch((err) => console.error('Error al incrementar views:', err))
+      }
       const relations = await this.relation(paramsRelations)
       prodoctReponse = {
         ...prodoctReponse,
@@ -111,12 +148,98 @@ class ProductsService {
       whereStatement.order = fxOrderNameId(pParam, whereStatement)
       whereStatement = fxMuiFilters(pParam, whereStatement)
       whereStatement = fxMuiSort(pParam, whereStatement)
-      whereStatement.where = fxSearchILike(
-        pParam,
-        whereStatement,
-        pParam?.typeSearch || 'name',
-        modelProduct.name
-      )
+
+      let scoreSql = ''
+
+      if (pParam?.search) {
+        // const searchString = pParam.search.trim()
+        const searchString = pParam.search.trim().replace(/([0-9]+)([a-zA-Z]+)/g, '$1 $2')
+        const stopWords = [
+          'und',
+          'unds',
+          'unidad',
+          'unidades',
+          'kg',
+          'gr',
+          'g',
+          'ml',
+          'de',
+          'la',
+          'el',
+          'con',
+          'para',
+        ]
+        // 1. Separamos por espacios y limpiamos palabras cortas
+        const words = searchString
+          .toLowerCase()
+          .split(/\s+/)
+          .filter((word) => word.length > 1 && !stopWords.includes(word))
+
+        if (words.length > 0) {
+          // 2. Cláusula WHERE: Cambiado Op.iLike por Op.like para compatibilidad con MySQL
+          const orConditions = words.map((word) => ({
+            name: { [Op.like]: `%${word}%` },
+          }))
+
+          whereStatement.where = {
+            ...whereStatement.where,
+            [Op.or]: orConditions,
+          }
+
+          // 3. Algoritmo de Scoring en el ORDER BY:
+          // Cambiado 'products.name' por '\`Product\`.\`name\`' para respetar el alias que usa Sequelize
+          scoreSql = words
+            .map(
+              (word) => `CASE WHEN LOWER(\`Product\`.\`name\`) LIKE '%${word}%' THEN 1 ELSE 0 END`
+            )
+            .join(' + ')
+
+          // Reemplazamos el orden por el Score de relevancia y las vistas
+          // whereStatement.order = [
+          //   [sequelize.literal(`(${scoreSql})`), 'DESC'], // Mayor coincidencia primero
+          //   ['views', 'DESC'], // Más vistos en empate
+          //   ['createdAt', 'DESC'], // Más nuevos al final
+          // ]
+        }
+      } else {
+        whereStatement.where = fxSearchILike(
+          pParam,
+          whereStatement,
+          pParam?.typeSearch || 'name',
+          modelProduct.name
+        )
+      }
+      const finalOrder: any[] = []
+      // Agrega esto dentro de tu método all, antes de modelProduct.findAll
+      whereStatement.attributes = {
+        include: [
+          [
+            sequelize.literal(`(
+        SELECT ROUND(AVG(rating), 1)
+        FROM product_reviews AS reviews
+        WHERE reviews.product_id = Product.id AND reviews.is_approved = true
+      )`),
+            'avgRating',
+          ],
+          [
+            sequelize.literal(`(
+        SELECT COUNT(*)
+        FROM product_reviews AS reviews
+        WHERE reviews.product_id = Product.id AND reviews.is_approved = true
+      )`),
+            'totalReviews',
+          ],
+          [
+            sequelize.literal(`(
+        SELECT COUNT(*)
+        FROM product_comments AS comments
+        WHERE comments.product_id = Product.id AND comments.is_approved = true
+      )`),
+            'totalComments',
+          ],
+        ],
+      }
+
       whereStatement.include = [
         {
           model: modelProductImages,
@@ -218,10 +341,11 @@ class ProductsService {
       }
       if (pParam?.order) {
         const type = pParam.order === 'maxPrice' ? 'DESC' : 'ASC'
-        whereStatement.order = [
-          ['price', type],
-          ['promotionalPrice', type],
-        ]
+        finalOrder.push(['price', type])
+        finalOrder.push(['promotionalPrice', type])
+      }
+      if (scoreSql) {
+        finalOrder.push([sequelize.literal(`(${scoreSql})`), 'DESC'])
       }
       if (!whereStatement.order) {
         whereStatement.order = [['createdAt', 'DESC']]
@@ -236,6 +360,9 @@ class ProductsService {
           },
         }
       }
+      finalOrder.push(['views', 'DESC'])
+      finalOrder.push(['createdAt', 'DESC'])
+      whereStatement.order = finalOrder
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllProduct = await fxReponseServices(
@@ -248,6 +375,7 @@ class ProductsService {
       }
       return { data: vResponse }
     } catch (error) {
+      console.error('Error en ProductsService.all:', error)
       throw error
     }
   }
@@ -335,12 +463,39 @@ class ProductsService {
     })
     return commonCount
   }
-
   public async create(
     productCreationParams: IProductCreationAttributes
   ): Promise<IProductAttributes> {
     try {
-      const vResponse: IProductAttributes = await modelProduct.create(productCreationParams)
+      const { name, code } = productCreationParams
+
+      // 1. Buscar si ya existe un producto activo con el mismo nombre
+      const existingProduct = await modelProduct.findOne({
+        where: {
+          name: name,
+          deletedAt: null, // solo productos no eliminados
+        },
+      })
+
+      // 2. Si existe, modificar el nombre añadiendo el código
+      let finalName = name
+      if (existingProduct) {
+        finalName = `${name} (${code})`
+        // Opcional: si temes que el nombre+code también pudiera existir (raro, porque code es único),
+        // podrías hacer una verificación recursiva sencilla.
+      }
+      // SELECT name, COUNT(name) AS repeticiones
+      // FROM products
+      // WHERE deletedAt IS NULL
+      // GROUP BY name
+      // HAVING COUNT(name) > 1
+      // ORDER BY repeticiones DESC;
+
+      // 3. Crear el producto con el nombre (posiblemente modificado)
+      const vResponse: IProductAttributes = await modelProduct.create({
+        ...productCreationParams,
+        name: finalName,
+      })
       return vResponse
     } catch (error) {
       throw error
@@ -506,6 +661,39 @@ class ProductsService {
       return results
     } catch (error) {
       await transaction.rollback()
+      throw error
+    }
+  }
+
+  public async getSuggestions(search: string): Promise<{ id: string; name: string }[]> {
+    try {
+      const vResponse: any = await modelProduct.findAll({
+        // CRÍTICO: Solo traemos las columnas mínimas para máxima velocidad
+        attributes: ['name'],
+        where: {
+          status: true,
+          // Mantenemos la regla de Corpoindustri de no sugerir cosas sin stock real
+          stock: {
+            [Op.gt]: 0,
+            // [Op.not]: null,
+          },
+          // Búsqueda insensible a mayúsculas/minúsculas
+          name: {
+            [Op.like]: `${search}%`,
+          },
+        },
+        // Ordenamos alfabéticamente para que se vea predecible
+        order: [
+          ['views', 'DESC'],
+          ['name', 'ASC'],
+        ],
+        // Limitamos estrictamente a las 5 sugerencias solicitadas
+        limit: 5,
+        logging: false, // Desactivamos logs aquí para no saturar la consola en cada pulsación
+      })
+
+      return vResponse
+    } catch (error) {
       throw error
     }
   }

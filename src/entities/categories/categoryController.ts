@@ -37,7 +37,29 @@ export class CategoriesController extends Controller {
     @Path() categoryId: string
   ): Promise<{ data: ICategoryAttributes | null; message?: string }> {
     try {
-      const vResponse: ICategoryAttributes | null = await this.categoryService.get(categoryId)
+      const vResponse: ICategoryAttributes | null = await this.categoryService.get(
+        categoryId,
+        undefined
+      )
+      this.setStatus(200)
+      return { data: vResponse }
+    } catch (error) {
+      console.error('Error en el controlador:', error)
+      this.setStatus(500)
+      return { data: null, message: 'Ocurrió un error' }
+    }
+  }
+
+  @Get('/show-by-name/{categoryName}')
+  public async getByName(
+    @Path() categoryName: string
+  ): Promise<{ data: ICategoryAttributes | null; message?: string }> {
+    try {
+      let name = categoryName
+      if (name.includes('-')) {
+        name = name.replace(/-/g, ' ')
+      }
+      const vResponse: ICategoryAttributes | null = await this.categoryService.get(undefined, name)
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {

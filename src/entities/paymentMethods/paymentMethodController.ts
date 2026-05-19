@@ -12,7 +12,7 @@ import {
   Delete,
   Put,
 } from 'tsoa'
-import {
+import type {
   IPaymentMethodAttributes,
   IPaymentMethodCreationAttributes,
   IResponseAllPaymentMethod,
@@ -20,6 +20,7 @@ import {
 } from '@entities/paymentMethods/paymentMethodModel'
 import PaymentMethodService from '@entities/paymentMethods/paymentMethodService'
 import { fxI18n } from '@utils/i18n'
+import { fxMoveImages } from '@utils/helpers'
 
 @Route('paymentMethods')
 @Tags('PaymentMethod')
@@ -76,6 +77,9 @@ export class PaymentMethodsController extends Controller {
   ): Promise<{ success: boolean; item: IPaymentMethodAttributes | null; message?: string }> {
     try {
       await this.paymentMethodService.validate(requestBody)
+      if (requestBody?.imageInfo) {
+        requestBody.imageInfo = await fxMoveImages(requestBody.imageInfo)
+      }
       const vItem: IPaymentMethodAttributes | null =
         await this.paymentMethodService.create(requestBody)
       this.setStatus(201) // set return status 201

@@ -12,6 +12,7 @@ import {
   Delete,
   Put,
   Request,
+  Query,
 } from 'tsoa'
 import type {
   IProductAttributes,
@@ -57,6 +58,29 @@ export class ProductsController extends Controller {
     }
   }
 
+  @Security('bearerAuth', ['optional'])
+  @Get('/show-by-name/{productName}')
+  public async getByName(
+    @Path() productName: string,
+    @Request() requestBody: { auth: IUserAttributes }
+  ): Promise<{ data: IProductAttributes | null; message?: string }> {
+    try {
+      const auth = requestBody?.auth || false
+      const params = {
+        auth: auth ? true : false,
+        name: productName.replaceAll('-', ' '),
+        userId: auth.id || null,
+      }
+      console.log('params :>> ', params)
+      const vResponse: IProductAttributes | null = await this.productService.get(params)
+      this.setStatus(200)
+      return { data: vResponse }
+    } catch (error) {
+      this.setStatus(500)
+      return { data: null, message: 'Ocurrió un error' }
+    }
+  }
+
   /**
    * @summary Obtener todos los datos con paginación.
    * @param {IProductFilter} pQueryParams - Filtros y Número de página.
@@ -80,6 +104,7 @@ export class ProductsController extends Controller {
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {
+      console.log('error :>> ', error)
       this.setStatus(500)
       return { data: [], message: 'Ocurrió un error' }
     }
@@ -102,6 +127,10 @@ export class ProductsController extends Controller {
     try {
       if (req?.auth?.id) {
         pQueryParams.userId = req.auth.id
+      }
+      if (pQueryParams?.name) {
+        pQueryParams.search = pQueryParams.name
+        delete pQueryParams.name
       }
       const vResponse: IProductAttributes[] | IResponseAllProduct =
         await this.productService.all(pQueryParams)
@@ -266,6 +295,31 @@ export class ProductsController extends Controller {
       return { success: false, message: fxI18n.__('item_not_found') }
     } catch (error) {
       throw error
+    }
+  }
+
+  /**
+   * @summary Obtener sugerencias de búsqueda rápidas (Type-ahead).
+   * @param {string} search - El texto abreviado que escribe el usuario.
+   */
+  @Security('bearerAuth', ['optional'])
+  @Get('/suggestions')
+  public async suggestions(
+    @Query() search: string
+  ): Promise<{ data: { id: string; name: string }[]; message?: string }> {
+    try {
+      // Evitamos procesar si envían un texto vacío o de una sola letra
+      if (!search || search.trim().length < 2) {
+        return { data: [] }
+      }
+
+      const vResponse = await this.productService.getSuggestions(search.trim())
+      this.setStatus(200)
+      return { data: vResponse }
+    } catch (error) {
+      console.error('Error en sugerencias:', error)
+      this.setStatus(500)
+      return { data: [], message: 'Ocurrió un error' }
     }
   }
 }

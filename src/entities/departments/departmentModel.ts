@@ -35,6 +35,11 @@ export interface IDepartmentFilter {
   filters?: any
   sort?: any
   search?: string
+  productName?: string | null // nombre del producto
+  minPrice?: number | null
+  maxPrice?: number | null
+  categoriesIds?: string | null
+  typePrice?: 'price' | 'priceBs'
 }
 export type IDepartmentCreationAttributes = Pick<IDepartmentAttributes, 'id' | 'description'> &
   Partial<Pick<IDepartmentAttributes, 'name'>> & {

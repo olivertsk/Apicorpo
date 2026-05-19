@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import { Op, type FindOptions } from 'sequelize'
 import sequelize from '@db/index'
+import { type IProductFilter } from '@products/productModel'
 
 export enum EOrderQuery {
   MASNUEVOS = 1,
@@ -27,37 +28,37 @@ export const fxOrderNameId = (pParam: any, pWhereStatement: FindOptions) => {
   return pWhereStatement.order
 }
 
-const fxSearchILikeQuery = (
-  pParam: any,
-  pWhereStatement: FindOptions,
-  pName: string,
-  pAttibutesPermisse: string | string[]
-) => {
-  const vName = pName.trim()
-  const search = pParam?.search || pParam?.name || pParam?.title || pParam?.text || ''
-  if (pAttibutesPermisse.includes(vName)) {
-    if (search.includes(',')) {
-      const searchs: string[] = search.split(',')
-      const searchsParse = searchs.map((search: string) => `%${search}%`)
-      pWhereStatement.where = {
-        ...pWhereStatement.where,
-        [vName]: {
-          [Op.or]: searchsParse.map((search) => ({ [Op.like]: search })),
-        },
-      }
-    } else {
-      pWhereStatement.where = {
-        ...pWhereStatement.where,
-        [vName]: { [Op.like]: `%${search}%` },
-      }
-    }
-  }
-  return pWhereStatement.where || {}
-}
+// const fxSearchILikeQuery = (
+//   pParam: any,
+//   pWhereStatement: FindOptions,
+//   pName: string,
+//   pAttibutesPermisse: string | string[]
+// ) => {
+//   const vName = pName.trim()
+//   const search = pParam?.search || pParam?.name || pParam?.title || pParam?.text || ''
+//   if (pAttibutesPermisse.includes(vName)) {
+//     if (search.includes(',')) {
+//       const searchs: string[] = search.split(',')
+//       const searchsParse = searchs.map((search: string) => `%${search}%`)
+//       pWhereStatement.where = {
+//         ...pWhereStatement.where,
+//         [vName]: {
+//           [Op.or]: searchsParse.map((search) => ({ [Op.like]: search })),
+//         },
+//       }
+//     } else {
+//       pWhereStatement.where = {
+//         ...pWhereStatement.where,
+//         [vName]: { [Op.like]: `%${search}%` },
+//       }
+//     }
+//   }
+//   return pWhereStatement.where || {}
+// }
 
 export const fxSearchILike = (
   pParam: any,
-  pWhereStatement: FindOptions,
+  pWhereStatement: any, // Cambiado a any para manipular el objeto where libremente
   pName: string = 'name',
   pModelName: string
 ) => {
@@ -66,17 +67,41 @@ export const fxSearchILike = (
     (key) =>
       vModelAttributes[key].type.key === 'STRING' || vModelAttributes[key].type.key === 'TEXT'
   )
-  if (pParam?.search || pParam?.name || pParam?.title || pParam.text) {
+
+  const searchTerm = pParam?.search || pParam?.name || pParam?.title || pParam?.text
+
+  if (searchTerm) {
+    let orConditions: any[] = []
+
     if (pParam?.typeSearch && pParam.typeSearch.includes(',')) {
-      const vTypeSearchs = pParam.typeSearch.split(',')
-      for (const typeSearch of vTypeSearchs) {
-        const where = fxSearchILikeQuery(pParam, pWhereStatement, typeSearch, vAttibutesPermisse)
-        pWhereStatement.where = { ...pWhereStatement.where, ...where }
-      }
+      const vTypeSearchs = pParam.typeSearch.split(',').map((s: string) => s.trim())
+
+      // Creamos un array de condiciones individuales
+      orConditions = vTypeSearchs
+        .filter((field: string) => vAttibutesPermisse.includes(field)) // Validamos que el campo exista
+        .map((field: string) => ({
+          [field]: {
+            [Op.like]: `%${searchTerm}%`, // Usamos like para que no importe mayúsculas/minúsculas
+          },
+        }))
     } else {
-      pWhereStatement.where = fxSearchILikeQuery(pParam, pWhereStatement, pName, vAttibutesPermisse)
+      // Búsqueda en un solo campo
+      orConditions.push({
+        [pName]: {
+          [Op.like]: `%${searchTerm}%`,
+        },
+      })
+    }
+
+    // Aplicamos el OR al objeto where existente
+    if (orConditions.length > 0) {
+      pWhereStatement.where = {
+        ...pWhereStatement.where,
+        [Op.or]: orConditions,
+      }
     }
   }
+
   return pWhereStatement.where || {}
 }
 
@@ -558,4 +583,86 @@ export const fxMuiSort = (pParam: any, pWhereStatement: FindOptions): FindOption
     pWhereStatement.order = [['createdAt', 'DESC']]
     return pWhereStatement
   }
+}
+
+export function buildProductWhere(pParam: IProductFilter, isClient: boolean = true) {
+  let where: any = {}
+
+  // nombre / búsqueda (similar a fxSearchILike)
+  if (pParam.search) {
+    // Aplicamos el mismo truco de separar números de letras (Ej: "1kg" -> "1 kg")
+    const searchString = pParam.search.trim().replace(/([0-9]+)([a-zA-Z]+)/g, '$1 $2')
+    const stopWords = [
+      'und',
+      'unds',
+      'unidad',
+      'unidades',
+      'kg',
+      'gr',
+      'g',
+      'ml',
+      'de',
+      'la',
+      'el',
+      'con',
+      'para',
+    ]
+    // 1. Separamos por espacios y limpiamos palabras cortas
+    const words = searchString
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 1 && !stopWords.includes(word))
+
+    if (words.length > 0) {
+      // Queremos que busque las palabras válidas tanto en nombre, descripción o código
+      const orConditions: any[] = []
+
+      words.forEach((word) => {
+        orConditions.push({ name: { [Op.like]: `%${word}%` } })
+        // orConditions.push({ description: { [Op.like]: `%${word}%` } })
+        // orConditions.push({ code: { [Op.like]: `%${word}%` } })
+      })
+
+      where[Op.or] = orConditions
+    }
+  } else if (pParam.name) {
+    where.name = { [Op.like]: `%${pParam.name}%` }
+  }
+
+  // departmentId se ignora porque estamos contando por departamento
+  if (pParam.categoriesIds) {
+    where.categoryId = { [Op.in]: pParam.categoriesIds.split(',') }
+  }
+  if (pParam.categoryId) {
+    where.categoryId = pParam.categoryId
+  }
+
+  // Precios
+  if (pParam.minPrice && pParam.typePrice === 'price') {
+    where[Op.and] = {
+      [Op.or]: [
+        { price: { [Op.gte]: Number(pParam.minPrice) } },
+        { promotionalPrice: { [Op.gte]: Number(pParam.minPrice) } },
+      ],
+    }
+  }
+  if (pParam.maxPrice && pParam.typePrice === 'price') {
+    where[Op.and] = {
+      [Op.or]: [
+        { price: { [Op.lte]: Number(pParam.maxPrice) } },
+        { promotionalPrice: { [Op.lte]: Number(pParam.maxPrice) } },
+      ],
+    }
+  }
+  // ... repite para priceBs
+
+  if (isClient) {
+    where.status = true
+    where.stock = { [Op.gt]: 10, [Op.not]: null }
+  }
+
+  // deletedAt null (productos no eliminados)
+  where.deletedAt = null
+
+  return where
 }

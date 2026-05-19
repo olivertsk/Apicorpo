@@ -39,7 +39,31 @@ export class DepartmentsController extends Controller {
     @Path() departmentId: string
   ): Promise<{ data: IDepartmentAttributes | null; message?: string }> {
     try {
-      const vResponse: IDepartmentAttributes | null = await this.departmentService.get(departmentId)
+      const vResponse: IDepartmentAttributes | null = await this.departmentService.get(
+        departmentId,
+        undefined
+      )
+      this.setStatus(200)
+      return { data: vResponse }
+    } catch (error) {
+      this.setStatus(500)
+      return { data: null, message: 'Ocurrió un error' }
+    }
+  }
+
+  @Get('/show-by-name/{departmentName}')
+  public async getByName(
+    @Path() departmentName: string
+  ): Promise<{ data: IDepartmentAttributes | null; message?: string }> {
+    try {
+      let name = departmentName
+      if (name.includes('-')) {
+        name = name.replace(/-/g, ' ')
+      }
+      const vResponse: IDepartmentAttributes | null = await this.departmentService.get(
+        undefined,
+        name
+      )
       this.setStatus(200)
       return { data: vResponse }
     } catch (error) {

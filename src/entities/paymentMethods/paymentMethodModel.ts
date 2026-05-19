@@ -13,6 +13,7 @@ export interface IPaymentMethodAttributes {
   accountType?: string | null
   currency?: string | null
   status: boolean | true
+  imageInfo?: string | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
@@ -23,6 +24,7 @@ export enum ETypePaymentMethods {
   Bank = 'bank',
   Zelle = 'zelle',
   PagoMovil = 'pago movil',
+  Binance = 'binance',
 }
 
 export interface IResponseAllPaymentMethod {
@@ -52,6 +54,7 @@ export type IPaymentMethodCreationAttributes = Pick<IPaymentMethodAttributes, 'i
     type: ETypePaymentMethods | ETypePaymentMethods.Cash
     phoneNumber?: string | null
     currency?: string | null
+    imageInfo?: string | null
   }
 export interface IPaymentMethodInstance
   extends Model<IPaymentMethodAttributes, IPaymentMethodCreationAttributes>,
@@ -124,6 +127,12 @@ export const vPaymentMethodModelAttributes: SequelizeAttributes<IPaymentMethodAt
   currency: {
     type: DataTypes.STRING,
     field: 'currency',
+    defaultValue: null,
+    allowNull: true,
+  },
+  imageInfo: {
+    type: DataTypes.STRING,
+    field: 'image_info',
     defaultValue: null,
     allowNull: true,
   },

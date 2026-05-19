@@ -32,6 +32,10 @@ import { fxConversationFactory } from '@entities/conversations/conversationModel
 import { fxConversationMessageFactory } from '@entities/conversations/conversationMessageModel'
 import { fxPermissionFactory } from '@entities/permissions/permissionModel'
 import { fxCurrencyFactory } from '@entities/currencies/currencyModel'
+import { fxPostProductFactory } from '@entities/posts/postProductModel'
+import { fxPostFactory } from '@entities/posts/postModel'
+import { fxProductReviewFactory } from '@products/productReviewModel'
+import { fxProductCommentFactory } from '@products/productCommentModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -70,6 +74,10 @@ export const modelConversation = fxConversationFactory(sequelize)
 export const modelConversationMessage = fxConversationMessageFactory(sequelize)
 export const modelPermission = fxPermissionFactory(sequelize)
 export const modelCurrency = fxCurrencyFactory(sequelize)
+export const modelPost = fxPostFactory(sequelize)
+export const modelPostProduct = fxPostProductFactory(sequelize)
+export const modelProductReview = fxProductReviewFactory(sequelize)
+export const modelProductComment = fxProductCommentFactory(sequelize)
 
 const models = {
   modelUser,
@@ -100,6 +108,10 @@ const models = {
   modelConversationMessage,
   modelPermission,
   modelCurrency,
+  modelPost,
+  modelPostProduct,
+  modelProductReview,
+  modelProductComment,
 }
 
 export type ModelRegistry = typeof models

@@ -73,6 +73,7 @@ class SuggestionService {
       const vResponse: ISuggestionAttributes = await modelSuggestion.create(
         surveyAnswerCreationParams
       )
+      console.log('vResponse.description :>> ', vResponse.description)
       return vResponse
     } catch (error) {
       throw error

@@ -84,6 +84,7 @@ export class SuggestionsController extends Controller {
       if (request.auth?.id) {
         requestBody.userId = request.auth.id // Set userId from auth token
       }
+      console.log('requestBody :>> ', requestBody)
       const vItem: ISuggestionAttributes | null = await this.suggestionService.create(requestBody)
       this.setStatus(201) // set return status 201
       return { success: true, item: vItem }

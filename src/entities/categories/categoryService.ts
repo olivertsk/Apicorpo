@@ -1,4 +1,4 @@
-import { modelCategory } from '@db/index'
+import { modelCategory, modelProduct } from '@db/index'
 import { Op, type FindOptions } from 'sequelize'
 import type {
   ICategoryAttributes,
@@ -7,6 +7,7 @@ import type {
   ICategoryInstance,
 } from '@entities/categories/categoryModel'
 import {
+  buildProductWhere,
   fxMuiFilters,
   fxMuiSort,
   fxOrderNameId,
@@ -20,11 +21,15 @@ class CategoriesService {
     const dataValidate = modelCategory.build(data)
     await dataValidate.validate()
   }
-  public async get(id: string): Promise<ICategoryAttributes | null> {
+  public async get(
+    id: string | undefined,
+    name: string | undefined
+  ): Promise<ICategoryAttributes | null> {
     try {
       const vResponse: ICategoryAttributes | null = await modelCategory.findOne({
         where: {
-          id,
+          ...(id && { id }),
+          ...(name && { name }),
         },
       })
       return vResponse
@@ -87,7 +92,7 @@ class CategoriesService {
           departmentId: pParam.departmentId,
         }
       }
-      const vResponse: ICategoryAttributes[] = await modelCategory.findAll(whereStatement)
+      let vResponse: ICategoryAttributes[] = await modelCategory.findAll(whereStatement)
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllCategory = await fxReponseServices(
           pParam,
@@ -96,6 +101,30 @@ class CategoriesService {
           vResponse
         )
         return vResponsePaginate
+      }
+      const hasProductFilters = !!(
+        pParam?.minPrice ||
+        pParam?.maxPrice ||
+        pParam?.departmentId ||
+        pParam?.categoriesIds ||
+        pParam?.productName
+      )
+      if (hasProductFilters) {
+        const productWhere = buildProductWhere(pParam, pParam?.isClient)
+        // Para cada departamento, contar productos
+        const deptsWithCount = await Promise.all(
+          vResponse.map(async (dept) => {
+            const deptJSON = JSON.parse(JSON.stringify(dept)) as ICategoryAttributes
+            const count = await modelProduct.count({
+              where: {
+                ...productWhere,
+                categoryId: dept.id,
+              },
+            })
+            return { ...deptJSON, productCount: count }
+          })
+        )
+        vResponse = deptsWithCount
       }
       return { data: vResponse }
     } catch (error) {

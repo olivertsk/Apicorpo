@@ -13,6 +13,7 @@ import type {
   IDepartmentInstance,
 } from '@entities/departments/departmentModel'
 import {
+  buildProductWhere,
   fxMuiFilters,
   fxMuiSort,
   fxOrderNameId,
@@ -26,13 +27,20 @@ class DepartmentsService {
     const dataValidate = modelDepartment.build(data)
     await dataValidate.validate()
   }
-  public async get(id: string): Promise<IDepartmentAttributes | null> {
+  public async get(id?: string, name?: string): Promise<IDepartmentAttributes | null> {
     try {
-      const vResponse: IDepartmentAttributes | null = await modelDepartment.findOne({
-        where: {
-          id,
-        },
-      })
+      const whereStatement: FindOptions = {}
+      if (name) {
+        whereStatement.where = {
+          name: name,
+        }
+        whereStatement.logging = true
+      } else {
+        whereStatement.where = {
+          id: id,
+        }
+      }
+      const vResponse: IDepartmentAttributes | null = await modelDepartment.findOne(whereStatement)
       return vResponse
     } catch (error) {
       throw error
@@ -165,7 +173,37 @@ class DepartmentsService {
           },
         ]
       }
-      const vResponse: IDepartmentAttributes[] = await modelDepartment.findAll(whereStatement)
+      let vResponse: IDepartmentAttributes[] = await modelDepartment.findAll(whereStatement)
+      const hasProductFilters = !!(
+        pParam?.minPrice ||
+        pParam?.maxPrice ||
+        pParam?.categoriesIds ||
+        pParam?.productName
+      )
+      if (hasProductFilters) {
+        const filtersProduct = {
+          minPrice: pParam?.minPrice,
+          maxPrice: pParam?.maxPrice,
+          categoryIds: pParam?.categoriesIds,
+          search: pParam?.productName,
+          isClient: true,
+        }
+        const productWhere = buildProductWhere(filtersProduct, pParam?.isClient)
+        // Para cada departamento, contar productos
+        const deptsWithCount = await Promise.all(
+          vResponse.map(async (dept) => {
+            const deptJSON = JSON.parse(JSON.stringify(dept)) as IDepartmentAttributes
+            const count = await modelProduct.count({
+              where: {
+                ...productWhere,
+                departmentId: dept.id,
+              },
+            })
+            return { ...deptJSON, productCount: count }
+          })
+        )
+        vResponse = deptsWithCount
+      }
       if (Number(pParam?.pag)) {
         const vResponsePaginate: IResponseAllDepartment = await fxReponseServices(
           pParam,
@@ -177,6 +215,7 @@ class DepartmentsService {
       }
       return { data: vResponse }
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }
