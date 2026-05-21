@@ -2065,6 +2065,14 @@
 						"format": "double",
 						"nullable": true
 					},
+					"model": {
+						"type": "string",
+						"nullable": true
+					},
+					"unit": {
+						"type": "string",
+						"nullable": true
+					},
 					"coverImage": {
 						"type": "string",
 						"nullable": true
@@ -2200,7 +2208,19 @@
 						]
 					},
 					"filters": {},
-					"sort": {}
+					"sort": {},
+					"model": {
+						"type": "string",
+						"nullable": true
+					},
+					"unit": {
+						"type": "string",
+						"nullable": true
+					},
+					"brand": {
+						"type": "string",
+						"nullable": true
+					}
 				},
 				"type": "object",
 				"additionalProperties": false
@@ -2310,6 +2330,14 @@
 					},
 					{
 						"properties": {
+							"unit": {
+								"type": "string",
+								"nullable": true
+							},
+							"model": {
+								"type": "string",
+								"nullable": true
+							},
 							"views": {
 								"type": "number",
 								"format": "double",
@@ -9298,6 +9326,30 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "model",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "unit",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "brand",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				]
 			}
@@ -9493,6 +9545,30 @@
 					{
 						"in": "query",
 						"name": "sort",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "model",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "unit",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "brand",
 						"required": false,
 						"schema": {
 							"type": "string"

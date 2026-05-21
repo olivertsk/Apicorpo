@@ -22,6 +22,8 @@ export interface IProductAttributes {
   stock: number
   brand?: string | null
   taxRate?: number | null
+  model?: string | null
+  unit?: string | null
   coverImage?: string | null
   idn?: number
   views?: number | null
@@ -44,6 +46,8 @@ export interface IProductAttributesResponse {
   stock: number
   brand?: string | null
   taxRate?: number | null
+  model?: string | null
+  unit?: string | null
   coverImage?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
@@ -76,6 +80,9 @@ export interface IProductFilter {
   typePrice?: 'price' | 'priceBs'
   filters?: any
   sort?: any
+  model?: string | null
+  unit?: string | null
+  brand?: string | null
 }
 export type IProductCreationAttributes = Pick<
   IProductAttributes,
@@ -94,6 +101,8 @@ export type IProductCreationAttributes = Pick<
     promotionalPriceBs?: number | null
     priceWithTaxBs?: number | null
     views?: number | null
+    model?: string | null
+    unit?: string | null
   }
 export interface IProductInstance
   extends Model<IProductAttributes, IProductCreationAttributes>,
@@ -235,6 +244,18 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     field: 'views',
     allowNull: true,
     defaultValue: 0,
+  },
+  model: {
+    type: DataTypes.STRING,
+    field: 'model',
+    allowNull: true,
+    defaultValue: null,
+  },
+  unit: {
+    type: DataTypes.STRING,
+    field: 'unit',
+    allowNull: true,
+    defaultValue: null,
   },
 }
 

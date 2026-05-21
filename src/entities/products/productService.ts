@@ -140,7 +140,7 @@ class ProductsService {
     }
   }
 
-  public async all(pParam: IProductFilter): Promise<IResponseAllProduct> {
+  public async all(pParam: IProductFilter): Promise<IResponseAllProduct | any> {
     try {
       pParam.limit = pParam?.limit || 50
       let whereStatement: FindOptions = {}
@@ -152,7 +152,6 @@ class ProductsService {
       let scoreSql = ''
 
       if (pParam?.search) {
-        // const searchString = pParam.search.trim()
         const searchString = pParam.search.trim().replace(/([0-9]+)([a-zA-Z]+)/g, '$1 $2')
         const stopWords = [
           'und',
@@ -169,37 +168,32 @@ class ProductsService {
           'con',
           'para',
         ]
-        // 1. Separamos por espacios y limpiamos palabras cortas
+
         const words = searchString
           .toLowerCase()
           .split(/\s+/)
           .filter((word) => word.length > 1 && !stopWords.includes(word))
 
         if (words.length > 0) {
-          // 2. Cláusula WHERE: Cambiado Op.iLike por Op.like para compatibilidad con MySQL
-          const orConditions = words.map((word) => ({
-            name: { [Op.like]: `%${word}%` },
-          }))
+          const orConditions: any[] = []
+          words.forEach((word) => {
+            orConditions.push({ name: { [Op.like]: `%${word}%` } })
+            // orConditions.push({ brand: { [Op.like]: `%${word}%` } })
+            // orConditions.push({ model: { [Op.like]: `%${word}%` } })
+            // orConditions.push({ unit: { [Op.like]: `%${word}%` } })
+          })
 
           whereStatement.where = {
             ...whereStatement.where,
             [Op.or]: orConditions,
           }
 
-          // 3. Algoritmo de Scoring en el ORDER BY:
-          // Cambiado 'products.name' por '\`Product\`.\`name\`' para respetar el alias que usa Sequelize
+          // 2. Ajustamos el Scoring para darle máxima prioridad a coincidencias en el Nombre
           scoreSql = words
             .map(
-              (word) => `CASE WHEN LOWER(\`Product\`.\`name\`) LIKE '%${word}%' THEN 1 ELSE 0 END`
+              (word) => `CASE WHEN LOWER(\`Product\`.\`name\`) LIKE '%${word}%' THEN 3 ELSE 0 END`
             )
             .join(' + ')
-
-          // Reemplazamos el orden por el Score de relevancia y las vistas
-          // whereStatement.order = [
-          //   [sequelize.literal(`(${scoreSql})`), 'DESC'], // Mayor coincidencia primero
-          //   ['views', 'DESC'], // Más vistos en empate
-          //   ['createdAt', 'DESC'], // Más nuevos al final
-          // ]
         }
       } else {
         whereStatement.where = fxSearchILike(
@@ -209,54 +203,39 @@ class ProductsService {
           modelProduct.name
         )
       }
-      const finalOrder: any[] = []
-      // Agrega esto dentro de tu método all, antes de modelProduct.findAll
+
+      // --- Inyección de Atributos Extra (Reviews/Comments) ---
       whereStatement.attributes = {
         include: [
           [
-            sequelize.literal(`(
-        SELECT ROUND(AVG(rating), 1)
-        FROM product_reviews AS reviews
-        WHERE reviews.product_id = Product.id AND reviews.is_approved = true
-      )`),
+            sequelize.literal(
+              '(SELECT ROUND(AVG(rating), 1) FROM product_reviews AS reviews WHERE reviews.product_id = Product.id AND reviews.is_approved = true)'
+            ),
             'avgRating',
           ],
           [
-            sequelize.literal(`(
-        SELECT COUNT(*)
-        FROM product_reviews AS reviews
-        WHERE reviews.product_id = Product.id AND reviews.is_approved = true
-      )`),
+            sequelize.literal(
+              // eslint-disable-next-line quotes
+              `(SELECT COUNT(*) FROM product_reviews AS reviews WHERE reviews.product_id = Product.id AND reviews.is_approved = true)`
+            ),
             'totalReviews',
           ],
           [
-            sequelize.literal(`(
-        SELECT COUNT(*)
-        FROM product_comments AS comments
-        WHERE comments.product_id = Product.id AND comments.is_approved = true
-      )`),
+            sequelize.literal(
+              '(SELECT COUNT(*) FROM product_comments AS comments WHERE comments.product_id = Product.id AND comments.is_approved = true)'
+            ),
             'totalComments',
           ],
         ],
       }
 
+      // --- Relaciones/Includes ---
       whereStatement.include = [
-        {
-          model: modelProductImages,
-          as: 'images',
-          required: false,
-        },
-        {
-          model: modelDepartment,
-          as: 'department',
-          required: false,
-        },
-        {
-          model: modelCategory,
-          as: 'category',
-          required: false,
-        },
+        { model: modelProductImages, as: 'images', required: false },
+        { model: modelDepartment, as: 'department', required: false },
+        { model: modelCategory, as: 'category', required: false },
       ]
+
       if (pParam?.userId) {
         whereStatement.include.push({
           model: modelFavoriteProduct,
@@ -266,114 +245,176 @@ class ProductsService {
           attributes: ['id'],
         })
       }
+
+      // --- Filtros por Categorías y Departamentos ---
       if (pParam?.departmentIds) {
         whereStatement.where = {
           ...whereStatement.where,
-          departmentId: {
-            [Op.in]: pParam?.departmentIds.split(','),
-          },
+          departmentId: { [Op.in]: pParam?.departmentIds.split(',') },
         }
       }
       if (pParam?.departmentId) {
-        let departmentId = pParam.departmentId
-        whereStatement.where = {
-          ...whereStatement.where,
-          departmentId: departmentId,
-        }
+        whereStatement.where = { ...whereStatement.where, departmentId: pParam.departmentId }
       }
       if (pParam?.categoriesIds) {
         whereStatement.where = {
           ...whereStatement.where,
-          categoryId: {
-            [Op.in]: pParam.categoriesIds.split(','),
-          },
+          categoryId: { [Op.in]: pParam.categoriesIds.split(',') },
         }
       }
       if (pParam?.categoryId) {
+        whereStatement.where = { ...whereStatement.where, categoryId: pParam.categoryId }
+      }
+      // --- Nuevos Filtros Directos de Facetas (Desde el Front) ---
+      if (pParam?.brand) {
         whereStatement.where = {
           ...whereStatement.where,
-          categoryId: pParam.categoryId,
+          brand: pParam.brand, // Filtra exactamente por la marca seleccionada
         }
       }
-      if (pParam?.minPrice && pParam.typePrice === 'price') {
+
+      if (pParam?.model) {
         whereStatement.where = {
           ...whereStatement.where,
-          [Op.and]: {
-            [Op.or]: [
-              { price: { [Op.gte]: Number(pParam.minPrice) } },
-              { promotionalPrice: { [Op.gte]: Number(pParam.minPrice) } },
-            ],
-          },
+          model: pParam.model, // Filtra exactamente por el modelo (Ej: 225GR)
         }
+      }
+
+      if (pParam?.unit) {
+        whereStatement.where = {
+          ...whereStatement.where,
+          unit: pParam.unit, // Filtra exactamente por la unidad (Ej: 12UND)
+        }
+      }
+
+      // --- Filtros de Rangos de Precio (USD / Bs) ---
+      const priceConditions: any[] = []
+      if (pParam?.minPrice && pParam.typePrice === 'price') {
+        priceConditions.push({
+          [Op.or]: [
+            { price: { [Op.gte]: Number(pParam.minPrice) } },
+            { promotionalPrice: { [Op.gte]: Number(pParam.minPrice) } },
+          ],
+        })
       }
       if (pParam?.maxPrice && pParam.typePrice === 'price') {
-        whereStatement.where = {
-          ...whereStatement.where,
-          [Op.and]: {
-            [Op.or]: [
-              { priceBs: { [Op.lte]: Number(pParam.maxPrice) } },
-              { promotionalPriceBs: { [Op.lte]: Number(pParam.maxPrice) } },
-            ],
-          },
-        }
+        priceConditions.push({
+          [Op.or]: [
+            { price: { [Op.lte]: Number(pParam.maxPrice) } },
+            { promotionalPrice: { [Op.lte]: Number(pParam.maxPrice) } },
+          ],
+        })
       }
       if (pParam?.minPrice && pParam.typePrice === 'priceBs') {
-        whereStatement.where = {
-          ...whereStatement.where,
-          [Op.and]: {
-            [Op.or]: [
-              { priceBs: { [Op.gte]: Number(pParam.minPrice) } },
-              { promotionalPriceBs: { [Op.gte]: Number(pParam.minPrice) } },
-            ],
-          },
-        }
+        priceConditions.push({
+          [Op.or]: [
+            { priceBs: { [Op.gte]: Number(pParam.minPrice) } },
+            { promotionalPriceBs: { [Op.gte]: Number(pParam.minPrice) } },
+          ],
+        })
       }
       if (pParam?.maxPrice && pParam.typePrice === 'priceBs') {
+        priceConditions.push({
+          [Op.or]: [
+            { priceBs: { [Op.lte]: Number(pParam.maxPrice) } },
+            { promotionalPriceBs: { [Op.lte]: Number(pParam.maxPrice) } },
+          ],
+        })
+      }
+      if (priceConditions.length > 0) {
+        whereStatement.where = { ...whereStatement.where, [Op.and]: priceConditions }
+      }
+
+      // --- Regla de negocio para clientes ---
+      if ('isClient' in pParam && pParam.isClient) {
         whereStatement.where = {
           ...whereStatement.where,
-          [Op.and]: {
-            [Op.or]: [
-              { price: { [Op.lte]: Number(pParam.maxPrice) } },
-              { promotionalPrice: { [Op.lte]: Number(pParam.maxPrice) } },
-            ],
-          },
+          status: true,
+          stock: { [Op.gt]: 10, [Op.not]: null },
         }
+      }
+
+      // --- Construcción del Ordenamiento Combinado ---
+      const finalOrder: any[] = []
+      if (scoreSql) {
+        finalOrder.push([sequelize.literal(`(${scoreSql})`), 'DESC'])
       }
       if (pParam?.order) {
         const type = pParam.order === 'maxPrice' ? 'DESC' : 'ASC'
         finalOrder.push(['price', type])
         finalOrder.push(['promotionalPrice', type])
       }
-      if (scoreSql) {
-        finalOrder.push([sequelize.literal(`(${scoreSql})`), 'DESC'])
-      }
-      if (!whereStatement.order) {
-        whereStatement.order = [['createdAt', 'DESC']]
-      }
-      if ('isClient' in pParam && pParam.isClient) {
-        whereStatement.where = {
-          ...whereStatement.where,
-          status: true,
-          stock: {
-            [Op.gt]: 10,
-            [Op.not]: null,
-          },
-        }
-      }
       finalOrder.push(['views', 'DESC'])
       finalOrder.push(['createdAt', 'DESC'])
       whereStatement.order = finalOrder
+
+      // --- 3. 🔥 EJECUCIÓN DE QUERIES COMPLEMENTARIAS (FACETAS) ---
+      let facets: { brands: any[]; models: any[]; units: any[] } = {
+        brands: [],
+        models: [],
+        units: [],
+      }
+
+      // Solo calculamos facetas si el usuario está buscando algo textualmente (pág 1)
+      // y para no recargar las consultas en paginaciones avanzadas.
+      if (pParam?.search && (!pParam.pag || Number(pParam.pag) === 1)) {
+        // Clonamos el objeto where actual para que respete los filtros aplicados (ej: departamento, stock, etc)
+        const facetsWhere = { ...whereStatement.where }
+
+        // Ejecutamos consultas paralelas ultra eficientes agrupando por MySQL
+        const [brandFacets, modelFacets, unitFacets] = await Promise.all([
+          modelProduct.findAll({
+            where: { ...facetsWhere, brand: { [Op.not]: null } },
+            attributes: ['brand', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+            group: ['brand'],
+            order: [[sequelize.literal('count'), 'DESC']],
+            limit: 10, // Top 10 marcas más relevantes de esa búsqueda
+            raw: true,
+          }),
+          modelProduct.findAll({
+            where: { ...facetsWhere, model: { [Op.not]: null } },
+            attributes: ['model', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+            group: ['model'],
+            order: [[sequelize.literal('count'), 'DESC']],
+            limit: 10,
+            raw: true,
+          }),
+          modelProduct.findAll({
+            where: { ...facetsWhere, unit: { [Op.not]: null } },
+            attributes: ['unit', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+            group: ['unit'],
+            order: [[sequelize.literal('count'), 'DESC']],
+            limit: 10,
+            raw: true,
+          }),
+        ])
+
+        facets = {
+          brands: brandFacets.map((f: any) => ({ name: f.brand, count: f.count })),
+          models: modelFacets.map((f: any) => ({ name: f.model, count: f.count })),
+          units: unitFacets.map((f: any) => ({ name: f.unit, count: f.count })),
+        }
+      }
+
+      // --- Ejecución de la consulta principal de productos ---
       const vResponse: IProductAttributes[] = await modelProduct.findAll(whereStatement)
+
       if (Number(pParam?.pag)) {
-        const vResponsePaginate: IResponseAllProduct = await fxReponseServices(
+        const vResponsePaginate: any = await fxReponseServices(
           pParam,
           whereStatement,
           modelProduct.name,
           vResponse
         )
-        return vResponsePaginate
+
+        // Inyectamos las facetas en la respuesta paginada
+        return {
+          ...vResponsePaginate,
+          facets: facets,
+        }
       }
-      return { data: vResponse }
+
+      return { data: vResponse, facets }
     } catch (error) {
       console.error('Error en ProductsService.all:', error)
       throw error
