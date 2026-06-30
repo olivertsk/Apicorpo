@@ -339,14 +339,30 @@ class ProductsService {
       if (scoreSql) {
         finalOrder.push([sequelize.literal(`(${scoreSql})`), 'DESC'])
       }
-      if (pParam?.order) {
-        const type = pParam.order === 'maxPrice' ? 'DESC' : 'ASC'
-        finalOrder.push(['price', type])
-        finalOrder.push(['promotionalPrice', type])
+      if (!pParam?.sort) {
+        const finalOrder: any[] = []
+
+        if (pParam?.order) {
+          if (pParam.order === 'maxPrice') {
+            finalOrder.push(['price', 'DESC'])
+            finalOrder.push(['promotionalPrice', 'DESC'])
+          } else if (pParam.order === 'minPrice') {
+            finalOrder.push(['price', 'ASC'])
+            finalOrder.push(['promotionalPrice', 'ASC'])
+          } else if (pParam.order === 'betterRating') {
+            finalOrder.push(['averageRating', 'DESC'])
+          } else if (pParam.order === 'worseRating') {
+            finalOrder.push(['averageRating', 'ASC'])
+          }
+          // Si llega otro valor, no se agrega ningún orden específico
+        }
+
+        // Órdenes secundarios (siempre se aplican)
+        finalOrder.push(['views', 'DESC'])
+        finalOrder.push(['createdAt', 'DESC'])
+
+        whereStatement.order = finalOrder
       }
-      finalOrder.push(['views', 'DESC'])
-      finalOrder.push(['createdAt', 'DESC'])
-      whereStatement.order = finalOrder
 
       // --- 3. 🔥 EJECUCIÓN DE QUERIES COMPLEMENTARIAS (FACETAS) ---
       let facets: { brands: any[]; models: any[]; units: any[] } = {

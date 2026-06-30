@@ -2086,6 +2086,14 @@
 						"format": "double",
 						"nullable": true
 					},
+					"reviewCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"averageRating": {
+						"type": "number",
+						"format": "double"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time",
@@ -2186,7 +2194,9 @@
 						"type": "string",
 						"enum": [
 							"maxPrice",
-							"minPrice"
+							"minPrice",
+							"betterRating",
+							"worseRating"
 						]
 					},
 					"typeSearch": {
@@ -2330,6 +2340,14 @@
 					},
 					{
 						"properties": {
+							"averageRating": {
+								"type": "number",
+								"format": "double"
+							},
+							"reviewCount": {
+								"type": "number",
+								"format": "double"
+							},
 							"unit": {
 								"type": "string",
 								"nullable": true
@@ -4987,6 +5005,10 @@
 						"type": "string",
 						"nullable": true
 					},
+					"departmentIds": {
+						"type": "string",
+						"nullable": true
+					},
 					"isClient": {
 						"type": "boolean"
 					},
@@ -5010,6 +5032,10 @@
 						"nullable": true
 					},
 					"categoriesIds": {
+						"type": "string",
+						"nullable": true
+					},
+					"categories": {
 						"type": "string",
 						"nullable": true
 					},
@@ -9025,6 +9051,45 @@
 				}
 			}
 		},
+		"/product-reviews/initializeProductReviews": {
+			"put": {
+				"operationId": "InitializeProductReviews",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Product Review"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/products/show/{productId}": {
 			"get": {
 				"operationId": "Get",
@@ -9271,7 +9336,9 @@
 							"type": "string",
 							"enum": [
 								"maxPrice",
-								"minPrice"
+								"minPrice",
+								"betterRating",
+								"worseRating"
 							]
 						}
 					},
@@ -9494,7 +9561,9 @@
 							"type": "string",
 							"enum": [
 								"maxPrice",
-								"minPrice"
+								"minPrice",
+								"betterRating",
+								"worseRating"
 							]
 						}
 					},
@@ -14348,6 +14417,14 @@
 					},
 					{
 						"in": "query",
+						"name": "departmentIds",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "isClient",
 						"required": false,
 						"schema": {
@@ -14407,6 +14484,14 @@
 					{
 						"in": "query",
 						"name": "categoriesIds",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categories",
 						"required": false,
 						"schema": {
 							"type": "string"

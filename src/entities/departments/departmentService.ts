@@ -186,6 +186,7 @@ class DepartmentsService {
           maxPrice: pParam?.maxPrice,
           categoryIds: pParam?.categoriesIds,
           search: pParam?.productName,
+          typePrice: pParam?.typePrice,
           isClient: true,
         }
         const productWhere = buildProductWhere(filtersProduct, pParam?.isClient)

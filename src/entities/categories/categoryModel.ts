@@ -29,6 +29,7 @@ export interface ICategoryFilter {
   name?: string | null
   isSalient?: boolean | null
   departmentId?: string | null
+  departmentIds?: string | null
   isClient?: boolean
   filters?: any
   sort?: any
@@ -37,6 +38,7 @@ export interface ICategoryFilter {
   minPrice?: number | null
   maxPrice?: number | null
   categoriesIds?: string | null
+  categories?: string | null
   typePrice?: 'price' | 'priceBs'
 }
 export type ICategoryCreationAttributes = Pick<ICategoryAttributes, 'id' | 'description' | 'icon'> &

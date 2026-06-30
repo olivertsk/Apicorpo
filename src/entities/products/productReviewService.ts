@@ -1,4 +1,4 @@
-import { modelProductReview } from '@db/index'
+import sequelize, { modelProduct, modelProductReview } from '@db/index'
 import { type FindOptions } from 'sequelize'
 import {
   type IProductReviewAttributes,
@@ -56,14 +56,78 @@ class ProductReviewService {
     }
   }
 
-  // Útil para el administrador de Corpoindustri
   public async toggleApproval(id: string, status: boolean): Promise<boolean> {
-    const record = await modelProductReview.findByPk(id)
-    if (record) {
-      await record.update({ isApproved: status })
+    const transaction = await sequelize.transaction()
+    try {
+      // 1. Obtener la reseña (sin bloqueo, solo lectura)
+      const review = await modelProductReview.findByPk(id, { transaction })
+      if (!review) {
+        await transaction.rollback()
+        return false
+      }
+      // Si ya está en el estado deseado, no hacemos nada
+      if (review.isApproved === status) {
+        await transaction.commit()
+        return true
+      }
+
+      const productId = review.productId
+
+      // 2. Bloquear el producto para actualización (SELECT ... FOR UPDATE)
+      const product = await modelProduct.findByPk(productId, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+      if (!product) {
+        await transaction.rollback()
+        return false
+      }
+
+      const currentCount = product.reviewCount || 0
+      const currentAvg = product.averageRating || 0
+      const rating = review.rating
+
+      let newCount = currentCount
+      let newAvg = currentAvg
+
+      if (status) {
+        // --- APROBAR ---
+        newCount = currentCount + 1
+        newAvg = (currentAvg * currentCount + rating) / newCount
+      }
+
+      // 3. Actualizar reseña y producto
+      await review.update({ isApproved: status }, { transaction })
+      await product.update(
+        {
+          reviewCount: newCount,
+          averageRating: newAvg,
+        },
+        { transaction }
+      )
+
+      await transaction.commit()
       return true
+    } catch (error) {
+      await transaction.rollback()
+      throw error
     }
-    return false
+  }
+
+  public async initializeProductReviews() {
+    const products = await modelProduct.findAll()
+    for (const product of products) {
+      const approved = await modelProductReview.findAll({
+        where: { productId: product.id, isApproved: true },
+        attributes: ['rating'],
+      })
+      const count = approved.length
+      let avg = 0
+      if (count > 0) {
+        avg = approved.reduce((s, r) => s + r.rating, 0) / count
+      }
+      await product.update({ reviewCount: count, averageRating: avg })
+    }
   }
 }
 

@@ -27,6 +27,8 @@ export interface IProductAttributes {
   coverImage?: string | null
   idn?: number
   views?: number | null
+  reviewCount?: number | undefined
+  averageRating?: number | undefined
   createdAt?: Date | null
   updatedAt?: Date | null
   deletedAt?: Date | null
@@ -73,7 +75,7 @@ export interface IProductFilter {
   categoriesIds?: string | null
   minPrice?: number | null
   maxPrice?: number | null
-  order?: 'maxPrice' | 'minPrice'
+  order?: 'maxPrice' | 'minPrice' | 'betterRating' | 'worseRating'
   typeSearch?: string | null
   userId?: string | null
   isClient?: boolean
@@ -103,6 +105,8 @@ export type IProductCreationAttributes = Pick<
     views?: number | null
     model?: string | null
     unit?: string | null
+    reviewCount?: number | undefined
+    averageRating?: number | undefined
   }
 export interface IProductInstance
   extends Model<IProductAttributes, IProductCreationAttributes>,
@@ -256,6 +260,18 @@ export const vProductModelAttributes: SequelizeAttributes<IProductAttributes> = 
     field: 'unit',
     allowNull: true,
     defaultValue: null,
+  },
+  reviewCount: {
+    type: DataTypes.INTEGER,
+    field: 'review_count',
+    defaultValue: 0,
+    allowNull: false,
+  },
+  averageRating: {
+    type: DataTypes.DECIMAL(3, 2),
+    field: 'average_rating',
+    defaultValue: 0,
+    allowNull: false,
   },
 }
 

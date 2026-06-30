@@ -73,7 +73,6 @@ export class AuthController extends Controller {
             avatar: requestBody.avatar,
           })
           if (existUser) {
-            console.log('si existe un usuario')
             const vUserJSON = {
               id: existUser.id,
               name: existUser.name,

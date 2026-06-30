@@ -507,6 +507,7 @@ export const fxMuiSort = (pParam: any, pWhereStatement: FindOptions): FindOption
     pWhereStatement.order = [['createdAt', 'DESC']]
     return pWhereStatement
   }
+  console.log('pParam.sort :>> ', pParam.sort)
 
   try {
     let sortData: Array<{ field: string; sort: 'asc' | 'desc' }> = []
@@ -571,7 +572,7 @@ export const fxMuiSort = (pParam: any, pWhereStatement: FindOptions): FindOption
         orderClauses.push([field, direction])
       }
     })
-
+    console.log('orderClauses :>> ', orderClauses)
     // Aplicar el ordenamiento
     if (orderClauses.length > 0) {
       pWhereStatement.order = orderClauses
@@ -636,6 +637,12 @@ export function buildProductWhere(pParam: IProductFilter, isClient: boolean = tr
   if (pParam.categoryId) {
     where.categoryId = pParam.categoryId
   }
+  if (pParam.departmentIds) {
+    where.categoryId = { [Op.in]: pParam.departmentIds.split(',') }
+  }
+  if (pParam.departmentId) {
+    where.departmentId = pParam.departmentId
+  }
 
   // Precios
   if (pParam.minPrice && pParam.typePrice === 'price') {
@@ -654,7 +661,22 @@ export function buildProductWhere(pParam: IProductFilter, isClient: boolean = tr
       ],
     }
   }
-  // ... repite para priceBs
+  if (pParam.minPrice && pParam.typePrice === 'priceBs') {
+    where[Op.and] = {
+      [Op.or]: [
+        { priceBs: { [Op.gte]: Number(pParam.minPrice) } },
+        { promotionalPriceBs: { [Op.gte]: Number(pParam.minPrice) } },
+      ],
+    }
+  }
+  if (pParam.maxPrice && pParam.typePrice === 'priceBs') {
+    where[Op.and] = {
+      [Op.or]: [
+        { priceBs: { [Op.lte]: Number(pParam.maxPrice) } },
+        { promotionalPriceBs: { [Op.lte]: Number(pParam.maxPrice) } },
+      ],
+    }
+  }
 
   if (isClient) {
     where.status = true

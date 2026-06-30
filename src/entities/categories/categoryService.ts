@@ -110,7 +110,17 @@ class CategoriesService {
         pParam?.productName
       )
       if (hasProductFilters) {
-        const productWhere = buildProductWhere(pParam, pParam?.isClient)
+        const filtersProduct = {
+          minPrice: pParam?.minPrice,
+          maxPrice: pParam?.maxPrice,
+          categoryIds: pParam?.categoriesIds,
+          search: pParam?.productName,
+          typePrice: pParam?.typePrice,
+          departmentIds: pParam?.departmentIds,
+          departmentId: pParam?.departmentId,
+          isClient: true,
+        }
+        const productWhere = buildProductWhere(filtersProduct, pParam?.isClient)
         // Para cada departamento, contar productos
         const deptsWithCount = await Promise.all(
           vResponse.map(async (dept) => {

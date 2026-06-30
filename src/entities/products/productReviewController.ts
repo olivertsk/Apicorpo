@@ -86,4 +86,16 @@ export class ProductReviewController extends Controller {
       throw error
     }
   }
+
+  @Security('bearerAuth', ['admin'])
+  @Put('/initializeProductReviews')
+  public async initializeProductReviews(): Promise<{ success: boolean; message?: string }> {
+    try {
+      await this.reviewService.initializeProductReviews()
+      this.setStatus(200)
+      return { success: true }
+    } catch (error) {
+      throw error
+    }
+  }
 }
