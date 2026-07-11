@@ -27,6 +27,7 @@ import type {
   IProductImageCreationAttributes,
   IProductImageInstance,
 } from './productImagesModel'
+import alertQueueService from '@entities/alertQueue/alertQueueService'
 
 class ProductsService {
   async validate(data: any) {
@@ -585,19 +586,55 @@ class ProductsService {
   ): Promise<IProductAttributes | null> {
     try {
       if (id) {
+        // Obtener producto actual (antes de actualizar)
         const vResponse: IProductInstance | null = await modelProduct.findOne({
-          where: {
-            id: id,
-          },
+          where: { id },
         })
         if (vResponse === null) {
           return null
         }
+
+        // --- DETECTAR CAMBIOS PARA ALERTAS ---
+        const oldPrice = Number(vResponse.price) || 0
+        const oldStock = Number(vResponse.stock) || 0
+        const newPrice = Number(productCreationParams.price) || 0
+        const newStock = Number(productCreationParams.stock) || 0
+
+        const alerts: any[] = []
+
+        // Precio disminuyó
+        if (newPrice < oldPrice) {
+          alerts.push({
+            productId: id,
+            previousPrice: oldPrice,
+            currentPrice: newPrice,
+            alertType: 'price_drop',
+          })
+        }
+
+        // Stock pasó de crítico a disponible
+        if (oldStock <= 10 && newStock > 10) {
+          alerts.push({
+            productId: id,
+            previousStock: oldStock,
+            currentStock: newStock,
+            alertType: 'stock_available',
+          })
+        }
+
+        // Crear alertas en la cola (si hay)
+        if (alerts.length > 0) {
+          await alertQueueService.bulkCreate(alerts)
+          console.log(`[Product Update] ${alerts.length} alertas creadas para producto ${id}`)
+        }
+
+        // --- ACTUALIZAR PRODUCTO ---
         await vResponse.update(productCreationParams)
         return vResponse
       }
       return null
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }

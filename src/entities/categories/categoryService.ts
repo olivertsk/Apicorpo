@@ -138,6 +138,7 @@ class CategoriesService {
       }
       return { data: vResponse }
     } catch (error) {
+      console.log('error :>> ', error)
       throw error
     }
   }

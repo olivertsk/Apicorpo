@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alertas de productos</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px;">
+  <div
+    style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <img src="https://www.corpoindustri.com/_next/image?url=%2Flogo.png&w=1080&q=75" alt="Corpoindustri"
+      style="width: 150px; display: block; margin: 0 auto 20px;">
+    <h2 style="color: #1958ac;">Hola {{userName}},</h2>
+    <p style="color: #333;">Se han detectado cambios en algunos de tus productos favoritos:</p>
+
+    <ul style="list-style: none; padding: 0; margin: 20px 0;">
+      {{#each products}}
+      <li
+        style="border-bottom: 1px solid #eee; padding: 12px 0; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong style="color: #1958ac;">{{this.name}}</strong>
+          <span style="color: #666; font-size: 14px;">({{this.code}})</span>
+        </div>
+        <div>
+          {{#if (eq this.alertType "price_drop")}}
+          <span style="background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 12px; font-size: 13px;">
+            ⬇ Bs {{this.previousPrice}} → Bs {{this.currentPrice}}
+          </span>
+          {{/if}}
+          {{#if (eq this.alertType "stock_available")}}
+          <span style="background: #e3f2fd; color: #0d47a1; padding: 4px 12px; border-radius: 12px; font-size: 13px;">
+            ✅ {{this.currentStock}} unidades (antes {{this.previousStock}})
+          </span>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+
+    <p style="margin: 20px 0 10px;">Visita nuestra tienda para ver más detalles y aprovechar estas ofertas.</p>
+    <a href="https://www.corpoindustri.com"
+      style="display: inline-block; background-color: #1958ac; color: #fff; padding: 10px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Ir
+      a la tienda</a>
+
+    <p style="color: #999; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px;">
+      Este es un mensaje automático. No respondas a este correo.<br>
+      Si necesitas asistencia, contacta a <a
+        href="mailto:oliveroviedo@corpoindustri.com">oliveroviedo@corpoindustri.com</a>.
+    </p>
+  </div>
+</body>
+
+</html>

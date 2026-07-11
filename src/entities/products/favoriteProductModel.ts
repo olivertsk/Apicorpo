@@ -1,7 +1,7 @@
 import { type Sequelize, type Model, DataTypes } from 'sequelize'
 import type { SequelizeAttributes, ModelStatic } from '@type/SequelizeTypes'
 import { v4 as uuidv4 } from 'uuid'
-import { ModelRegistry } from '@db/index'
+import type { ModelRegistry } from '@db/index'
 
 export interface IFavoriteProductAttributes {
   id?: string
@@ -92,10 +92,14 @@ export function fxFavoriteProductFactory(sequelize: Sequelize) {
     }
   )
   vData.associate = function (models: ModelRegistry) {
-    const { modelFavoriteProduct, modelProduct } = models
+    const { modelFavoriteProduct, modelProduct, modelUser } = models
     modelFavoriteProduct.belongsTo(modelProduct, {
       foreignKey: 'productId',
       as: 'product',
+    })
+    modelFavoriteProduct.belongsTo(modelUser, {
+      foreignKey: 'userId',
+      as: 'user',
     })
   }
   vData.prototype.toJSON = function () {

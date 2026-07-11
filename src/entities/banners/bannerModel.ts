@@ -27,6 +27,7 @@ export enum EPositionBanner {
   AlwaysPopup = 'AlwaysPopup',
   Product = 'Product',
   Filter = 'Filter',
+  downloadCatalog = 'downloadCatalog',
 }
 export interface IResponseAllBanner {
   total?: number

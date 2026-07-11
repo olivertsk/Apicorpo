@@ -4650,6 +4650,253 @@
 					}
 				]
 			},
+			"IComboProductAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"comboId": {
+						"type": "string"
+					},
+					"productId": {
+						"type": "string"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"productDetail": {},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"comboId",
+					"productId",
+					"quantity"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IComboAttributes": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"priceBs": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"coverImage": {
+						"type": "string",
+						"nullable": true
+					},
+					"status": {
+						"type": "boolean"
+					},
+					"products": {
+						"items": {
+							"$ref": "#/components/schemas/IComboProductAttributes"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name",
+					"slug",
+					"price"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IResponseAllCombo": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IComboAttributes"
+						},
+						"type": "array"
+					},
+					"actualPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IComboFilter": {
+				"properties": {
+					"pag": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"search": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IComboAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Pick_IComboProductAttributes.id_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"IComboProductCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IComboProductAttributes.id_"
+					},
+					{
+						"properties": {
+							"updatedAt": {
+								"type": "string",
+								"format": "date-time"
+							},
+							"createdAt": {
+								"type": "string",
+								"format": "date-time"
+							},
+							"productDetail": {},
+							"quantity": {
+								"type": "number",
+								"format": "double"
+							},
+							"productId": {
+								"type": "string"
+							},
+							"comboId": {
+								"type": "string",
+								"nullable": true
+							},
+							"id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"quantity",
+							"productId"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"IComboCreationAttributes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_IComboAttributes.id_"
+					},
+					{
+						"properties": {
+							"products": {
+								"items": {
+									"$ref": "#/components/schemas/IComboProductCreationAttributes"
+								},
+								"type": "array"
+							},
+							"status": {
+								"type": "boolean"
+							},
+							"coverImage": {
+								"type": "string",
+								"nullable": true
+							},
+							"priceBs": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							},
+							"price": {
+								"type": "number",
+								"format": "double"
+							},
+							"description": {
+								"type": "string",
+								"nullable": true
+							},
+							"slug": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"price",
+							"slug",
+							"name"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"Partial_Pick_IChatAnswerAttributes.name__": {
 				"properties": {
 					"name": {
@@ -5128,7 +5375,8 @@
 					"PopupOnce",
 					"AlwaysPopup",
 					"Product",
-					"Filter"
+					"Filter",
+					"downloadCatalog"
 				],
 				"type": "string"
 			},
@@ -10449,6 +10697,33 @@
 				]
 			}
 		},
+		"/catalog/download": {
+			"get": {
+				"operationId": "Download",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Descarga el catálogo en PDF.",
+				"tags": [
+					"Catalog"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/posts/show/{postId}": {
 			"get": {
 				"operationId": "Get",
@@ -13839,6 +14114,363 @@
 				"parameters": [
 					{
 						"description": "- ID de la item a eliminar.",
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/combos/show/{comboId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IComboAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtener un combo por ID.",
+				"tags": [
+					"Combo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "comboId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/combos/show-by-name/{comboName}": {
+			"get": {
+				"operationId": "GetByName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IComboAttributes"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtener un combo por nombre (slug).",
+				"tags": [
+					"Combo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "comboName",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/combos/all": {
+			"get": {
+				"operationId": "All",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"anyOf": [
+												{
+													"items": {
+														"$ref": "#/components/schemas/IComboAttributes"
+													},
+													"type": "array"
+												},
+												{
+													"$ref": "#/components/schemas/IResponseAllCombo"
+												}
+											]
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtener todos los combos con paginación y filtros.",
+				"tags": [
+					"Combo"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"optional"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "pag",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/combos/create": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IComboAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Crear un nuevo combo (solo administradores).",
+				"tags": [
+					"Combo"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IComboCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/combos/update/{comboId}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"item": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/IComboAttributes"
+												}
+											],
+											"nullable": true
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"item",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Actualizar un combo existente (solo administradores).",
+				"tags": [
+					"Combo"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "comboId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IComboCreationAttributes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/combos/deleted/{key}": {
+			"delete": {
+				"operationId": "SoftDeleteRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Eliminar (soft delete) un combo por ID (solo administradores).",
+				"tags": [
+					"Combo"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
 						"in": "path",
 						"name": "key",
 						"required": true,

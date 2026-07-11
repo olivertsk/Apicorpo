@@ -14,7 +14,8 @@ import { parse as json2csv } from 'json2csv'
 import morgan from 'morgan'
 import { contextMiddleware } from 'middlewares/context.middleware'
 import device from 'express-device'
-import { initCurrencyScheduler } from './scheduler/currencyScheduler'
+// import { initCurrencyScheduler } from './scheduler/currencyScheduler'
+import { initSchedulers } from 'scheduler'
 
 export const app = express()
 app.use(morgan('dev'))
@@ -57,7 +58,8 @@ RegisterRoutes(app, {
 //   console.log('estoy pasando por app');
 //   next();
 // })
-initCurrencyScheduler()
+// initCurrencyScheduler()
+initSchedulers()
 app.get('/file/:folder/:fileName', async (pReq, pRes) => {
   try {
     const vFileName = pReq.params.fileName

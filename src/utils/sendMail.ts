@@ -13,6 +13,15 @@ const transporter = nodeMailer.createTransport({
     pass: 'CorpoMailWeb123!',
   },
 })
+handlebars.registerHelper('eq', function (a: any, b: any) {
+  return a === b
+})
+
+// También puedes agregar otros helpers si los necesitas, por ejemplo:
+handlebars.registerHelper('gt', function (a: any, b: any) {
+  return a > b
+})
+
 export const fxSendMail = (data: any, email: string, subject: string) => {
   const templatePath = path.join(__dirname, `../view/${email}.handlebars`)
   const htmlTemplate = fs.readFileSync(templatePath, 'utf-8')

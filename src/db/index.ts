@@ -36,6 +36,9 @@ import { fxPostProductFactory } from '@entities/posts/postProductModel'
 import { fxPostFactory } from '@entities/posts/postModel'
 import { fxProductReviewFactory } from '@products/productReviewModel'
 import { fxProductCommentFactory } from '@products/productCommentModel'
+import { fxComboProductFactory } from '@entities/combos/comboProductsModel'
+import { fxComboFactory } from '@entities/combos/comboModel'
+import { fxProductAlertQueueFactory } from '@entities/alertQueue/alertQueueModel'
 // @ts-ignore
 const database = config[AppConfig.NODE_ENV] || config.development
 
@@ -78,6 +81,9 @@ export const modelPost = fxPostFactory(sequelize)
 export const modelPostProduct = fxPostProductFactory(sequelize)
 export const modelProductReview = fxProductReviewFactory(sequelize)
 export const modelProductComment = fxProductCommentFactory(sequelize)
+export const modelComboProduct = fxComboProductFactory(sequelize)
+export const modelCombo = fxComboFactory(sequelize)
+export const modelProductAlertQueue = fxProductAlertQueueFactory(sequelize)
 
 const models = {
   modelUser,
@@ -112,6 +118,9 @@ const models = {
   modelPostProduct,
   modelProductReview,
   modelProductComment,
+  modelComboProduct,
+  modelCombo,
+  modelProductAlertQueue,
 }
 
 export type ModelRegistry = typeof models

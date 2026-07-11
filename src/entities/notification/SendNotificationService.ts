@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin'
 import path from 'path'
 import NotificationService from './NotificationService'
 import UserService from '@users/userService'
+import { fxSendMail } from '@utils/sendMail'
 
 interface NotificationData {
   title: string
@@ -45,6 +46,8 @@ class SendNotificationService {
           if (user) {
             receiveNotification = 'receiveNotification' in user ? user.receiveNotification : true
           }
+          const email = user?.email || null
+          const userName = user?.name || 'Usuario'
           try {
             if (token) {
               const notification = {
@@ -75,6 +78,27 @@ class SendNotificationService {
                   url: data?.data?.url || '',
                   userId,
                 })
+              }
+              if (email) {
+                try {
+                  // Preparar datos para el template
+                  const templateData = {
+                    userName: userName,
+                    title: data.title,
+                    body: data.body,
+                    url: data.data?.url || null,
+                  }
+                  // Usar fxSendMail con el template 'notification'
+                  console.log('enviando a :>> ', email)
+                  await fxSendMail(
+                    { ...templateData, email }, // fxSendMail espera data.email
+                    'notification', // nombre del template (sin .handlebars)
+                    data.title // asunto
+                  )
+                  console.log(`Correo enviado a ${email}`)
+                } catch (error) {
+                  console.error(`Error enviando correo a ${email}:`, error)
+                }
               }
             }
             console.log(`El token ${token} funciona`)

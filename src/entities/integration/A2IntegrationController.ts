@@ -10,6 +10,9 @@ import ProductService from '@products/productService'
 import BulkUploadLogService from './BulkUploadLogService'
 import type { Item, OrderA2, OrderProductA2 } from './interfaces'
 import type { IOrderAttributes } from '@entities/orders/orderModel'
+import alertQueueService from '@entities/alertQueue/alertQueueService'
+import { modelProduct } from '@db/index'
+import { Op } from 'sequelize'
 
 interface IUploadZipReponseError {
   status: boolean
@@ -321,6 +324,52 @@ export class A2IntegrationController extends Controller {
           }
           products.push(product)
         }
+      }
+
+      // 1. Obtener productos existentes por código para comparar
+      const codes = products.map((p) => p.code)
+      const existingProducts = await modelProduct.findAll({
+        where: { code: { [Op.in]: codes } },
+        attributes: ['id', 'code', 'price', 'stock'],
+      })
+      const existingMap = new Map(existingProducts.map((p) => [p.code, p]))
+
+      // 2. Preparar lista de alertas
+      const alerts: any[] = []
+
+      for (const newProduct of products) {
+        const existing = existingMap.get(newProduct.code)
+        if (!existing) continue
+
+        // Precio disminuyó
+        const oldPrice = Number(existing.price) || 0
+        const newPrice = Number(newProduct.price) || 0
+        if (newPrice < oldPrice) {
+          alerts.push({
+            productId: existing.id,
+            previousPrice: oldPrice,
+            currentPrice: newPrice,
+            alertType: 'price_drop',
+          })
+        }
+
+        // Stock pasó de crítico (<=10) a disponible (>10)
+        const oldStock = Number(existing.stock) || 0
+        const newStock = Number(newProduct.stock) || 0
+        if (oldStock <= 10 && newStock > 10) {
+          alerts.push({
+            productId: existing.id,
+            previousStock: oldStock,
+            currentStock: newStock,
+            alertType: 'stock_available',
+          })
+        }
+      }
+
+      // 3. Guardar alertas en la cola
+      if (alerts.length > 0) {
+        await alertQueueService.bulkCreate(alerts)
+        console.log(`[Importación] ${alerts.length} alertas creadas`)
       }
 
       const productsCreated = await this.productService.saveMasive(products)

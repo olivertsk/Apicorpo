@@ -25,6 +25,16 @@ class BulkUploadLogsService {
       throw error
     }
   }
+  public async getLatestLog(): Promise<IBulkUploadLogAttributes | null> {
+    try {
+      const vResponse = await modelBulkUploadLog.findOne({
+        order: [['createdAt', 'DESC']],
+      })
+      return vResponse
+    } catch (error) {
+      throw error
+    }
+  }
 
   public async all(pParam: any): Promise<IResponseAllBulkUploadLog> {
     try {

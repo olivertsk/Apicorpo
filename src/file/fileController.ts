@@ -14,6 +14,7 @@ import {
 import * as fs from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 import path from 'path'
+import sharp from 'sharp'
 import ProductService from '@entities/products/productService'
 import DepartmentService from '@entities/departments/departmentService'
 import CategoryService from '@entities/categories/categoryService'
@@ -40,6 +41,38 @@ export class FileController extends Controller {
     this.mapService = MapService
   }
 
+  private async processFile(file: Express.Multer.File): Promise<string> {
+    const isImage = file.mimetype.startsWith('image/')
+    const originalExt = path.extname(file.originalname)
+    let fileName: string
+    let buffer: Buffer
+
+    if (isImage) {
+      // Generar nombre con extensión .webp
+      const baseName = uuidv4()
+      fileName = `${baseName}.webp`
+      // Procesar con sharp: convertir a WebP con calidad 80%
+      buffer = await sharp(file.buffer)
+        .webp({ quality: 80 }) // calidad 80% (0-100)
+        .toBuffer()
+    } else {
+      // Guardar con extensión original
+      const format = originalExt || '.bin'
+      const baseName = uuidv4()
+      fileName = `${baseName}${format}`
+      buffer = file.buffer
+    }
+
+    // Guardar en carpeta 'uploads/temp/'
+    const uploadDir = 'uploads/temp'
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true })
+    }
+    const filePath = path.join(uploadDir, fileName)
+    fs.writeFileSync(filePath, buffer)
+    return `temp/${fileName}` // ruta relativa para devolver
+  }
+
   @Post('uploadFile')
   public async uploadFile(
     @Res() notFound: TsoaResponse<404, { reason: string; error?: any }>,
@@ -50,21 +83,23 @@ export class FileController extends Controller {
       if (!file && !files) {
         return notFound(404, { reason: 'No file provided' })
       } else if (file) {
-        const format = path.extname(file.originalname)
-        const vNormalizedName = uuidv4() + format
-        const vFileName = `temp/${Date.now()}-${vNormalizedName}`
-        fs.writeFileSync(`uploads/${vFileName}`, file.buffer)
-        return { fileName: [vFileName] }
+        // const format = path.extname(file.originalname)
+        // const vNormalizedName = uuidv4() + format
+        // const vFileName = `temp/${Date.now()}-${vNormalizedName}`
+        // fs.writeFileSync(`uploads/${vFileName}`, file.buffer)
+        const filePath = await this.processFile(file)
+        return { fileName: [filePath] }
       } else if (files) {
-        const filesName: string[] = []
-        for (const item of files) {
-          const format = path.extname(item.originalname)
-          const vNormalizedName = uuidv4() + format
-          const vFileName = `temp/${Date.now()}-${vNormalizedName}`
-          fs.writeFileSync(`uploads/${vFileName}`, item.buffer)
-          filesName.push(vFileName)
-        }
-        return { fileName: filesName }
+        // const filesName: string[] = []
+        // for (const item of files) {
+        //   const format = path.extname(item.originalname)
+        //   const vNormalizedName = uuidv4() + format
+        //   const vFileName = `temp/${Date.now()}-${vNormalizedName}`
+        //   fs.writeFileSync(`uploads/${vFileName}`, item.buffer)
+        //   filesName.push(vFileName)
+        // }
+        const filePaths = await Promise.all(files.map((f) => this.processFile(f)))
+        return { fileName: filePaths }
       }
       return notFound(404, { reason: 'No file provided' })
     } catch (error) {

@@ -165,9 +165,11 @@ class UsersService {
     }
   }
 
-  public async showRolName(name: string): Promise<IRolAttributes | null> {
+  public async showRolName(
+    name: string
+  ): Promise<(IRolAttributes & { users: IUserAttributes[] }) | null> {
     try {
-      const vResponse: IRolAttributes | null = await modelRol.findOne({
+      const vResponse: any | null = await modelRol.findOne({
         where: {
           name,
         },
