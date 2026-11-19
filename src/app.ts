@@ -16,6 +16,8 @@ import { contextMiddleware } from 'middlewares/context.middleware'
 import device from 'express-device'
 // import { initCurrencyScheduler } from './scheduler/currencyScheduler'
 import { initSchedulers } from 'scheduler'
+import path from 'path'
+import { fxCheckA2Credentials } from '@utils/a2Auth'
 
 export const app = express()
 app.use(morgan('dev'))
@@ -60,12 +62,28 @@ RegisterRoutes(app, {
 // })
 // initCurrencyScheduler()
 initSchedulers()
+const ALLOWED_FILE_FOLDERS = ['temp', 'storage', 'static']
+const UPLOADS_ROOT = path.resolve('uploads')
 app.get('/file/:folder/:fileName', async (pReq, pRes) => {
   try {
-    const vFileName = pReq.params.fileName
     const vFolder = pReq.params.folder
-    // const vFolder = pReq.params.folder
-    return pRes.download(`uploads/${vFolder}/${vFileName}`)
+    const vFileName = path.basename(pReq.params.fileName)
+    // Solo carpetas conocidas y nombres sin rutas (evita leer archivos fuera de uploads/)
+    if (
+      !ALLOWED_FILE_FOLDERS.includes(vFolder) ||
+      vFileName !== pReq.params.fileName ||
+      vFileName.startsWith('.')
+    ) {
+      return pRes.status(404).send('Not found')
+    }
+    return pRes.download(
+      path.join(vFolder, vFileName),
+      vFileName,
+      { root: UPLOADS_ROOT },
+      (err) => {
+        if (err && !pRes.headersSent) pRes.status(404).send('Not found')
+      }
+    )
   } catch (error) {
     console.error('Error al descargar el archivo:', error)
     pRes.status(500).send('Internal server error')
@@ -74,7 +92,9 @@ app.get('/file/:folder/:fileName', async (pReq, pRes) => {
 
 app.get('/detalle.php', async (pReq, pRes) => {
   try {
-    console.log('hola')
+    if (!fxCheckA2Credentials(pReq.query.usu, pReq.query.cla, '/detalle.php')) {
+      return pRes.status(401).send('Unauthorized')
+    }
     const requestBody = {
       wasSent: pReq.query.wasSent ? Number(pReq.query.wasSent) : undefined,
       product: pReq.query.product === 'true' ? true : undefined,
@@ -146,6 +166,9 @@ app.get('/archivophp.php', async (req, res) => {
   }
 
   try {
+    if (!fxCheckA2Credentials(req.query.usu, req.query.cla, '/archivophp.php')) {
+      return res.status(401).send('Unauthorized')
+    }
     requestBody.wasSent = 0
     requestBody.product = false
     const data: IOrderAttributes[] = await orderService.downloadOrder({

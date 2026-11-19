@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Tags, Route, Queries, Post, UploadedFile, Request } from 'tsoa'
+import {
+  Body,
+  Controller,
+  Get,
+  Tags,
+  Route,
+  Queries,
+  Post,
+  UploadedFile,
+  Request,
+  Security,
+} from 'tsoa'
+import { fxCheckA2Credentials } from '@utils/a2Auth'
 import * as unzipper from 'unzipper'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -79,6 +91,10 @@ export class A2IntegrationController extends Controller {
   // @Hidden()
   public async downloadOrder(@Queries() requestBody: IDownloadOrder) {
     try {
+      if (!fxCheckA2Credentials(requestBody.usu, requestBody.cla, '/A2/archivophp2.php')) {
+        this.setStatus(401)
+        return 'Unauthorized'
+      }
       requestBody.wasSent = 0
       requestBody.product = false
       const data: IOrderAttributes[] = await this.orderService.downloadOrder(requestBody)
@@ -151,6 +167,10 @@ export class A2IntegrationController extends Controller {
     }
   ) {
     try {
+      if (!fxCheckA2Credentials(requestBody.usu, requestBody.cla, '/A2/detalle2.php')) {
+        this.setStatus(401)
+        return 'Unauthorized'
+      }
       requestBody.wasSent = 1
       requestBody.product = true
       const data: IOrderAttributes[] = await this.orderService.downloadOrder(requestBody)
@@ -280,6 +300,10 @@ export class A2IntegrationController extends Controller {
   @Post('importardata.php')
   public async outputProduct(@Body() requestBody: IOutputProduct) {
     try {
+      if (!fxCheckA2Credentials(requestBody.usu, requestBody.cla, '/A2/importardata.php')) {
+        this.setStatus(401)
+        return { message: 'Unauthorized' }
+      }
       const pData = requestBody.data
       const vData = pData.replace(/\\r\\n/g, '')
       const jsonData = await this.convertToJSON(vData)
@@ -392,6 +416,7 @@ export class A2IntegrationController extends Controller {
     }
   }
 
+  @Security('bearerAuth', ['admin'])
   @Post('/upload')
   public async uploadZip(
     @UploadedFile() file: Express.Multer.File,

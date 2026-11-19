@@ -72,6 +72,7 @@ export type IUserCreationAttributes =
       passwordConfirmation?: string | null
       password?: string | null
       recaptchaToken?: string
+      firebaseToken?: string
     })
   | (Pick<IUserAttributes, 'id' | 'email' | 'password'> &
       Partial<Pick<IUserAttributes, 'name'>> & {

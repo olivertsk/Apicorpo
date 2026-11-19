@@ -3,7 +3,10 @@ const axios = require('axios')
 
 export const fxVerifyRecaptcha = async (token: string) => {
   // Ejemplo de uso
-  const secretKey = '6LcDIGMrAAAAAKoo3gKojynWRVal1UUbsSBxSBmQ'
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY
+  if (!secretKey) {
+    throw new Error('RECAPTCHA_SECRET_KEY no está configurada')
+  }
   // verifyRecaptcha(secretKey, token)
   //   .then((data) => console.log('Validación reCAPTCHA:', data))
   //   .catch((err) => console.error(err))

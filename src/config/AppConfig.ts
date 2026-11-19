@@ -2,11 +2,16 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+// Sin clave JWT el servidor no arranca: una clave por defecto en el código permite falsificar tokens
+if (!process.env.JWT_SECRET_KEY) {
+  throw new Error('JWT_SECRET_KEY no está configurada en el .env')
+}
+
 const AppConfig = {
   API_PREFIX: process.env.API_PREFIX,
   NODE_ENV: process.env.NODE_ENV || 'development',
   MY_PORT: process.env.MY_PORT || 5000,
-  JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'MyS3cr3t_JWT$ecret!2024.',
+  JWT_SECRET_KEY: process.env.JWT_SECRET_KEY as string,
   JWT_EXPIRES: process.env.JWT_EXPIRES,
   STORAGE_HOST: process.env.STORAGE_HOST || 'gs://marketing-audiologico.appspot.com/storage',
   CREDENTIAL_HOST_TEST:

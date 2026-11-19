@@ -192,7 +192,8 @@ class ProductsService {
           // 2. Ajustamos el Scoring para darle máxima prioridad a coincidencias en el Nombre
           scoreSql = words
             .map(
-              (word) => `CASE WHEN LOWER(\`Product\`.\`name\`) LIKE '%${word}%' THEN 3 ELSE 0 END`
+              (word) =>
+                `CASE WHEN LOWER(\`Product\`.\`name\`) LIKE ${sequelize.escape(`%${word}%`)} THEN 3 ELSE 0 END`
             )
             .join(' + ')
         }

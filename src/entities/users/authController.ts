@@ -55,6 +55,10 @@ export class AuthController extends Controller {
     @Body() requestBody: IUserCreationAttributes
   ): Promise<{ success: boolean; user: IUserAttributes | null; token?: string; message?: any }> {
     try {
+      // El rol nunca lo elige quien se registra (siempre 'client' por defecto)
+      if ('rolId' in requestBody) {
+        delete requestBody.rolId
+      }
       const recaptchaToken = requestBody.recaptchaToken
       if (recaptchaToken) {
         const verifyRecaptcha = await fxVerifyRecaptcha(recaptchaToken)
@@ -64,6 +68,27 @@ export class AuthController extends Controller {
         }
       }
       if ('uid' in requestBody && requestBody?.uid) {
+        // El uid y el email solo se aceptan si vienen respaldados por un token de Firebase
+        // válido; si no, cualquiera podría entrar a otra cuenta conociendo su email.
+        const firebaseToken = 'firebaseToken' in requestBody ? requestBody.firebaseToken : null
+        if (!firebaseToken) {
+          this.setStatus(401)
+          return { success: false, user: null, message: 'Token de Google requerido' }
+        }
+        let decoded: Partial<DecodedIdToken>
+        try {
+          decoded = (await this.sendNotificationService.verifyToken(
+            firebaseToken
+          )) as Partial<DecodedIdToken>
+        } catch {
+          this.setStatus(401)
+          return { success: false, user: null, message: 'Token de Google inválido' }
+        }
+        if (decoded.uid !== requestBody.uid || !decoded.email || decoded.email_verified === false) {
+          this.setStatus(401)
+          return { success: false, user: null, message: 'Token de Google inválido' }
+        }
+        requestBody.email = decoded.email
         const vHashedPassword = await argon2.hash(requestBody.uid)
         if (requestBody.email) {
           const existUser = await this.userService.loginOrRegisterGoogle({

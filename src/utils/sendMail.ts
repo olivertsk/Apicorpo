@@ -1,16 +1,17 @@
+import 'dotenv/config'
 import path from 'path'
 import * as fs from 'node:fs'
 import * as nodeMailer from 'nodemailer'
 const handlebars = require('handlebars')
 
-const sendEmail = 'noreply@corpoindustri.com'
+const sendEmail = process.env.SMTP_USER || 'noreply@corpoindustri.com'
 const transporter = nodeMailer.createTransport({
-  host: 'smtp.dreamhost.com',
-  port: 465,
+  host: process.env.SMTP_HOST || 'smtp.dreamhost.com',
+  port: Number(process.env.SMTP_PORT) || 465,
   secure: true,
   auth: {
     user: sendEmail,
-    pass: 'CorpoMailWeb123!',
+    pass: process.env.SMTP_PASSWORD,
   },
 })
 handlebars.registerHelper('eq', function (a: any, b: any) {

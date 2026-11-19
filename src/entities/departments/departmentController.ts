@@ -119,6 +119,7 @@ export class DepartmentsController extends Controller {
     }
   }
 
+  @Security('bearerAuth', ['admin'])
   @SuccessResponse('200', 'Update') // Custom success response
   @Put('/update/{departmentId}')
   public async update(

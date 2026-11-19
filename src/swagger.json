@@ -358,6 +358,9 @@
 							},
 							{
 								"properties": {
+									"firebaseToken": {
+										"type": "string"
+									},
 									"recaptchaToken": {
 										"type": "string"
 									},
@@ -2690,6 +2693,25 @@
 						"$ref": "#/components/schemas/Partial_Pick_IFavoriteProductAttributes.id-or-userId__"
 					}
 				]
+			},
+			"Error": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"stack": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"IPostAttributes": {
 				"properties": {
@@ -10705,7 +10727,17 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"anyOf": [
+										{
+											"type": "string",
+											"format": "byte"
+										},
+										{
+											"$ref": "#/components/schemas/Error"
+										}
+									]
+								}
 							}
 						}
 					}
@@ -12952,7 +12984,13 @@
 				"tags": [
 					"A2"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -13352,7 +13390,13 @@
 				"tags": [
 					"Department"
 				],
-				"security": [],
+				"security": [
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

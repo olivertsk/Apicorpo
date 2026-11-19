@@ -200,7 +200,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IUserCreationAttributes": {
         "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"intersection","subSchemas":[{"ref":"Partial_Pick_IUserAttributes.uid__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"string"},"password":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"passwordConfirmation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"rolId":{"dataType":"string"},"name":{"dataType":"string"},"avatar":{"dataType":"string"},"email":{"dataType":"string"}}}]},{"dataType":"intersection","subSchemas":[{"ref":"Pick_IUserAttributes.id-or-email-or-password_"},{"ref":"Partial_Pick_IUserAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"idToken":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"zone":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"city":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"state":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"gender":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"dob":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"receiveNotification":{"dataType":"boolean"},"rolId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"avatar":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"passwordConfirmation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}}]},{"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"string"},"rolId":{"dataType":"string"},"idToken":{"dataType":"string","required":true},"licenseNumber":{"dataType":"string"},"healthCenter":{"dataType":"string"},"avatar":{"dataType":"string"},"passwordConfirmation":{"dataType":"string"},"password":{"dataType":"string"},"email":{"dataType":"string"},"name":{"dataType":"string"}}}],"validators":{}},
+        "type": {"dataType":"union","subSchemas":[{"dataType":"intersection","subSchemas":[{"ref":"Partial_Pick_IUserAttributes.uid__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"firebaseToken":{"dataType":"string"},"recaptchaToken":{"dataType":"string"},"password":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"passwordConfirmation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"rolId":{"dataType":"string"},"name":{"dataType":"string"},"avatar":{"dataType":"string"},"email":{"dataType":"string"}}}]},{"dataType":"intersection","subSchemas":[{"ref":"Pick_IUserAttributes.id-or-email-or-password_"},{"ref":"Partial_Pick_IUserAttributes.name__"},{"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"idToken":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"zone":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"city":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"state":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"gender":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"dob":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"receiveNotification":{"dataType":"boolean"},"rolId":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"location":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"avatar":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"passwordConfirmation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}}]},{"dataType":"nestedObjectLiteral","nestedProperties":{"recaptchaToken":{"dataType":"string"},"rolId":{"dataType":"string"},"idToken":{"dataType":"string","required":true},"licenseNumber":{"dataType":"string"},"healthCenter":{"dataType":"string"},"avatar":{"dataType":"string"},"passwordConfirmation":{"dataType":"string"},"password":{"dataType":"string"},"email":{"dataType":"string"},"name":{"dataType":"string"}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_IUserAttributes.id-or-rolId_": {
@@ -870,6 +870,16 @@ const models: TsoaRoute.Models = {
     "IFavoriteProductCreationAttributes": {
         "dataType": "refAlias",
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_IFavoriteProductAttributes.productId_"},{"ref":"Partial_Pick_IFavoriteProductAttributes.id-or-userId__"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Error": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "message": {"dataType":"string","required":true},
+            "stack": {"dataType":"string"},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IPostAttributes": {
@@ -5227,6 +5237,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 _req: {"in":"request","name":"_req","required":true,"dataType":"object"},
         };
         app.post('/A2/upload',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
             upload.fields([
                 {
                     name: "file",
@@ -5387,6 +5398,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IDepartmentCreationAttributes"},
         };
         app.put('/departments/update/:departmentId',
+            authenticateMiddleware([{"bearerAuth":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.update)),
 
